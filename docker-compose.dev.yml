@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  mash:
+    volumes:
+      - c-mash-sync:/projects
+
+volumes:
+  c-mash-sync:
+    external: true
