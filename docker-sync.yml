@@ -7,5 +7,4 @@ syncs:
   c-mash-sync:
     src: '.'
     notify_terminal: true
-    sync_excludes:
-      - 'node_modules'
+    sync_excludes: ['node_modules']

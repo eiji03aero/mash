@@ -1,4 +1,4 @@
-import * as Errors from './Error';
+import * as Errors from './Errors';
 
 export class ErrorFactory {
   private constructor () {}

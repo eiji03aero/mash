@@ -1,4 +1,4 @@
-import { ErrorBase, ErrorBaseBasis } from "./Error";
+import { ErrorBase, ErrorBaseBasis } from "./ErrorBase";
 
 interface NoSuchFileOrDirectoryErrorBasis extends ErrorBaseBasis {
   path: string;

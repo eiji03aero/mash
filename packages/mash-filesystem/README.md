@@ -17,16 +17,17 @@
   - root: Directory
 
 - instance methods
-  - changeCurrentDirectory(): void
-  - resolveNodeFromPath:(path: string): FileSystemNode
-  - createFile
-  - createDirectory
-  - updateNode
-  - deleteNode
-  - readNode
+  - changeCurrentDirectory(params, (err) => void): void
+  - createFile(params, (err, file) => void): void
+  - createDirectory(params, (err, dir) => void): void
+  - updateNode(params, (err, node) => void): void
+  - deleteNode(params, (err) => void): void
+  - readFile(params, (err, content) => void): void
+  - readDirectory(params, (err, content) => void): void
 
 - private instance methods
   - isRoot(node: FileSystemNode): boolean
+  - resolveNodeFromPath:(path: string): FileSystemNode
 
 ### FileSystemNode
 
@@ -45,12 +46,14 @@
 - property
   - &FileSystemNode
   - children: FileSystemNode[]
+  - `__root__`: boolean
 
 - instance methods
   - addChild(node: FileSystemNode): void
   - removeChild(node: FileSystemNode): void
   - containsByName(name: string): boolean
   - findByName(name: string): FileSystemNode
+  - isRoot
 
 ### File < FileSystemNode
 
@@ -67,7 +70,7 @@
 
 - change current directory
 
-- reolve file from path
+- resolve file from path
   - relative path
   - absolute path
 
@@ -77,6 +80,6 @@
 
 - delete file/directory
 
-- output the content of file
+- read the content of file
 
 - list the nodes in a directory

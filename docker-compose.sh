@@ -10,8 +10,8 @@ execute-docker-compose () {
 }
 
 function stop-docker-compose () {
-  execute_docker_sync stop
-  execute_docker_compose stop
+  docker-sync stop
+  execute-docker-compose stop
 }
 
 if [ $COMMAND = 'up' ] && [ $# -le 1 ]; then
