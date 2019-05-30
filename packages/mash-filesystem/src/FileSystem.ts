@@ -1,9 +1,14 @@
-import { ErrorFactory } from "mash-common";
+import { ErrorFactory, Errors } from "mash-common";
 
+import { FileSystemNode } from "./FileSystemNode";
 import { Directory } from "./Directory";
 import { FileBasis } from "./File";
 
 import { initialFileNodes, homeDirectory } from "./assets/initialFileNodes";
+
+export interface FileSystemCommandResult {
+  error?: Errors.Base
+}
 
 export class FileSystem {
   private static _instance: FileSystem;
@@ -14,6 +19,7 @@ export class FileSystem {
     this.root = new Directory({
       name: 'root',
       children: initialFileNodes,
+      __root__: true
     });
     this.currentDirectory = homeDirectory;
   }
@@ -31,15 +37,9 @@ export class FileSystem {
   //   return node === this.root;
   // }
 
-  createFile ({
-    parentPath,
-    fileParams,
-  } : {
-    parentPath: string,
-    fileParams: FileBasis,
-  }) {
-    node.parentNode.removeChild(node);
-    node.removeParentNode();
+  createFile (params : { path: string, params: FileBasis }) : FileSystemCommandResult {
+    console.log(params.path, params.params, this.resolveNodeFromPath(params.path));
+    return {}
   }
 
   // createDirectory (node: FileSystemNode, parentNode: D) {
@@ -53,11 +53,10 @@ export class FileSystem {
   //   node.removeParent();
   // }
 
-  private resolveNodeFromPath (path: string): FileSystemNode {
+  private resolveNodeFromPath (path: string): ({ error?: Errors.Base, node?: FileSystemNode }) {
     const isAbsolutePath = path[0] === '/';
     let resolvedNode: FileSystemNode;
     let fragments: string[];
-    let error: any;
 
     if (isAbsolutePath) {
       resolvedNode = this.root;
@@ -69,30 +68,32 @@ export class FileSystem {
 
     for (let fragment of fragments) {
       if (fragment === '..') {
-        resolvedNode = resolvedNode.parentNode;
-        continue;
+        if (resolvedNode.parentNode instanceof FileSystemNode) {
+          resolvedNode = resolvedNode.parentNode;
+          continue;
+        } else {
+          return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+        }
       }
       else if (fragment === '.') {
         continue;
       }
       else if (fragment === '') {
-        error = ErrorFactory.noSuchFileOrDirectory(path);
-        break;
+        return { error: ErrorFactory.noSuchFileOrDirectory(path) };
       }
       else {
         if (!resolvedNode.isDirectory) {
-          error = ErrorFactory.notDirectory(fragment);
-          break;
+          return { error: ErrorFactory.notDirectory(fragment) };
         }
-        if (!resolvedNode.containsByName(fragment)) {
-          error = ErrorFactory.noSuchFileOrDirectory(path);
-          break;
+        if (!(<Directory>resolvedNode).containsByName(fragment)) {
+          return { error: ErrorFactory.noSuchFileOrDirectory(path) };
         }
 
-        resolvedNode = resolvedNode.findByName(fragment);
+        resolvedNode = (<Directory>resolvedNode).findByName(fragment) as FileSystemNode;
+        continue;
       }
     }
 
-    return { node: resolvedNode, error: error };
+    return { node: resolvedNode };
   }
 }

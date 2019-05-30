@@ -4,14 +4,17 @@ type Nodes = FileSystemNode[];
 
 export interface DirectoryBasis extends FileSystemNodeBasis {
   children?: Nodes;
+  __root__?: boolean;
 }
 
 export class Directory extends FileSystemNode {
   children: Nodes;
+  private __root__: boolean;
 
   constructor (params: DirectoryBasis) {
     super(params);
     this.children = params.children || [] as Nodes;
+    this.__root__ = params.__root__ || false;
   }
 
   addChild (node: FileSystemNode) {
@@ -34,5 +37,9 @@ export class Directory extends FileSystemNode {
     return this.children.find(
       (node: FileSystemNode) => node.name === name
     );
+  }
+
+  isRoot () {
+    return this.__root__
   }
 }

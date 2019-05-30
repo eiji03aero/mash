@@ -17,11 +17,12 @@
   - root: Directory
 
 - instance methods
-  - changeCurrentDirectory(params, (err) => void): void
-  - createFile(params, (err, file) => void): void
-  - createDirectory(params, (err, dir) => void): void
-  - updateNode(params, (err, node) => void): void
-  - deleteNode(params, (err) => void): void
+  - changeCurrentDirectory(params): ({err})
+  - createFile(params): ({err})
+  - createDirectory(params): ({err})
+  - updateFile(params): ({err})
+  - updateDirectory(params): ({err})
+  - deleteNode(params): ({err})
   - readFile(params, (err, content) => void): void
   - readDirectory(params, (err, content) => void): void
 

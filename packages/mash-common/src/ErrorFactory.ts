@@ -4,10 +4,10 @@ export class ErrorFactory {
   private constructor () {}
 
   static noSuchFileOrDirectory (path: string) {
-    return new Errors.NoSuchFileOrDirectoryError({ path });
+    return new Errors.NoSuchFileOrDirectory({ path });
   }
 
   static notDirectory (name: string) {
-    return new Errors.NotDirectoryError({ name });
+    return new Errors.NotDirectory({ name });
   }
 }

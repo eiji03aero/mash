@@ -14,7 +14,7 @@
     "lib"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf ./lib && tsc",
     "test": "jest"
   },
   "devDependencies": {

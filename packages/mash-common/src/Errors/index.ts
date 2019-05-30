@@ -1,3 +1,3 @@
-export * from './ErrorBase';
-export * from './NoSuchFileOrDirectoryError';
-export * from './NotDirectoryError';
+export * from './Base';
+export * from './NoSuchFileOrDirectory';
+export * from './NotDirectory';

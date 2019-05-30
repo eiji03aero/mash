@@ -1,8 +1,8 @@
 import { date } from "../";
 
-export interface ErrorBaseBasis { }
+export interface BaseBasis { }
 
-export class ErrorBase {
+export class Base {
   createdAt: string;
 
   constructor () {

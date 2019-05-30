@@ -14,8 +14,9 @@
     "lib"
   ],
   "scripts": {
-    "build": "tsc",
-    "test": "jest"
+    "build": "rm -rf ./lib && tsc",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "devDependencies": {
     "@types/jest": "^24.0.11",

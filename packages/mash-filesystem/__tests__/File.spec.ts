@@ -1,4 +1,4 @@
-import { File } from './File';
+import { File } from '../src/File';
 
 describe('File', () => {
   it('should have basic properties', () => {

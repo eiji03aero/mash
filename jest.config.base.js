@@ -1,6 +1,6 @@
 module.exports = {
   "roots": [
-    "<rootDir>/__tests__"
+    "<rootDir>/"
   ],
   "transform": {
     "^.+\\.ts$": "ts-jest"
@@ -11,4 +11,5 @@ module.exports = {
     "js",
   ],
   verbose: true,
+  collectCoverage: true
 };

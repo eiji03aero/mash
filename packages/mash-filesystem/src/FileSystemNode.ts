@@ -2,18 +2,19 @@ import { cid, date } from 'mash-common';
 
 export interface FileSystemNodeBasis {
   name: string
+  parentNode?: FileSystemNode
 }
 
 export class FileSystemNode {
   cid: string;
   name: string;
-  parentNode?: FileSystemNode | null;
+  parentNode?: FileSystemNode;
   createdAt: string;
 
   constructor (params: FileSystemNodeBasis) {
     this.cid = cid.generate();
     this.name = params.name;
-    this.parentNode = null;
+    this.parentNode = params.parentNode;
     this.createdAt = date.getCurrentTime();
   }
 
@@ -23,9 +24,5 @@ export class FileSystemNode {
 
   setParentNode (node: FileSystemNode) {
     this.parentNode = node;
-  }
-
-  removeParentNode () {
-    this.parentNode = null;
   }
 }
