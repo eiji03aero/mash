@@ -23,8 +23,9 @@
   - updateFile(params): ({err})
   - updateDirectory(params): ({err})
   - deleteNode(params): ({err})
-  - readFile(params, (err, content) => void): void
-  - readDirectory(params, (err, content) => void): void
+  - readFile(params): ({err, data})
+  - readDirectory(params): ({err, data})
+  - splitLastFragmentFromPath(params): ({err, data})
 
 - private instance methods
   - isRoot(node: FileSystemNode): boolean

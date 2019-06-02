@@ -2,7 +2,7 @@ import { ErrorFactory, Errors } from "mash-common";
 
 import { FileSystemNode } from "./FileSystemNode";
 import { Directory } from "./Directory";
-import { FileBasis } from "./File";
+import { File, FileBasis } from "./File";
 
 import { initialFileNodes, homeDirectory } from "./assets/initialFileNodes";
 
@@ -33,12 +33,10 @@ export class FileSystem {
     return this._instance;
   }
 
-  // private isRoot (node: FileSystemNode): boolean {
-  //   return node === this.root;
-  // }
-
-  changeCurrentDirectory (params: { path: string }) : FileSystemCommandResult {
-    const { path } = params;
+  changeCurrentDirectory (args: {
+    path: string
+  }) : FileSystemCommandResult {
+    const { path } = args;
     const { error, node } = this.resolveNodeFromPath(path);
 
     if (error) return { error };
@@ -49,9 +47,22 @@ export class FileSystem {
     return {};
   }
 
-  createFile (params : { path: string, params: FileBasis }) : FileSystemCommandResult {
-    console.log(params.path, params.params, this.resolveNodeFromPath(params.path));
-    return {}
+  createFile (args : {
+    path: string,
+    params: FileBasis 
+  }) : FileSystemCommandResult & {
+    file?: FileSystemNode
+  } {
+    const { path, params } = args;
+    const { error, node } = this.resolveNodeFromPath(path);
+
+    if (error) return { error };
+
+    if (!node || !node.isDirectory) return { error: ErrorFactory.notDirectory(path) };
+
+    const file = new File(params);
+    (<Directory>node).addChild(file);
+    return { file };
   }
 
   // createDirectory (node: FileSystemNode, parentNode: D) {
@@ -63,6 +74,26 @@ export class FileSystem {
   // deleteNode (node: FileSystemNode) {
   //   node.parent.removeChild(node);
   //   node.removeParent();
+  // }
+
+  splitLastFragmentFromPath (
+    path: string
+  ): ({
+    parentPath?: string,
+    lastFragment?: string
+  }) {
+    const lastIndex = path[path.length - 1] === '/'
+      ? path.lastIndexOf('/', path.length - 2)
+      : path.lastIndexOf('/');
+
+    return {
+      parentPath: path.slice(0, lastIndex),
+      lastFragment: path.slice(lastIndex + 1),
+    };
+  }
+
+  // private isRoot (node: FileSystemNode): boolean {
+  //   return node === this.root;
   // }
 
   private resolveNodeFromPath (
