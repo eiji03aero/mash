@@ -13,12 +13,19 @@ export class Directory extends FileSystemNode {
 
   constructor (params: DirectoryBasis) {
     super(params);
-    this.children = params.children || [] as Nodes;
+    this.children = [] as Nodes;
     this.__root__ = params.__root__ || false;
+
+    if (params.children) {
+      for (let child of params.children) {
+        this.addChild(child);
+      }
+    }
   }
 
   addChild (node: FileSystemNode) {
-    this.children = [ ...this.children, node ];
+    node.setParentNode(this);
+    this.children.push(node);
   }
 
   removeChild (node: FileSystemNode) {

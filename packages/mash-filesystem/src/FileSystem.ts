@@ -37,6 +37,18 @@ export class FileSystem {
   //   return node === this.root;
   // }
 
+  changeCurrentDirectory (params: { path: string }) : FileSystemCommandResult {
+    const { path } = params;
+    const { error, node } = this.resolveNodeFromPath(path);
+
+    if (error) return { error };
+
+    if (!node || !node.isDirectory) return { error: ErrorFactory.notDirectory(path) };
+
+    this.currentDirectory = node as Directory;
+    return {};
+  }
+
   createFile (params : { path: string, params: FileBasis }) : FileSystemCommandResult {
     console.log(params.path, params.params, this.resolveNodeFromPath(params.path));
     return {}
@@ -53,7 +65,12 @@ export class FileSystem {
   //   node.removeParent();
   // }
 
-  private resolveNodeFromPath (path: string): ({ error?: Errors.Base, node?: FileSystemNode }) {
+  private resolveNodeFromPath (
+    path: string
+  ): ({
+    error?: Errors.Base,
+    node?: FileSystemNode
+  }) {
     const isAbsolutePath = path[0] === '/';
     let resolvedNode: FileSystemNode;
     let fragments: string[];
