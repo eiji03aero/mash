@@ -1,7 +1,7 @@
 import { ErrorFactory, Errors } from "mash-common";
 
 import { FileSystemNode } from "./FileSystemNode";
-import { Directory } from "./Directory";
+import { Directory, DirectoryBasis } from "./Directory";
 import { File, FileBasis } from "./File";
 
 import { initialFileNodes, homeDirectory } from "./assets/initialFileNodes";
@@ -26,11 +26,17 @@ export class FileSystem {
 
   static bootstrap () {
     this._instance = new FileSystem();
-    return this;
+    return this._instance;
   }
 
   static get instance () {
     return this._instance;
+  }
+
+  static reboot () {
+    delete this._instance;
+    this.bootstrap();
+    return this._instance
   }
 
   changeCurrentDirectory (args: {
@@ -65,16 +71,23 @@ export class FileSystem {
     return { file };
   }
 
-  // createDirectory (node: FileSystemNode, parentNode: D) {
-  //   parent.addC
-  //   node.parent.removeChild(node);
-  //   node.removeParent();
-  // }
+  createDirectory (args: {
+    path: string,
+    params: DirectoryBasis
+  }): FileSystemCommandResult & {
+    directory?: FileSystemNode
+  } {
+    const { path, params } = args;
+    const { error, node } = this.resolveNodeFromPath(path);
 
-  // deleteNode (node: FileSystemNode) {
-  //   node.parent.removeChild(node);
-  //   node.removeParent();
-  // }
+    if (error) return { error };
+
+    if (!node || !node.isDirectory) return { error: ErrorFactory.notDirectory(path) };
+
+    const directory = new Directory(params);
+    (<Directory>node).addChild(directory);
+    return { directory };
+  }
 
   splitLastFragmentFromPath (
     path: string
