@@ -15,4 +15,9 @@ export class File extends FileSystemNode {
   setContent (content: string) {
     this.content = content;
   }
+
+  update (args: FileBasis) {
+    super.update(args);
+    args.content && (this.content = args.content);
+  }
 }

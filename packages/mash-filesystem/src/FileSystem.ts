@@ -71,6 +71,27 @@ export class FileSystem {
     return { file };
   }
 
+  updateFile (args : {
+    path: string,
+    name: string,
+    params: FileBasis
+  }) : FileSystemCommandResult & {
+    file?: File
+  } {
+    const { path, params } = args;
+    const { error, node } = this.resolveNodeFromPath(path);
+
+    if (error) return { error };
+
+    if (!node || !node.isDirectory) return { error: ErrorFactory.notDirectory(path) };
+
+    if ((<Directory>node).containsByName(name)) return { error: ErrorFactory.noSuchFileOrDirectory(path + name) };
+
+    const file = (<Directory>node).findByName(name) as File;
+    file.update(params);
+    return { file };
+  }
+
   createDirectory (args: {
     path: string,
     params: DirectoryBasis

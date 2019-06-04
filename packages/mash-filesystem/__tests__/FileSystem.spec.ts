@@ -37,7 +37,34 @@ describe('FileSystem', () => {
     expect(result).not.toHaveProperty('error');
     expect(fs.currentDirectory.containsByName(fileParams.name)).toBe(true);
     expect(result.file!.parentNode).toBe(fs.currentDirectory);
-  })
+  });
+
+  it('should update file', () => {
+    const fileParams = {
+      name: 'file',
+      content: 'hm'
+    };
+    const updatedFileParams = {
+      name: 'updated file',
+      content: 'yay'
+    };
+
+    fs.createFile({
+      path: '.',
+      params: fileParams
+    });
+    const result = fs.updateFile({
+      path: '.',
+      name: fileParams.name,
+      params: updatedFileParams,
+    });
+
+    expect(result).not.toHaveProperty('error');
+    expect(fs.currentDirectory.containsByName(updatedFileParams.name)).toBe(true);
+    expect(result.file!.parentNode).toBe(fs.currentDirectory);
+    expect(result.file!.name).toBe(updatedFileParams.name);
+    expect(result.file!.content).toBe(updatedFileParams.content);
+  });
 
   it('should create directory', () => {
     const directoryParams = {
@@ -50,5 +77,5 @@ describe('FileSystem', () => {
     expect(result).not.toHaveProperty('error');
     expect(fs.currentDirectory.containsByName(directoryParams.name)).toBe(true);
     expect(result.directory!.parentNode).toBe(fs.currentDirectory);
-  })
+  });
 });
