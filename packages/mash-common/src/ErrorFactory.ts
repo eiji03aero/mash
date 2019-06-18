@@ -10,4 +10,8 @@ export class ErrorFactory {
   static notDirectory (name: string) {
     return new Errors.NotDirectory({ name });
   }
+
+  static script (fileName: string, errorMessage: string) {
+    return new Errors.Script({ fileName, errorMessage });
+  }
 }
