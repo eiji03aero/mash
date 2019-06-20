@@ -7,13 +7,13 @@ export interface FileBasis extends FileSystemNodeBasis {
 export class File extends FileSystemNode {
   content: string;
 
+  static isBasis (obj: any): obj is FileBasis {
+    return 'content' in obj;
+  }
+
   constructor (params: FileBasis) {
     super(params);
     this.content = params.content || '';
-  }
-
-  setContent (content: string) {
-    this.content = content;
   }
 
   update (args: FileBasis) {

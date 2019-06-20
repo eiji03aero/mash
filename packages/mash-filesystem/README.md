@@ -18,10 +18,8 @@
 
 - instance methods
   - changeCurrentDirectory(params): ({err})
-  - createFile(params): ({err})
-  - createDirectory(params): ({err})
-  - updateFile(params): ({err})
-  - updateDirectory(params): ({err})
+  - createNode(params): ({err})
+  - updateNode(params): ({err})
   - deleteNode(params): ({err})
   - readFile(params): ({err, data})
   - readDirectory(params): ({err, data})

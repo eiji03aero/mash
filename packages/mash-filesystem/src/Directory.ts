@@ -11,6 +11,10 @@ export class Directory extends FileSystemNode {
   children: Nodes;
   private __root__: boolean;
 
+  static isBasis (obj: any): obj is DirectoryBasis {
+    return 'children' in obj;
+  }
+
   constructor (params: DirectoryBasis) {
     super(params);
     this.children = [] as Nodes;
@@ -21,6 +25,10 @@ export class Directory extends FileSystemNode {
         this.addChild(child);
       }
     }
+  }
+
+  update (args: DirectoryBasis) {
+    super.update(args);
   }
 
   addChild (node: FileSystemNode) {

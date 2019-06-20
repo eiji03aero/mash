@@ -1,5 +1,6 @@
 import { FileSystem } from "../src/FileSystem";
 import { Directory } from "../src/Directory";
+import { File } from "../src/File";
 
 
 describe('FileSystem', () => {
@@ -30,13 +31,27 @@ describe('FileSystem', () => {
       name: 'application child',
       content: 'application content'
     };
-    const result = fs.createFile({
+    const result = fs.createNode({
       path: '.',
       params: fileParams
     });
     expect(result).not.toHaveProperty('error');
     expect(fs.currentDirectory.containsByName(fileParams.name)).toBe(true);
-    expect(result.file!.parentNode).toBe(fs.currentDirectory);
+    expect(result.node!.parentNode).toBe(fs.currentDirectory);
+  });
+
+  it('should create directory', () => {
+    const directoryParams = {
+      name: 'application child directory',
+      children: []
+    };
+    const result = fs.createNode({
+      path: '.',
+      params: directoryParams
+    });
+    expect(result).not.toHaveProperty('error');
+    expect(fs.currentDirectory.containsByName(directoryParams.name)).toBe(true);
+    expect(result.node!.parentNode).toBe(fs.currentDirectory);
   });
 
   it('should update file', () => {
@@ -44,38 +59,52 @@ describe('FileSystem', () => {
       name: 'file',
       content: 'hm'
     };
+    fs.createNode({
+      path: '.',
+      params: fileParams
+    });
+
     const updatedFileParams = {
       name: 'updated file',
       content: 'yay'
     };
-
-    fs.createFile({
-      path: '.',
-      params: fileParams
-    });
-    const result = fs.updateFile({
-      path: '.',
-      name: fileParams.name,
+    const result = fs.updateNode<File>({
+      path: `./${fileParams.name}`,
       params: updatedFileParams,
     });
 
     expect(result).not.toHaveProperty('error');
     expect(fs.currentDirectory.containsByName(updatedFileParams.name)).toBe(true);
-    expect(result.file!.parentNode).toBe(fs.currentDirectory);
-    expect(result.file!.name).toBe(updatedFileParams.name);
-    expect(result.file!.content).toBe(updatedFileParams.content);
+
+    const file = result.node!;
+    expect(file.parentNode).toBe(fs.currentDirectory);
+    expect(file.name).toBe(updatedFileParams.name);
+    expect(file.content).toBe(updatedFileParams.content);
   });
 
-  it('should create directory', () => {
+
+  it('should update directory', () => {
     const directoryParams = {
-      name: 'hoge',
+      name: 'dir',
     };
-    const result = fs.createDirectory({
+    fs.createNode<Directory>({
       path: '.',
       params: directoryParams
     });
+
+    const updatedDirectoryParams = {
+      name: 'updated dir',
+    };
+    const result = fs.updateNode<Directory>({
+      path: `./${directoryParams.name}`,
+      params: updatedDirectoryParams,
+    });
+
     expect(result).not.toHaveProperty('error');
-    expect(fs.currentDirectory.containsByName(directoryParams.name)).toBe(true);
-    expect(result.directory!.parentNode).toBe(fs.currentDirectory);
+    expect(fs.currentDirectory.containsByName(updatedDirectoryParams.name)).toBe(true);
+
+    const directory = result.node!;
+    expect(directory.parentNode).toBe(fs.currentDirectory);
+    expect(directory.name).toBe(updatedDirectoryParams.name);
   });
 });
