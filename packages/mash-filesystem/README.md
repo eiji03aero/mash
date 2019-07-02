@@ -21,8 +21,7 @@
   - createNode(params): ({err})
   - updateNode(params): ({err})
   - deleteNode(params): ({err})
-  - readFile(params): ({err, data})
-  - readDirectory(params): ({err, data})
+  - readNode(params): ({err, data})
   - splitLastFragmentFromPath(params): ({err, data})
 
 - private instance methods

@@ -98,6 +98,30 @@ export class FileSystem {
     return { node };
   }
 
+  deleteNode<T extends FileSystemNode> (args : {
+    path: string,
+  }) : FileSystemCommandResult & {
+    node?: T
+  } {
+    const { path } = args;
+    const { parentPath, lastFragment } = this.splitLastFragmentFromPath(path);
+    const { error, node: parentDirectory } = this.resolveNodeFromPath(parentPath);
+
+    if (error) return { error };
+
+    if (!parentDirectory || !parentDirectory.isDirectory) {
+      return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+    }
+
+    if (!(<Directory>parentDirectory).containsByName(lastFragment)) {
+      return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+    }
+
+    const node = (<Directory>parentDirectory).findByName(lastFragment) as T;
+    (<Directory>parentDirectory).removeChild(node);
+    return { node };
+  }
+
   private splitLastFragmentFromPath (
     path: string
   ): ({

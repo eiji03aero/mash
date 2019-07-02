@@ -28,7 +28,7 @@ describe('FileSystem', () => {
 
   it('should create file', () => {
     const fileParams = {
-      name: 'application child',
+      name: 'application_child',
       content: 'application content'
     };
     const result = fs.createNode({
@@ -42,7 +42,7 @@ describe('FileSystem', () => {
 
   it('should create directory', () => {
     const directoryParams = {
-      name: 'application child directory',
+      name: 'application_child_directory',
       children: []
     };
     const result = fs.createNode({
@@ -65,7 +65,7 @@ describe('FileSystem', () => {
     });
 
     const updatedFileParams = {
-      name: 'updated file',
+      name: 'updated_file',
       content: 'yay'
     };
     const result = fs.updateNode<File>({
@@ -93,7 +93,7 @@ describe('FileSystem', () => {
     });
 
     const updatedDirectoryParams = {
-      name: 'updated dir',
+      name: 'updated_dir',
     };
     const result = fs.updateNode<Directory>({
       path: `./${directoryParams.name}`,
@@ -106,5 +106,41 @@ describe('FileSystem', () => {
     const directory = result.node!;
     expect(directory.parentNode).toBe(fs.currentDirectory);
     expect(directory.name).toBe(updatedDirectoryParams.name);
+  });
+
+  it('should delete file', () => {
+    const fileParams = {
+      name: 'file',
+      content: 'application content'
+    };
+    fs.createNode<File>({
+      path: '.',
+      params: fileParams
+    });
+
+    const result = fs.deleteNode<File>({
+      path: `./${fileParams.name}`
+    });
+
+    expect(result).not.toHaveProperty('error');
+    expect(fs.currentDirectory.containsByName(fileParams.name)).toBe(false);
+  });
+
+  it('should delete directory', () => {
+    const directoryParams = {
+      name: 'dir',
+      content: 'application content'
+    };
+    fs.createNode<Directory>({
+      path: '.',
+      params: directoryParams
+    });
+
+    const result = fs.deleteNode<Directory>({
+      path: `./${directoryParams.name}`
+    });
+
+    expect(result).not.toHaveProperty('error');
+    expect(fs.currentDirectory.containsByName(directoryParams.name)).toBe(false);
   });
 });
