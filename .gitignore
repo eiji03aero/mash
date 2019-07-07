@@ -1,5 +1,4 @@
 node_modules/
-packages/*/lib
 coverage/
 .docker-sync/
 

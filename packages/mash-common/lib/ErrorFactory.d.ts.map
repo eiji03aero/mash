@@ -1,0 +1,1 @@
+{"version":3,"file":"ErrorFactory.d.ts","sourceRoot":"","sources":["../src/ErrorFactory.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,MAAM,MAAM,UAAU,CAAC;AAEnC,qBAAa,YAAY;IACvB,OAAO;IAEP,MAAM,CAAC,qBAAqB,CAAE,IAAI,EAAE,MAAM;IAI1C,MAAM,CAAC,YAAY,CAAE,IAAI,EAAE,MAAM;IAIjC,MAAM,CAAC,MAAM,CAAE,QAAQ,EAAE,MAAM,EAAE,YAAY,EAAE,MAAM;CAGtD"}

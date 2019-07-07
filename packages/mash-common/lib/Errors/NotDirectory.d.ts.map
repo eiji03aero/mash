@@ -1,0 +1,1 @@
+{"version":3,"file":"NotDirectory.d.ts","sourceRoot":"","sources":["../../src/Errors/NotDirectory.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,IAAI,EAAE,SAAS,EAAE,MAAM,QAAQ,CAAC;AAEzC,UAAU,iBAAkB,SAAQ,SAAS;IAC3C,IAAI,EAAE,MAAM,CAAC;CACd;AAED,qBAAa,YAAa,SAAQ,IAAI;IACpC,IAAI,EAAE,MAAM,CAAC;gBAEA,MAAM,EAAE,iBAAiB;IAKtC,OAAO,IAAK,MAAM;CAGnB"}
