@@ -33,8 +33,13 @@ if [ $COMMAND = 'up' ] && [ $# -le 1 ]; then
   docker-sync start
   execute-docker-compose exec mash bash
   stop-docker-compose
+
+elif [ $COMMAND = 'bash' ]; then
+  execute-docker-compose exec mash bash
+
 elif [ $COMMAND = 'bootstrap' ]; then
   bootstrap
+
 else
   execute-docker-compose $@
 fi

@@ -3,6 +3,13 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/mash",
+    "packages/mash-common",
+    "packages/mash-filesystem",
+    "packages/mash-term"
+  ],
   "scripts": {
     "build": "lerna run build",
     "test": "jest",
