@@ -1,4 +1,4 @@
-FROM node:10.15.3-jessie
+FROM node:12.7.0-buster
 
 WORKDIR /projects
 
