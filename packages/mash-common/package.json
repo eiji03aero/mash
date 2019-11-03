@@ -15,6 +15,7 @@
   ],
   "scripts": {
     "build": "rm -rf ./lib && tsc",
+    "build:watch": "rm -rf ./lib && tsc --watch",
     "test": "jest"
   },
   "devDependencies": {

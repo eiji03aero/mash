@@ -7,10 +7,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var date = __importStar(require("./date"));
-exports.date = date;
 var cid = __importStar(require("./cid"));
 exports.cid = cid;
+var date = __importStar(require("./date"));
+exports.date = date;
+var text = __importStar(require("./text"));
+exports.text = text;
 var Errors = __importStar(require("./Errors"));
 exports.Errors = Errors;
 var ErrorFactory_1 = require("./ErrorFactory");

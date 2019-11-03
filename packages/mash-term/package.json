@@ -1,0 +1,35 @@
+{
+  "name": "mash-term",
+  "version": "0.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "eiji03aero <eiji03aero@gmail.com>",
+  "license": "ISC",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eiji03aero/mash.git"
+  },
+  "scripts": {
+    "dev": "webpack-dev-server"
+  },
+  "bugs": {
+    "url": "https://github.com/eiji03aero/mash/issues"
+  },
+  "homepage": "https://github.com/eiji03aero/mash#readme",
+  "devDependencies": {
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.6.4",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.9.0"
+  },
+  "dependencies": {}
+}
