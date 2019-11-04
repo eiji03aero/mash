@@ -1,13 +1,12 @@
-import { text } from 'mash-common';
-import { BaseRenderLayer } from './BaseRenderLayer';
+import { IRenderer, IBaseRenderLayer, IRenderPayload } from '../Types';
 import { BackdropRenderLayer } from './BackdropRenderLayer';
 import { TextRenderLayer } from './TextRenderLayer';
 
-export class Renderer {
-  renderLayers: BaseRenderLayer[];
+export class Renderer implements IRenderer {
+  renderLayers: IBaseRenderLayer[];
 
   constructor (
-    container: HTMLElement
+    container: HTMLElement,
   ) {
     this.renderLayers = [
       new BackdropRenderLayer(container, 1),
@@ -15,9 +14,15 @@ export class Renderer {
     ];
   }
 
-  render (rows: text.rows, rowIndex: number) {
+  render (params: IRenderPayload) {
     for (let l of this.renderLayers) {
-      l.render(rows, rowIndex);
+      l.render(params);
+    }
+  }
+
+  resize (params: IRenderPayload) {
+    for (let l of this.renderLayers) {
+      l.resize(params);
     }
   }
 

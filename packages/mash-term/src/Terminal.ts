@@ -1,50 +1,66 @@
 import { text } from 'mash-common';
+import {
+  ITerminal,
+  IRenderer,
+  IConfig,
+  IRenderPayload
+} from './Types';
 import { Renderer } from './renderer';
-import { Config, getConfig } from './common/Config';
+import { getConfig } from './common/Config';
 
-export class Terminal {
+export class Terminal implements ITerminal {
   container: HTMLElement;
-  renderer: Renderer;
+  renderer: IRenderer;
   textarea: HTMLTextAreaElement;
-  config: Config;
+  config: IConfig;
   rows: text.rows;
   rowPosition: number;
 
   constructor (
     container: HTMLElement,
-    config: Config
+    config: any
   ) {
     this.container = container;
 
-    this.renderer = new Renderer(this.container)
     this.textarea = document.createElement('textarea');
     this.textarea.setAttribute('style', 'width: 0; height: 0; position: absolute;');
     this.container.appendChild(this.textarea);
     this.config = getConfig(config);
     this.rows = [] as text.rows;
     this.rowPosition = 0;
+    this.renderer = new Renderer(this.container);
 
+    window.addEventListener('resize', this.onResize);
     document.addEventListener('click', this.onDocumentClick);
     this.textarea.addEventListener('keyup', this.onKeyUp);
   }
 
-  focus () {
+  public focus () {
     this.textarea.focus();
   }
 
-  blur () {
+  public blur () {
     this.textarea.blur();
   }
 
-  prompt () {
+  public prompt () {
     this.rows.push([
       ...this.config.prompt,
       { text: "" }
     ]);
-    this.renderer.render(this.rows, this.rowPosition);
+    this.renderer.render(this.renderPayload);
   }
 
-  onDocumentClick = (e: Event) => {
+  private get renderPayload () {
+    const payload: IRenderPayload = {
+      rows: this.rows,
+      rowPosition: this.rowPosition,
+      config: this.config
+    };
+    return payload;
+  }
+
+  private onDocumentClick = (e: Event) => {
     if (this.container.contains(e.target as HTMLElement)) {
       this.focus();
     } else {
@@ -52,10 +68,14 @@ export class Terminal {
     }
   }
 
-  onKeyUp = (e: Event) => {
+  private onResize = (_: Event) => {
+    this.renderer.resize(this.renderPayload);
+  }
+
+  private onKeyUp = (e: Event) => {
     const lastRow = this.rows[this.rows.length - 1];
     const lastTextObject = lastRow[lastRow.length - 1];
     lastTextObject.text = (e.target as HTMLInputElement).value;
-    this.renderer.render(this.rows, this.rowPosition);
+    this.renderer.render(this.renderPayload);
   }
 }

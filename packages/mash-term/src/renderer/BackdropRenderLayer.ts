@@ -1,20 +1,16 @@
+import { IRenderPayload } from '../Types';
 import { BaseRenderLayer } from './BaseRenderLayer';
 
 export class BackdropRenderLayer extends BaseRenderLayer {
   constructor (
     container: HTMLElement,
-    zIndex: number
+    zIndex: number,
   ) {
     super(container, zIndex);
-    this.drawBackdrop();
   }
 
-  resizeHook = () => {
-    this.drawBackdrop();
-  }
-
-  drawBackdrop = () => {
-    this.ctx.fillStyle = '#182F40';
+  render = (params: IRenderPayload) => {
+    this.ctx.fillStyle = params.config.terminalBg;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
 }
