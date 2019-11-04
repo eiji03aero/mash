@@ -1,5 +1,7 @@
 import { text } from 'mash-common';
 
+export type KeyboardEventHandler = (e: KeyboardEvent) => void;
+
 export interface IConfig {
   prompt: text.row;
   terminalBg: string;

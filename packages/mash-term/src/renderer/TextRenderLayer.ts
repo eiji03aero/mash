@@ -21,8 +21,8 @@ export class TextRenderLayer extends BaseRenderLayer {
   }
 
   renderRow (row: text.row, index: number, config: IConfig) {
-    let xPosition: number = 4;
-    const yPosition = index * 16 + 8;
+    let xPosition: number = config.rowLeftMargin;
+    const yPosition = index * config.fontSize + (index + 1) * config.rowTopMargin;
     this.ctx.save();
     this.ctx.font = `${config.fontSize}px ${config.fontFamily}`;
     this.ctx.textBaseline = 'top';

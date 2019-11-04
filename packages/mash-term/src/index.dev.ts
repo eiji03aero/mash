@@ -10,5 +10,11 @@ document.addEventListener('DOMContentLoaded', (_: Event) => {
     }
   );
 
+  terminal.onKeyPress((e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      terminal.prompt();
+    }
+  });
   terminal.prompt();
 });

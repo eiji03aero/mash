@@ -1,5 +1,6 @@
 import { text } from 'mash-common';
 import {
+  KeyboardEventHandler,
   ITerminal,
   IRenderer,
   IConfig,
@@ -9,12 +10,13 @@ import { Renderer } from './renderer';
 import { getConfig } from './common/Config';
 
 export class Terminal implements ITerminal {
-  container: HTMLElement;
-  renderer: IRenderer;
-  textarea: HTMLTextAreaElement;
-  config: IConfig;
-  rows: text.rows;
-  rowPosition: number;
+  public container: HTMLElement;
+  public renderer: IRenderer;
+  public textarea: HTMLTextAreaElement;
+  public config: IConfig;
+  public rows: text.rows;
+  public rowPosition: number;
+  private _onKeyPressHandler: (e: KeyboardEvent) => void;
 
   constructor (
     container: HTMLElement,
@@ -30,9 +32,12 @@ export class Terminal implements ITerminal {
     this.rowPosition = 0;
     this.renderer = new Renderer(this.container);
 
-    window.addEventListener('resize', this.onResize);
-    document.addEventListener('click', this.onDocumentClick);
-    this.textarea.addEventListener('keyup', this.onKeyUp);
+    this._onKeyPressHandler = (_: KeyboardEvent) => {};
+
+    window.addEventListener('resize', this._onResize);
+    document.addEventListener('click', this._onDocumentClick);
+    this.textarea.addEventListener('keyup', this._onKeyUp);
+    this.textarea.addEventListener('keypress', this._onKeyPress);
   }
 
   public focus () {
@@ -44,11 +49,16 @@ export class Terminal implements ITerminal {
   }
 
   public prompt () {
+    this.textarea.value = "";
     this.rows.push([
       ...this.config.prompt,
       { text: "" }
     ]);
     this.renderer.render(this.renderPayload);
+  }
+
+  public onKeyPress (fn: KeyboardEventHandler) {
+    this._onKeyPressHandler = fn;
   }
 
   private get renderPayload () {
@@ -60,7 +70,7 @@ export class Terminal implements ITerminal {
     return payload;
   }
 
-  private onDocumentClick = (e: Event) => {
+  private _onDocumentClick = (e: Event) => {
     if (this.container.contains(e.target as HTMLElement)) {
       this.focus();
     } else {
@@ -68,11 +78,15 @@ export class Terminal implements ITerminal {
     }
   }
 
-  private onResize = (_: Event) => {
+  private _onResize = (_: Event) => {
     this.renderer.resize(this.renderPayload);
   }
 
-  private onKeyUp = (e: Event) => {
+  private _onKeyPress = (e: KeyboardEvent) => {
+    this._onKeyPressHandler(e);
+  }
+
+  private _onKeyUp = (e: Event) => {
     const lastRow = this.rows[this.rows.length - 1];
     const lastTextObject = lastRow[lastRow.length - 1];
     lastTextObject.text = (e.target as HTMLInputElement).value;
