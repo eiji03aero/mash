@@ -13,6 +13,7 @@
   "scripts": {
     "build": "lerna run build",
     "test": "jest",
+    "dev:t": "(cd packages/mash-term && yarn run dev)",
     "dev-test:fs": "(cd packages/mash-filesystem && yarn run test:watch)"
   },
   "devDependencies": {

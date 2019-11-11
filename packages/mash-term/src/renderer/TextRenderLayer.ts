@@ -13,9 +13,8 @@ export class TextRenderLayer extends BaseRenderLayer {
   render (params: IRenderPayload) {
     this.ctx.save();
     this.clear();
-    const displayedRows = params.rows.slice(params.rowPosition);
-    for (let i = 0; i < displayedRows.length; i++) {
-      this.renderRow(displayedRows[i], i, params.config);
+    for (let i = 0; i < params.displayedRows.length; i++) {
+      this.renderRow(params.displayedRows[i], i, params.config);
     }
     this.ctx.restore();
   }

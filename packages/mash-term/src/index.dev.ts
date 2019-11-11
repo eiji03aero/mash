@@ -1,14 +1,52 @@
 import { Terminal } from './index';
 
 document.addEventListener('DOMContentLoaded', (_: Event) => {
+  const promptObj = { text: "Eiji's MBP $ " };
   const terminal = new Terminal(
     document.querySelector('#app') as HTMLElement,
     {
-      prompt: [
-        { text: "Eiji's MBP $ " },
-      ]
+      prompt: [ promptObj ]
     }
   );
+
+  const dummy = [
+    "this is not going to end well",
+    "I know it was not the right timing, but I couldn't help",
+    "There was this beautiful sunrise",
+    "That was it",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+    "domo",
+  ];
+
+  let count = 0;
+  for (let t of dummy) {
+    count += 1;
+    let c = count;
+    setTimeout(() => {
+      terminal.writeln([promptObj, {text: t + c}]);
+    }, c * 30);
+  }
 
   terminal.onKeyPress((e: KeyboardEvent) => {
     if (e.key === 'Enter') {

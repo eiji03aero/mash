@@ -9,13 +9,13 @@
   - detect enter to emit the string
 - show/hide cursor
 - append lines
-  - Terminal#write
+  - Terminal#writeln
 - configure
   - Terminal#configure
     - prompt
     - background
 - scroll
-  - Terminal#onScroll
-    - Renderer#onScroll
-      - renderLayers[]#onScroll
+  - Terminal#scroll(rowToScroll: number)
+- scroll to bottom
+  - Terminal#scrollToBottom
 ```

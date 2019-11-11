@@ -15,7 +15,10 @@ export interface IConfig {
 
 export interface IRenderPayload {
   rows: text.rows;
+  displayedRows: text.rows;
   rowPosition: number;
+  rowHeight: number;
+  numberOfDisplayedRows: number;
   config: IConfig;
 }
 
@@ -41,4 +44,10 @@ export interface ITerminal {
   config: IConfig;
   rows: text.rows;
   rowPosition: number;
+  focus(): void;
+  blur(): void;
+  prompt(): void;
+  writeln(texts: text.row): void;
+  scroll(numberToScroll: number): void;
+  scrollToBottom(): void;
 }
