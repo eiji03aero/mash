@@ -1,16 +1,18 @@
-import { IRenderer, IBaseRenderLayer, IRenderPayload } from '../Types';
+import { IRenderer, IBaseRenderLayer, IRenderPayload, ITerminal } from '../Types';
 import { BackdropRenderLayer } from './BackdropRenderLayer';
+import { CursorRenderLayer } from './CursorRenderLayer';
 import { TextRenderLayer } from './TextRenderLayer';
 
 export class Renderer implements IRenderer {
   renderLayers: IBaseRenderLayer[];
 
   constructor (
-    container: HTMLElement,
+    terminal: ITerminal
   ) {
     this.renderLayers = [
-      new BackdropRenderLayer(container, 1),
-      new TextRenderLayer(container, 2)
+      new BackdropRenderLayer(terminal, 1),
+      new TextRenderLayer(terminal, 2),
+      new CursorRenderLayer(terminal, 3)
     ];
   }
 
@@ -24,11 +26,5 @@ export class Renderer implements IRenderer {
     for (let l of this.renderLayers) {
       l.resize(params);
     }
-  }
-
-  showCursor () {
-  }
-
-  hideCursor () {
   }
 }

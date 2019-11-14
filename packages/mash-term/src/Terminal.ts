@@ -17,6 +17,7 @@ export class Terminal implements ITerminal {
   public config: IConfig;
   public rows: text.rows;
   public rowPosition: number;
+  public isCursorShown: boolean;
   private _onKeyPressHandler: (e: KeyboardEvent) => void;
 
   constructor (
@@ -31,7 +32,8 @@ export class Terminal implements ITerminal {
     this.config = getConfig(config);
     this.rows = [] as text.rows;
     this.rowPosition = 0;
-    this.renderer = new Renderer(this.container);
+    this.isCursorShown = true;
+    this.renderer = new Renderer(this);
 
     this._onKeyPressHandler = (_: KeyboardEvent) => {};
 
@@ -40,6 +42,16 @@ export class Terminal implements ITerminal {
     this.container.addEventListener('wheel', this._onContainerWheel);
     this.textarea.addEventListener('keyup', this._onKeyUp);
     this.textarea.addEventListener('keypress', this._onKeyPress);
+
+    this.focus();
+  }
+
+  public get relativePromptRowPosition () {
+    return this.rows.length - 1 - this.rowPosition;
+  }
+
+  public get rowHeight () {
+    return this.config.fontSize + this.config.rowTopMargin + this.config.rowBottomMargin;
   }
 
   public focus () {
@@ -51,17 +63,25 @@ export class Terminal implements ITerminal {
   }
 
   public prompt () {
+    if (this._isOnBottom) {
+      this.rowPosition += 1;
+    }
+
     this.textarea.value = "";
     this.rows.push([
       ...this.config.prompt,
       { text: "" }
     ]);
-    this._render({ appendIfNeeded: true });
+    this._render();
   }
 
   public writeln (texts: text.row) {
+    if (this._isOnBottom) {
+      this.rowPosition += 1;
+    }
+
     this.rows.push(texts);
-    this._render({ appendIfNeeded: true });
+    this._render();
   }
 
   public scroll (numberToScroll: number) {
@@ -93,42 +113,28 @@ export class Terminal implements ITerminal {
       rows: this.rows,
       displayedRows: this.rows.slice(this.rowPosition, this.rowPosition + this._numberOfDisplayedRows),
       rowPosition: this.rowPosition,
-      rowHeight: this._rowHeight,
+      rowHeight: this.rowHeight,
       numberOfDisplayedRows: this._numberOfDisplayedRows,
-      config: this.config
+      config: this.config,
+      textarea: this.textarea
     };
   }
 
   private get _bottomPosition () {
     const bottomPosition = this.rows.length - this._numberOfDisplayedRows;
-    return bottomPosition >= 0
-      ? bottomPosition
-      : 0;
-  }
-
-  private get _rowHeight () {
-    return this.config.fontSize + this.config.rowTopMargin;
+    return Math.max(bottomPosition, 0);
   }
 
   private get _numberOfDisplayedRows () {
-    return Math.floor(this.container.offsetHeight / this._rowHeight);
+    return Math.floor(this.container.offsetHeight / this.rowHeight);
   }
 
   private get _isOnBottom () {
     if (this.rows.length < this._numberOfDisplayedRows) return false;
-    return this.rows.length >= this.rowPosition + this._numberOfDisplayedRows + 1;
+    return this.rowPosition === this.rows.length - this._numberOfDisplayedRows;
   }
 
-  private _render (
-    option?: {
-      appendIfNeeded?: boolean
-    }
-  ) {
-    if (typeof option !== 'undefined') {
-      if (option.appendIfNeeded && this._isOnBottom) {
-        this.rowPosition += 1;
-      }
-    }
+  private _render () {
     this.renderer.render(this._renderPayload);
   }
 
@@ -145,9 +151,15 @@ export class Terminal implements ITerminal {
   }
 
   private _onContainerWheel = _.throttle((e: WheelEvent) => {
-    const rowToScroll = e.deltaY > 0 ? 1 : -1;
-    this.scroll(rowToScroll);
-
+    const stride = Math.abs(e.deltaY);
+    const modifier =
+      stride < 2 ? 0 :
+      stride < 8 ? 1 :
+      stride < 24 ? 2 :
+      stride < 48 ? 4 :
+      6;
+    const direction = e.deltaY > 0 ? 1 : -1;
+    this.scroll(direction * modifier);
   }, 50);
 
   private _onKeyPress = (e: KeyboardEvent) => {
@@ -155,6 +167,9 @@ export class Terminal implements ITerminal {
   }
 
   private _onKeyUp = (e: Event) => {
+    if (!this._isOnBottom) {
+      this.scrollToBottom();
+    }
     const lastRow = this.rows[this.rows.length - 1];
     const lastTextObject = lastRow[lastRow.length - 1];
     lastTextObject.text = (e.target as HTMLInputElement).value;

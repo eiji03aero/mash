@@ -8,6 +8,7 @@
   - Terminal#prompt
   - detect enter to emit the string
 - show/hide cursor
+  - tbd
 - append lines
   - Terminal#writeln
 - configure

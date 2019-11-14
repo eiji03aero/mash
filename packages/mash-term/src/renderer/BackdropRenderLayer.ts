@@ -1,12 +1,12 @@
-import { IRenderPayload } from '../Types';
+import { IRenderPayload, ITerminal } from '../Types';
 import { BaseRenderLayer } from './BaseRenderLayer';
 
 export class BackdropRenderLayer extends BaseRenderLayer {
   constructor (
-    container: HTMLElement,
+    terminal: ITerminal,
     zIndex: number,
   ) {
-    super(container, zIndex);
+    super(terminal, zIndex);
   }
 
   render = (params: IRenderPayload) => {

@@ -14,29 +14,6 @@ document.addEventListener('DOMContentLoaded', (_: Event) => {
     "I know it was not the right timing, but I couldn't help",
     "There was this beautiful sunrise",
     "That was it",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
-    "domo",
   ];
 
   let count = 0;
@@ -45,8 +22,12 @@ document.addEventListener('DOMContentLoaded', (_: Event) => {
     let c = count;
     setTimeout(() => {
       terminal.writeln([promptObj, {text: t + c}]);
-    }, c * 30);
+    }, c * 100);
   }
+
+  setTimeout(() => {
+    terminal.prompt();
+  }, dummy.length * 100);
 
   terminal.onKeyPress((e: KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -54,5 +35,4 @@ document.addEventListener('DOMContentLoaded', (_: Event) => {
       terminal.prompt();
     }
   });
-  terminal.prompt();
 });

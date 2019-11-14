@@ -1,13 +1,13 @@
 import { text } from 'mash-common';
-import { IConfig, IRenderPayload } from '../Types';
+import { IConfig, IRenderPayload, ITerminal } from '../Types';
 import { BaseRenderLayer } from './BaseRenderLayer';
 
 export class TextRenderLayer extends BaseRenderLayer {
   constructor (
-    container: HTMLElement,
+    terminal: ITerminal,
     zIndex: number
   ) {
-    super(container, zIndex);
+    super(terminal, zIndex);
   }
 
   render (params: IRenderPayload) {
@@ -21,10 +21,9 @@ export class TextRenderLayer extends BaseRenderLayer {
 
   renderRow (row: text.row, index: number, config: IConfig) {
     let xPosition: number = config.rowLeftMargin;
-    const yPosition = index * config.fontSize + (index + 1) * config.rowTopMargin;
+    const yPosition = (index + 1) * this.terminal.rowHeight - this.terminal.config.rowBottomMargin;
     this.ctx.save();
-    this.ctx.font = `${config.fontSize}px ${config.fontFamily}`;
-    this.ctx.textBaseline = 'top';
+    this.setTextBaseStyle();
     this.ctx.fillStyle = config.textWhite;
     for (let t of row) {
       this.ctx.fillText(t.text, xPosition, yPosition);
