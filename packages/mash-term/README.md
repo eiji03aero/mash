@@ -1,4 +1,4 @@
-# `mash-term`
+# mash-term
 
 # APIs
 

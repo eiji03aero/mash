@@ -86,9 +86,7 @@ export class Terminal implements ITerminal {
 
   public scroll (numberToScroll: number) {
     const nextPosition = this.rowPosition + numberToScroll;
-    const shouldBeOnTop = (
-      nextPosition < 0
-    );
+    const shouldBeOnTop = nextPosition < 0;
     const shouldBeOnBottom = nextPosition >= this._bottomPosition;
 
     this.rowPosition = (

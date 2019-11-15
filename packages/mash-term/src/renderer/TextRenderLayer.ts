@@ -26,6 +26,7 @@ export class TextRenderLayer extends BaseRenderLayer {
     this.setTextBaseStyle();
     this.ctx.fillStyle = config.textWhite;
     for (let t of row) {
+      this.setTextColorFromObject(t);
       this.ctx.fillText(t.text, xPosition, yPosition);
       xPosition = xPosition + this.ctx.measureText(t.text).width;
     }

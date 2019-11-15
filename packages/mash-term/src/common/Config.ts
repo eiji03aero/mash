@@ -8,6 +8,8 @@ export const defaultConfig: IConfig = {
   terminalBg: '#182F40',
   cursorBg: '#396FE2',
   textWhite: '#FFFFFF',
+  textBlue: '#396FE2',
+  textYellow: '#FAED70',
   fontFamily: 'Menlo',
   fontSize: 16,
   rowTopMargin: 4,

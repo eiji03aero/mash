@@ -1,4 +1,4 @@
-# `mash`
+# mash
 
 # Packages
 
@@ -15,11 +15,9 @@
 
 ```
 - mash-term
-  - implement cursor thing
-    - refactor text rendering
-      - put the baseline back to default. alphabetic
-      - render texts based on that
-    - make cursor blink properly
+  - take care of text-overflow
+    - need to add cachedRows
+      - generate based on rows. be run on necessary occasions
   - create service object to calculate coords based on cell idea
 
 ```

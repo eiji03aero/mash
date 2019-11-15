@@ -9,6 +9,8 @@ export interface IConfig {
   terminalBg: string;
   cursorBg: string;
   textWhite: string;
+  textBlue: string;
+  textYellow: string;
   fontFamily: string;
   fontSize: number;
   rowTopMargin: number;

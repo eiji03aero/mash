@@ -1,11 +1,15 @@
 import { Terminal } from './index';
 
 document.addEventListener('DOMContentLoaded', (_: Event) => {
-  const promptObj = { text: "Eiji's MBP $ " };
+  const promptObj = [
+    { text: "Eiji's MBP " },
+    { text: "/home ", color: 'blue' },
+    { text: "$ " },
+  ];
   const terminal = new Terminal(
     document.querySelector('#app') as HTMLElement,
     {
-      prompt: [ promptObj ]
+      prompt: promptObj
     }
   );
 
@@ -21,7 +25,7 @@ document.addEventListener('DOMContentLoaded', (_: Event) => {
     count += 1;
     let c = count;
     setTimeout(() => {
-      terminal.writeln([promptObj, {text: t + c}]);
+      terminal.writeln([...promptObj, {text: t}]);
     }, c * 100);
   }
 
