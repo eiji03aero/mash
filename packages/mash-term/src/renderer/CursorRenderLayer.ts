@@ -26,9 +26,9 @@ export class CursorRenderLayer extends BaseRenderLayer {
   }
 
   private _clearIntervals () {
-    this._blinkTimeoutIds.forEach(clearTimeout);
+    this._blinkTimeoutIds.forEach(window.clearTimeout);
     this._blinkTimeoutIds = [] as ids;
-    this._blinkIntervalIds.forEach(clearInterval);
+    this._blinkIntervalIds.forEach(window.clearInterval);
     this._blinkIntervalIds = [] as ids;
   }
 
@@ -36,8 +36,8 @@ export class CursorRenderLayer extends BaseRenderLayer {
     this._isCursorShown = true;
     this._showBlockCursor();
 
-    const timeoutId = setTimeout(() => {
-      const intervalId = setInterval(() => {
+    const timeoutId = window.setTimeout(() => {
+      const intervalId = window.setInterval(() => {
         this._isCursorShown = !this._isCursorShown;
         if (this._isCursorShown) {
           this._showBlockCursor();
@@ -95,7 +95,7 @@ export class CursorRenderLayer extends BaseRenderLayer {
   }
 
   private get _cursorY () {
-    const index = this.terminal.relativePromptRowPosition
+    const index = this.terminal.relativePromptRowPosition;
     const height = this.terminal.rowHeight;
     return index * height;
   }

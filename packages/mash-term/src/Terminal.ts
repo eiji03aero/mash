@@ -5,19 +5,23 @@ import {
   ITerminal,
   IRenderer,
   IConfig,
-  IRenderPayload
+  IRenderPayload,
+  ICalculateService
 } from './Types';
 import { Renderer } from './renderer';
+import { CalculateService } from './services';
 import { getConfig } from './common/Config';
 
 export class Terminal implements ITerminal {
   public container: HTMLElement;
-  public renderer: IRenderer;
   public textarea: HTMLTextAreaElement;
   public config: IConfig;
   public rows: text.rows;
   public rowPosition: number;
   public isCursorShown: boolean;
+  public renderer: IRenderer;
+  public calculateService: ICalculateService;
+  private _cachedRows: text.rows;
   private _onKeyPressHandler: (e: KeyboardEvent) => void;
 
   constructor (
@@ -33,7 +37,9 @@ export class Terminal implements ITerminal {
     this.rows = [] as text.rows;
     this.rowPosition = 0;
     this.isCursorShown = true;
+    this._cachedRows = [] as text.rows;
     this.renderer = new Renderer(this);
+    this.calculateService = new CalculateService(this);
 
     this._onKeyPressHandler = (_: KeyboardEvent) => {};
 
@@ -47,7 +53,7 @@ export class Terminal implements ITerminal {
   }
 
   public get relativePromptRowPosition () {
-    return this.rows.length - 1 - this.rowPosition;
+    return this._cachedRows.length - 1 - this.rowPosition;
   }
 
   public get rowHeight () {
@@ -68,7 +74,7 @@ export class Terminal implements ITerminal {
     }
 
     this.textarea.value = "";
-    this.rows.push([
+    this.appendRow([
       ...this.config.prompt,
       { text: "" }
     ]);
@@ -80,8 +86,13 @@ export class Terminal implements ITerminal {
       this.rowPosition += 1;
     }
 
-    this.rows.push(texts);
+    this.appendRow(texts);
     this._render();
+  }
+
+  public appendRow (texts: text.row) {
+    this.rows.push(texts);
+    this._updateCachedRows();
   }
 
   public scroll (numberToScroll: number) {
@@ -108,8 +119,8 @@ export class Terminal implements ITerminal {
 
   private get _renderPayload (): IRenderPayload {
     return {
-      rows: this.rows,
-      displayedRows: this.rows.slice(this.rowPosition, this.rowPosition + this._numberOfDisplayedRows),
+      rows: this._cachedRows,
+      displayedRows: this._cachedRows.slice(this.rowPosition, this.rowPosition + this._numberOfDisplayedRows),
       rowPosition: this.rowPosition,
       rowHeight: this.rowHeight,
       numberOfDisplayedRows: this._numberOfDisplayedRows,
@@ -136,6 +147,51 @@ export class Terminal implements ITerminal {
     this.renderer.render(this._renderPayload);
   }
 
+  private _updateCachedRows () {
+    const start = window.performance.now();
+    this._cachedRows = this.rows.reduce((accum: text.rows, cur: text.row) => {
+      const splitRows = this._splitRowWithLimit(cur);
+      return accum.concat(splitRows);
+    }, [] as text.rows);
+    console.log(performance.now() - start);
+  }
+
+  private _splitRowWithLimit (row: text.row) {
+    const { rowLeftMargin, rowRightMargin } = this.config;
+    const availableWidth = this.container.offsetWidth - rowLeftMargin - rowRightMargin;
+    const rs = [] as text.rows;
+    let tmpWidth = 0;
+
+    rs.push([] as text.row);
+
+    for (let ti = 0; ti < row.length; ti++) {
+      const t = row[ti];
+      rs[rs.length - 1].push({ ...t, text: '' });
+
+      for (let ci = 0; ci < t.text.length; ci++) {
+        const c = t.text[ci];
+
+        tmpWidth += this.calculateService.measureText(c).width;
+
+        if (tmpWidth <= availableWidth) {
+          const lastRow = rs[rs.length - 1];
+          const lastTextObject = lastRow[lastRow.length - 1];
+          lastTextObject.text += c;
+        }
+        else {
+          const newRow = [] as text.row;
+          const newTextObject = { ...t, text: c };
+          newRow.push(newTextObject);
+          rs.push(newRow);
+
+          tmpWidth = 0;
+        }
+      }
+    }
+
+    return rs;
+  }
+
   private _onDocumentClick = (e: Event) => {
     if (this.container.contains(e.target as HTMLElement)) {
       this.focus();
@@ -145,6 +201,7 @@ export class Terminal implements ITerminal {
   }
 
   private _onResize = (_: Event) => {
+    this._updateCachedRows();
     this.renderer.resize(this._renderPayload);
   }
 
@@ -171,6 +228,7 @@ export class Terminal implements ITerminal {
     const lastRow = this.rows[this.rows.length - 1];
     const lastTextObject = lastRow[lastRow.length - 1];
     lastTextObject.text = (e.target as HTMLInputElement).value;
+    this._updateCachedRows();
     this._render();
   }
 }

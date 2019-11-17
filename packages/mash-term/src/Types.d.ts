@@ -36,6 +36,12 @@ export interface IRenderPayload {
   textarea: HTMLTextAreaElement;
 }
 
+/* -------------------- service -------------------- */
+export interface ICalculateService {
+  measureText(text: string): TextMetrics;
+}
+
+/* -------------------- renderer -------------------- */
 export interface IBaseRenderLayer {
   terminal: ITerminal;
   canvas: HTMLCanvasElement;
@@ -51,6 +57,7 @@ export interface IRenderer {
   resize(params: IRenderPayload): void;
 }
 
+/* -------------------- main -------------------- */
 export interface ITerminal {
   container: HTMLElement;
   renderer: IRenderer;
@@ -61,10 +68,12 @@ export interface ITerminal {
   relativePromptRowPosition: number;
   rowHeight: number;
   isCursorShown: boolean;
+  calculateService: ICalculateService;
   focus(): void;
   blur(): void;
   prompt(): void;
   writeln(texts: text.row): void;
+  appendRow(texts: text.row): void;
   scroll(numberToScroll: number): void;
   scrollToBottom(): void;
 }
