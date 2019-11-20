@@ -1,8 +1,10 @@
 import readline from 'readline';
 
+import {
+  IAstNode
+} from './Types';
 import { Lexer } from "./Lexer";
 import { Parser } from "./Parser";
-import { AstNode } from "./Ast";
 
 const prompt = 'mash > ';
 const rl = readline.createInterface({
@@ -23,7 +25,7 @@ rl.on('line', (input: string) => {
   const parser = new Parser(lexer);
   const program = parser.parseProgram();
   const parsed = program.statements
-    .map((sm: AstNode) => {
+    .map((sm: IAstNode) => {
       return sm.toString();
     })
     .join('\n');

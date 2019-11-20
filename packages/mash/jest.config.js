@@ -4,4 +4,4 @@ module.exports = {
   ...base,
   name: 'mash',
   displayName: 'mash',
-}
+};

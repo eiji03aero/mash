@@ -1,49 +1,44 @@
-import { Token } from "./Token";
+import {
+  IToken,
+  IAstNode,
+  IProgram,
+  ICommandLine
+} from './Types';
 
-export abstract class AstNode {
-  constructor () {}
-  abstract tokenLiteral (): string;
-  abstract toString (): string;
-}
-
-export type Statement = AstNode | CommandLine;
-
-export class Program extends AstNode {
-  statements: Statement[];
+export class Program implements IProgram {
+  public nodes: IAstNode[];
 
   constructor () {
-    super();
-    this.statements = [] as AstNode[];
+    this.nodes = [] as IAstNode[];
   }
 
-  append (node: AstNode) {
-    this.statements.push(node);
+  public append (node: IAstNode) {
+    this.nodes.push(node);
   }
 
-  tokenLiteral () {
-    return this.statements.toString();
+  public tokenLiteral () {
+    return this.nodes.toString();
   }
 
-  toString () {
-    return this.statements.toString();
+  public toString () {
+    return this.nodes.toString();
   }
 }
 
-export class CommandLine extends AstNode {
-  command: Token;
-  args: Token[];
+export class CommandLine implements ICommandLine {
+  public command: IToken;
+  public args: IToken[];
 
-  constructor (option: { tokens: Token[] }) {
-    super();
+  constructor (option: { tokens: IToken[] }) {
     this.command = option.tokens[0];
     this.args = option.tokens.slice(1);
   }
 
-  tokenLiteral () {
+  public tokenLiteral () {
     return this.command.literal;
   }
 
-  toString () {
+  public toString () {
     return [
       this.command.literal,
       ...this.args.map(t => t.literal)

@@ -1,5 +1,15 @@
 # Mash - Mama's shell
 
+## Todos
+
+```
+- refactor CommandLine
+  - update arguments
+    - option arguments in different property
+    - anything else is normal arguments
+- make Lexer put option arguments in separate token
+```
+
 ## models
 
 - Lexer

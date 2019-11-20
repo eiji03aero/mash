@@ -1,10 +1,14 @@
-import { Token, Tokens, newToken } from "./Token";
+import {
+  ILexer,
+  IToken
+} from './Types';
+import { Tokens, newToken } from "./Token";
 
-export class Lexer {
-  input: string;
-  position: number;
-  readPosition: number;
-  ch: string;
+export class Lexer implements ILexer {
+  public input: string;
+  public position: number;
+  public readPosition: number;
+  public ch: string;
 
   constructor (input: string) {
     this.input = input;
@@ -15,8 +19,8 @@ export class Lexer {
     this.readChar();
   }
 
-  nextToken () {
-    const tok: Token = newToken();
+  public nextToken () {
+    const tok: IToken = newToken();
 
     this.skipSpace();
 

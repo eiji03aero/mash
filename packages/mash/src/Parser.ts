@@ -1,15 +1,19 @@
-import { Lexer } from "./Lexer";
-import { Token, Tokens } from "./Token";
+import {
+  IParser,
+  IToken,
+  ILexer
+} from './Types';
+import { Tokens } from "./Token";
 import * as A from './Ast';
 
-export class Parser {
-  lexer: Lexer;
-  errors: any;
+export class Parser implements IParser {
+  public lexer: ILexer;
+  public errors: any;
 
-  curToken: Token;
-  peekToken: Token;
+  public curToken: IToken;
+  public peekToken: IToken;
 
-  constructor (lexer: Lexer) {
+  constructor (lexer: ILexer) {
     this.lexer = lexer;
 
     // Need to set both curToken and peekToken before get started
@@ -19,7 +23,7 @@ export class Parser {
     this.peekToken = this.lexer.nextToken();
   }
 
-  parseProgram () {
+  public parseProgram () {
     const program = new A.Program();
 
     while (!this.curTokenIs(Tokens.EOF)) {
@@ -43,7 +47,7 @@ export class Parser {
   }
 
   private parseCommandLine () {
-    const tokens: Token[] = [];
+    const tokens: IToken[] = [];
     while (!this.curTokenIs(Tokens.EOF) && !this.curTokenIs(Tokens.NEWLINE)) {
       tokens.push(this.curToken);
       this.nextToken();

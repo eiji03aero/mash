@@ -1,11 +1,6 @@
-export type TokenType = string;
+import { IToken } from './Types';
 
-export interface Token {
-  type: TokenType;
-  literal: string;
-}
-
-export const newToken = (): Token => ({
+export const newToken = (): IToken => ({
   type: "",
   literal: "",
 });
