@@ -1,6 +1,6 @@
 # mash
 
-# Packages
+## Packages
 
 - mash
   - mama's shell runtime
@@ -11,8 +11,13 @@
 - mash-common
   - shared stuff
 
-# Todos
+## Todos
 
 ```
-- nothing for now
+- mash
+  - refactor CommandLine
+    - update arguments
+      - option arguments in different property
+      - anything else is normal arguments
+  - make Lexer put option arguments in separate token
 ```
