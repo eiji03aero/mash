@@ -1,4 +1,4 @@
-import { IRenderPayload, ITerminal } from '../Types';
+import { IRenderPayload, ITerminal } from '../types';
 import { BaseRenderLayer } from './BaseRenderLayer';
 
 export class BackdropRenderLayer extends BaseRenderLayer {

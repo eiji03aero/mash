@@ -21,15 +21,15 @@ var Parser = /** @class */ (function () {
     Parser.prototype.parseProgram = function () {
         var program = new A.Program();
         while (!this.curTokenIs(Token_1.Tokens.EOF)) {
-            var statement = this.parseStatement();
-            if (statement !== null) {
-                program.append(statement);
+            var node = this.parseNode();
+            if (node !== null) {
+                program.append(node);
             }
             this.nextToken();
         }
         return program;
     };
-    Parser.prototype.parseStatement = function () {
+    Parser.prototype.parseNode = function () {
         switch (this.curToken.type) {
             case Token_1.Tokens.NEWLINE:
                 return null;
@@ -49,8 +49,8 @@ var Parser = /** @class */ (function () {
         this.curToken = this.peekToken;
         this.peekToken = this.lexer.nextToken();
     };
-    Parser.prototype.curTokenIs = function (type) {
-        return type === this.curToken.type;
+    Parser.prototype.curTokenIs = function (t) {
+        return t === this.curToken.type;
     };
     return Parser;
 }());

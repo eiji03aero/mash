@@ -1,12 +1,12 @@
-import { Token } from "./Token";
-export declare class Lexer {
+import { ILexer, IToken } from './types';
+export declare class Lexer implements ILexer {
     input: string;
     position: number;
     readPosition: number;
     ch: string;
     constructor(input: string);
-    nextToken(): Token;
-    private readonly nextCharacter;
+    nextToken(): IToken;
+    private get nextCharacter();
     private isSpace;
     private isNewLine;
     private isEOF;

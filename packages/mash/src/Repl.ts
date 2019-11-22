@@ -2,7 +2,7 @@ import readline from 'readline';
 
 import {
   IAstNode
-} from './Types';
+} from './types';
 import { Lexer } from "./Lexer";
 import { Parser } from "./Parser";
 
@@ -24,7 +24,7 @@ rl.on('line', (input: string) => {
   const lexer = new Lexer(input);
   const parser = new Parser(lexer);
   const program = parser.parseProgram();
-  const parsed = program.statements
+  const parsed = program.nodes
     .map((sm: IAstNode) => {
       return sm.toString();
     })

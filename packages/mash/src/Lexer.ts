@@ -1,7 +1,7 @@
 import {
   ILexer,
   IToken
-} from './Types';
+} from './types';
 import { Tokens, newToken } from "./Token";
 
 export class Lexer implements ILexer {

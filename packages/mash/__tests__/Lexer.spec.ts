@@ -1,5 +1,9 @@
+import {
+  IToken
+} from '../src/types';
 import { Lexer } from "../src/Lexer";
-import { Tokens, Token } from "../src/Token";
+import { Tokens } from "../src/Token";
+
 
 describe('Lexer', () => {
   it ('should lex one line', () => {
@@ -12,7 +16,7 @@ describe('Lexer', () => {
 
     const l = new Lexer(input);
     for (let t of tests) {
-      const tok: Token = l.nextToken();
+      const tok: IToken = l.nextToken();
       expect(tok.type).toBe(t.type);
       expect(tok.literal).toBe(t.literal);
     }
@@ -71,7 +75,7 @@ describe('Lexer', () => {
     const l = new Lexer(input);
 
     for (let t of tests) {
-      const tok: Token = l.nextToken();
+      const tok: IToken = l.nextToken();
       expect(tok.type).toBe(t.type);
       expect(tok.literal).toBe(t.literal);
     }

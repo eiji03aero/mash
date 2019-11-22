@@ -1,4 +1,4 @@
-import { ICalculateService, ITerminal } from '../Types';
+import { ICalculateService, ITerminal } from '../types';
 
 export class CalculateService implements ICalculateService {
   private _canvas: HTMLCanvasElement;

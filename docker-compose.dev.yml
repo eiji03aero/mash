@@ -4,7 +4,9 @@ services:
   mash:
     volumes:
       - c-mash-sync:/projects
+      - v-mash-yarn:/usr/local/share/.cache/yarn/v4
 
 volumes:
+  v-mash-yarn:
   c-mash-sync:
     external: true

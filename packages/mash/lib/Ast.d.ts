@@ -1,22 +1,15 @@
-import { Token } from "./Token";
-export declare abstract class AstNode {
+import { IToken, IAstNode, IProgram, ICommandLine } from './types';
+export declare class Program implements IProgram {
+    nodes: IAstNode[];
     constructor();
-    abstract tokenLiteral(): string;
-    abstract toString(): string;
-}
-export declare type Statement = AstNode | CommandLine;
-export declare class Program extends AstNode {
-    statements: Statement[];
-    constructor();
-    append(node: AstNode): void;
+    append(node: IAstNode): void;
     tokenLiteral(): string;
     toString(): string;
 }
-export declare class CommandLine extends AstNode {
-    command: Token;
-    args: Token[];
+export declare class CommandLine implements ICommandLine {
+    args: IToken[];
     constructor(option: {
-        tokens: Token[];
+        tokens: IToken[];
     });
     tokenLiteral(): string;
     toString(): string;

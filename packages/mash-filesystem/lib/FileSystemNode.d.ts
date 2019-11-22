@@ -1,16 +1,13 @@
-export interface FileSystemNodeBasis {
-    name: string;
-    parentNode?: FileSystemNode;
-}
-export declare class FileSystemNode {
+import { IFileSystemNodeBasis, IFileSystemNode } from './types';
+export declare class FileSystemNode implements IFileSystemNode {
     cid: string;
     name: string;
-    parentNode?: FileSystemNode;
+    parentNode?: IFileSystemNode;
     createdAt: string;
     updatedAt: string;
-    constructor(params: FileSystemNodeBasis);
-    readonly isDirectory: boolean;
-    update(args: FileSystemNodeBasis): void;
-    setParentNode(node: FileSystemNode): void;
+    constructor(params: IFileSystemNodeBasis);
+    get isDirectory(): boolean;
+    update(args: IFileSystemNodeBasis): void;
+    setParentNode(node: IFileSystemNode): void;
 }
 //# sourceMappingURL=FileSystemNode.d.ts.map

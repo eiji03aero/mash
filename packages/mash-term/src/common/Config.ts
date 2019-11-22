@@ -1,5 +1,5 @@
 import { text } from 'mash-common';
-import { IConfig } from '../Types';
+import { IConfig } from '../types';
 
 export const defaultConfig: IConfig = {
   prompt: [] as text.row,

@@ -1,9 +1,5 @@
-export declare type TokenType = string;
-export interface Token {
-    type: TokenType;
-    literal: string;
-}
-export declare const newToken: () => Token;
+import { IToken } from './types';
+export declare const newToken: () => IToken;
 export declare const Tokens: {
     ILLEGAL: string;
     NEWLINE: string;

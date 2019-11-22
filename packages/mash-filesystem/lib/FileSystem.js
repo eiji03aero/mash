@@ -32,7 +32,7 @@ var FileSystem = /** @class */ (function () {
     };
     FileSystem.prototype.changeCurrentDirectory = function (args) {
         var path = args.path;
-        var _a = this.resolveNodeFromPath(path), error = _a.error, node = _a.node;
+        var _a = this._resolveNodeFromPath(path), error = _a.error, node = _a.node;
         if (error)
             return { error: error };
         if (!node || !node.isDirectory)
@@ -42,7 +42,7 @@ var FileSystem = /** @class */ (function () {
     };
     FileSystem.prototype.createNode = function (args) {
         var path = args.path, params = args.params;
-        var _a = this.resolveNodeFromPath(path), error = _a.error, parentDirectory = _a.node;
+        var _a = this._resolveNodeFromPath(path), error = _a.error, parentDirectory = _a.node;
         if (error)
             return { error: error };
         if (!parentDirectory || !parentDirectory.isDirectory)
@@ -55,8 +55,8 @@ var FileSystem = /** @class */ (function () {
     };
     FileSystem.prototype.updateNode = function (args) {
         var path = args.path, params = args.params;
-        var _a = this.splitLastFragmentFromPath(path), parentPath = _a.parentPath, lastFragment = _a.lastFragment;
-        var _b = this.resolveNodeFromPath(parentPath), error = _b.error, parentDirectory = _b.node;
+        var _a = this._splitLastFragmentFromPath(path), parentPath = _a.parentPath, lastFragment = _a.lastFragment;
+        var _b = this._resolveNodeFromPath(parentPath), error = _b.error, parentDirectory = _b.node;
         if (error)
             return { error: error };
         if (!parentDirectory || !parentDirectory.isDirectory) {
@@ -71,8 +71,8 @@ var FileSystem = /** @class */ (function () {
     };
     FileSystem.prototype.deleteNode = function (args) {
         var path = args.path;
-        var _a = this.splitLastFragmentFromPath(path), parentPath = _a.parentPath, lastFragment = _a.lastFragment;
-        var _b = this.resolveNodeFromPath(parentPath), error = _b.error, parentDirectory = _b.node;
+        var _a = this._splitLastFragmentFromPath(path), parentPath = _a.parentPath, lastFragment = _a.lastFragment;
+        var _b = this._resolveNodeFromPath(parentPath), error = _b.error, parentDirectory = _b.node;
         if (error)
             return { error: error };
         if (!parentDirectory || !parentDirectory.isDirectory) {
@@ -85,7 +85,7 @@ var FileSystem = /** @class */ (function () {
         parentDirectory.removeChild(node);
         return { node: node };
     };
-    FileSystem.prototype.splitLastFragmentFromPath = function (path) {
+    FileSystem.prototype._splitLastFragmentFromPath = function (path) {
         var lastIndex = path[path.length - 1] === '/'
             ? path.lastIndexOf('/', path.length - 2)
             : path.lastIndexOf('/');
@@ -99,7 +99,7 @@ var FileSystem = /** @class */ (function () {
     // private isRoot (node: FileSystemNode): boolean {
     //   return node === this.root;
     // }
-    FileSystem.prototype.resolveNodeFromPath = function (path) {
+    FileSystem.prototype._resolveNodeFromPath = function (path) {
         var isAbsolutePath = path[0] === '/';
         var resolvedNode;
         var fragments;

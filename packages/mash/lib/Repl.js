@@ -18,7 +18,7 @@ rl.on('line', function (input) {
     var lexer = new Lexer_1.Lexer(input);
     var parser = new Parser_1.Parser(lexer);
     var program = parser.parseProgram();
-    var parsed = program.statements
+    var parsed = program.nodes
         .map(function (sm) {
         return sm.toString();
     })

@@ -1,5 +1,5 @@
 import { text } from 'mash-common';
-import { IRenderPayload, IRectCoords, ITerminal } from '../Types';
+import { IRenderPayload, IRectCoords, ITerminal } from '../types';
 
 export class BaseRenderLayer {
   terminal: ITerminal;

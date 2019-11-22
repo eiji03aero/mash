@@ -7,7 +7,7 @@ import {
   IConfig,
   IRenderPayload,
   ICalculateService
-} from './Types';
+} from './types';
 import { Renderer } from './renderer';
 import { CalculateService } from './services';
 import { getConfig } from './common/Config';

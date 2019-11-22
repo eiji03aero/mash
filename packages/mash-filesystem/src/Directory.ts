@@ -1,21 +1,20 @@
-import { FileSystemNodeBasis, FileSystemNode } from "./FileSystemNode";
+import {
+  IDirectoryBasis,
+  IDirectory,
+  IFileSystemNode,
+  Nodes
+} from './types';
+import { FileSystemNode } from "./FileSystemNode";
 
-type Nodes = FileSystemNode[];
-
-export interface DirectoryBasis extends FileSystemNodeBasis {
-  children?: Nodes;
-  __root__?: boolean;
-}
-
-export class Directory extends FileSystemNode {
+export class Directory extends FileSystemNode implements IDirectory {
   children: Nodes;
   private __root__: boolean;
 
-  static isBasis (obj: any): obj is DirectoryBasis {
+  static isBasis (obj: any): obj is IDirectoryBasis {
     return 'children' in obj;
   }
 
-  constructor (params: DirectoryBasis) {
+  constructor (params: IDirectoryBasis) {
     super(params);
     this.children = [] as Nodes;
     this.__root__ = params.__root__ || false;
@@ -27,34 +26,34 @@ export class Directory extends FileSystemNode {
     }
   }
 
-  update (args: DirectoryBasis) {
+  update (args: IDirectoryBasis) {
     super.update(args);
   }
 
-  addChild (node: FileSystemNode) {
+  addChild (node: IFileSystemNode) {
     node.setParentNode(this);
     this.children.push(node);
   }
 
-  removeChild (node: FileSystemNode) {
+  removeChild (node: IFileSystemNode) {
     this.children = this.children.filter(
-      (c: FileSystemNode) => c.cid !== node.cid
+      (c: IFileSystemNode) => c.cid !== node.cid
     );
   }
 
-  containsByName (name: string): boolean {
+  containsByName (name: string) {
     return this.children
-      .map((node: FileSystemNode) => node.name)
+      .map((node: IFileSystemNode) => node.name)
       .includes(name);
   }
 
-  findByName (name: string): (FileSystemNode | undefined) {
+  findByName (name: string) {
     return this.children.find(
-      (node: FileSystemNode) => node.name === name
+      (node: IFileSystemNode) => node.name === name
     );
   }
 
   isRoot () {
-    return this.__root__
+    return this.__root__;
   }
 }

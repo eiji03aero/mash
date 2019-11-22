@@ -20,24 +20,30 @@ export interface IParser {
   parseProgram(): IProgram;
 }
 
+
 export interface IAstNode {
   tokenLiteral(): string;
   toString(): string;
 }
+
 export interface IProgram extends IAstNode {
   nodes: IAstNode[];
   append(node: IAstNode): void;
 }
+
 export interface ICommandLine extends IAstNode {
-  command: IToken;
   args: IToken[];
 }
 
-export interface IEnv {
+export interface IEnvironment {
 
+}
+
+export interface IStore {
+  [index: string]: string;
 }
 
 export interface IEvaluator {
   // TODO: update return type for eval
-  eval(node: IAstNode, env: IEnv): any;
+  eval(node: IAstNode, env: IEnvironment): any;
 }

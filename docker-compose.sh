@@ -15,17 +15,9 @@ stop-docker-compose () {
 }
 
 # Required to let plugins on editor work properly,
-# otherwise tsuquyomi won't work
+# otherwise local packages will not have symlinks properly
 bootstrap () {
-  docker-sync stop
-
-  docker-compose run mash rm -rf node_modules
-  docker-compose run mash rm -rf packages/mash/node_modules
-  docker-compose run mash rm -rf packages/mash-common/node_modules
-  docker-compose run mash rm -rf packages/mash-filesystem/node_modules
-
-  docker-compose run mash yarn install
-  docker-compose run mash lerna bootstrap
+  docker-compose run --rm mash /bin/bash -c "lerna clean --yes && lerna bootstrap && lerna link"
 }
 
 if [ $COMMAND = 'up' ] && [ $# -le 1 ]; then

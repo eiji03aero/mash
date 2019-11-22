@@ -1,39 +1,34 @@
-import { Errors } from "mash-common";
+import { IDirectoryBasis, IDirectory, IFileBasis, IFile, IFileSystemCommandResult } from './types';
 import { FileSystemNode } from "./FileSystemNode";
-import { Directory, DirectoryBasis } from "./Directory";
-import { File, FileBasis } from "./File";
-export interface FileSystemCommandResult {
-    error?: Errors.Base;
-}
 export declare class FileSystem {
     private static _instance;
-    currentDirectory: Directory;
-    root: Directory;
-    private constructor();
+    currentDirectory: IDirectory;
+    root: IDirectory;
     static bootstrap(): FileSystem;
-    static readonly instance: FileSystem;
+    static get instance(): FileSystem;
     static reboot(): FileSystem;
+    private constructor();
     changeCurrentDirectory(args: {
         path: string;
-    }): FileSystemCommandResult;
-    createNode<T extends File | Directory>(args: {
+    }): IFileSystemCommandResult;
+    createNode<T extends IFile | IDirectory>(args: {
         path: string;
-        params: FileBasis | DirectoryBasis;
-    }): FileSystemCommandResult & {
+        params: IFileBasis | IDirectoryBasis;
+    }): IFileSystemCommandResult & {
         node?: T;
     };
-    updateNode<T extends FileSystemNode>(args: {
+    updateNode<T extends IFile | IDirectory>(args: {
         path: string;
-        params: FileBasis | DirectoryBasis;
-    }): FileSystemCommandResult & {
+        params: IFileBasis | IDirectoryBasis;
+    }): IFileSystemCommandResult & {
         node?: T;
     };
     deleteNode<T extends FileSystemNode>(args: {
         path: string;
-    }): FileSystemCommandResult & {
+    }): IFileSystemCommandResult & {
         node?: T;
     };
-    private splitLastFragmentFromPath;
-    private resolveNodeFromPath;
+    private _splitLastFragmentFromPath;
+    private _resolveNodeFromPath;
 }
 //# sourceMappingURL=FileSystem.d.ts.map

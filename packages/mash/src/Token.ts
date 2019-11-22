@@ -1,4 +1,4 @@
-import { IToken } from './Types';
+import { IToken } from './types';
 
 export const newToken = (): IToken => ({
   type: "",

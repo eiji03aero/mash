@@ -18,6 +18,7 @@
     "url": "git+https://github.com/eiji03aero/mash.git"
   },
   "scripts": {
+    "build": "rm -rf ./lib && tsc",
     "dev": "webpack-dev-server"
   },
   "bugs": {
@@ -33,6 +34,7 @@
   },
   "dependencies": {
     "@types/lodash": "^4.14.146",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "mash-common": "^0.0.0"
   }
 }

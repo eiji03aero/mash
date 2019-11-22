@@ -2,7 +2,7 @@ import {
   IParser,
   IToken,
   ILexer
-} from './Types';
+} from './types';
 import { Tokens } from "./Token";
 import * as A from './Ast';
 
@@ -27,9 +27,9 @@ export class Parser implements IParser {
     const program = new A.Program();
 
     while (!this.curTokenIs(Tokens.EOF)) {
-      let statement = this.parseStatement();
-      if (statement !== null) {
-        program.append(statement);
+      const node = this.parseNode();
+      if (node !== null) {
+        program.append(node);
       }
       this.nextToken();
     }
@@ -37,7 +37,7 @@ export class Parser implements IParser {
     return program;
   }
 
-  private parseStatement () {
+  private parseNode () {
     switch (this.curToken.type) {
       case Tokens.NEWLINE:
         return null;
@@ -60,7 +60,7 @@ export class Parser implements IParser {
     this.peekToken = this.lexer.nextToken();
   }
 
-  private curTokenIs (type: string) {
-    return type === this.curToken.type;
+  private curTokenIs (t: string) {
+    return t === this.curToken.type;
   }
 }

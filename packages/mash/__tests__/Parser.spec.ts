@@ -1,6 +1,6 @@
 import {
   IAstNode
-} from '../src/Types';
+} from '../src/types';
 import { Lexer } from "../src/Lexer";
 // import { Token } from "./Token";
 import { Parser } from "../src/Parser";
@@ -33,22 +33,20 @@ describe('Parser', () => {
       const program = parser.parseProgram();
       for (let i = 0; i < t.cls.length; i++) {
         const args = t.cls[i];
-        const sm = program.nodes[i];
-        testCommandLine(args[0], args.slice(1), sm);
+        const node = program.nodes[i];
+        testCommandLine(args, node);
       }
     }
   });
 });
 
 function testCommandLine (
-  command: string,
   args: string[],
-  commandLine: IAstNode
+  node: IAstNode
 ) {
-  if (commandLine instanceof A.CommandLine) {
-    expect(command).toBe(commandLine.command.literal);
+  if (node instanceof A.CommandLine) {
     for (let i = 0; i < args.length; i++) {
-      expect(args[i]).toBe(commandLine.args[i].literal);
+      expect(args[i]).toBe(node.args[i].literal);
     }
   }
 }

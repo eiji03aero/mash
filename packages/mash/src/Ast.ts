@@ -3,7 +3,7 @@ import {
   IAstNode,
   IProgram,
   ICommandLine
-} from './Types';
+} from './types';
 
 export class Program implements IProgram {
   public nodes: IAstNode[];
@@ -26,22 +26,17 @@ export class Program implements IProgram {
 }
 
 export class CommandLine implements ICommandLine {
-  public command: IToken;
   public args: IToken[];
 
   constructor (option: { tokens: IToken[] }) {
-    this.command = option.tokens[0];
-    this.args = option.tokens.slice(1);
+    this.args = option.tokens;
   }
 
   public tokenLiteral () {
-    return this.command.literal;
+    return this.args[0].literal;
   }
 
   public toString () {
-    return [
-      this.command.literal,
-      ...this.args.map(t => t.literal)
-    ].join(', ');
+    return this.args.map(t => t.literal).join(', ');
   }
 }

@@ -1,16 +1,17 @@
 import {
   IAstNode,
-  IEvaluator
-} from './Types';
+  IEvaluator,
+  IEnvironment
+} from './types';
 import {
   // Statement,
   Program,
   // CommandLine
 } from "./Ast";
-import { Env } from "./Env";
+// import { Environment } from "./Environment";
 
 export class Evaluator implements IEvaluator {
-  public eval (node: IAstNode, env: Env) {
+  public eval (node: IAstNode, env: IEnvironment) {
     // Have to make use of constructor instead of interface,
     // since switch-case based on implement-interface is currently not supported
     switch (node.constructor) {
@@ -19,11 +20,11 @@ export class Evaluator implements IEvaluator {
     }
   }
 
-  private _evalProgram (program: Program, env: Env) {
+  private _evalProgram (program: Program, env: IEnvironment) {
     let result: any;
 
-    for (let statement of program.statements) {
-      result = this.eval(statement, env);
+    for (let node of program.nodes) {
+      result = this.eval(node, env);
     }
 
     return result;

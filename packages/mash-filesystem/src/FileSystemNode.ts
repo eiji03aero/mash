@@ -1,18 +1,17 @@
 import { cid, date } from 'mash-common';
+import {
+  IFileSystemNodeBasis,
+  IFileSystemNode,
+} from './types';
 
-export interface FileSystemNodeBasis {
-  name: string
-  parentNode?: FileSystemNode
-}
-
-export class FileSystemNode {
+export class FileSystemNode implements IFileSystemNode {
   cid: string;
   name: string;
-  parentNode?: FileSystemNode;
+  parentNode?: IFileSystemNode;
   createdAt: string;
   updatedAt: string;
 
-  constructor (params: FileSystemNodeBasis) {
+  constructor (params: IFileSystemNodeBasis) {
     this.cid = cid.generate();
     this.name = params.name;
     this.parentNode = params.parentNode;
@@ -24,14 +23,14 @@ export class FileSystemNode {
     return this.constructor.name === 'Directory';
   }
 
-  update (args: FileSystemNodeBasis) {
+  update (args: IFileSystemNodeBasis) {
     args.name && (this.name = args.name);
     args.parentNode && (this.parentNode = args.parentNode);
 
     this.updatedAt = date.getCurrentTime();
   }
 
-  setParentNode (node: FileSystemNode) {
+  setParentNode (node: IFileSystemNode) {
     this.parentNode = node;
   }
 }

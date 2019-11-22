@@ -7,44 +7,23 @@
 
 - Parser
 - Program
+  nodes: AstNode[]
 - ASTNode
-  - Statement
-    - CommandLineStatement
-    - PipeStatement
-    - AndStatement
-    - OrStatement
-  - Expression
-    - InterpolationExpression
+  - CommandLine
+    - args: Token[]
 
 - Evaluator
 - Environment
-- Standard
-  - StandardOut
-  - StandardError
 
 ## features
 
-- execute CommandLine
-  - returns STDOUT
-  - returns STDERR
-
-- STDOUT interpolation
-  - should be evaluated in evaluator
-
-- Pattern interpolation
-  - should be evaluated in evaluator
-
-- define variable
-
-- pipe
-
-- logical operators, works based on exit status
-  - &&
-  - ||
-
-- parse arguemnt
-  - put all the arguments in [$@]
-
+- functions
+  - parseArgs
+    - arguments
+    - args: Token[]
+      - { optionArgs: { optionKeys: string[], hasValue: boolean }[] }
+    - return
+      - { args: string[], optionArgs: {[index:string]: string} }
 
 ## buildin functions
 
@@ -64,21 +43,14 @@
 ### TBD
 
 - grep
-
 - :
-
 - read
-
 - >
-
 - [
-
 - interpolation
   - ${}: in string
   - $(): in evaluation spot
-
 - heredocument
-
 - argument variables
   - $[0-9]: arguments passed to
   - $@: contains all the arguments

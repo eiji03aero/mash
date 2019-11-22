@@ -1,4 +1,4 @@
-import { IRenderer, IBaseRenderLayer, IRenderPayload, ITerminal } from '../Types';
+import { IRenderer, IBaseRenderLayer, IRenderPayload, ITerminal } from '../types';
 import { BackdropRenderLayer } from './BackdropRenderLayer';
 import { CursorRenderLayer } from './CursorRenderLayer';
 import { TextRenderLayer } from './TextRenderLayer';

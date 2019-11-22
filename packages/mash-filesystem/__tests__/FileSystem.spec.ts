@@ -1,3 +1,7 @@
+import {
+  IFile,
+  IDirectory
+} from '../src/types';
 import { FileSystem } from "../src/FileSystem";
 import { Directory } from "../src/Directory";
 import { File } from "../src/File";
@@ -87,7 +91,7 @@ describe('FileSystem', () => {
     const directoryParams = {
       name: 'dir',
     };
-    fs.createNode<Directory>({
+    fs.createNode<IDirectory>({
       path: '.',
       params: directoryParams
     });
@@ -95,7 +99,7 @@ describe('FileSystem', () => {
     const updatedDirectoryParams = {
       name: 'updated_dir',
     };
-    const result = fs.updateNode<Directory>({
+    const result = fs.updateNode<IDirectory>({
       path: `./${directoryParams.name}`,
       params: updatedDirectoryParams,
     });
@@ -113,12 +117,12 @@ describe('FileSystem', () => {
       name: 'file',
       content: 'application content'
     };
-    fs.createNode<File>({
+    fs.createNode<IFile>({
       path: '.',
       params: fileParams
     });
 
-    const result = fs.deleteNode<File>({
+    const result = fs.deleteNode<IFile>({
       path: `./${fileParams.name}`
     });
 
@@ -131,12 +135,12 @@ describe('FileSystem', () => {
       name: 'dir',
       content: 'application content'
     };
-    fs.createNode<Directory>({
+    fs.createNode<IDirectory>({
       path: '.',
       params: directoryParams
     });
 
-    const result = fs.deleteNode<Directory>({
+    const result = fs.deleteNode<IDirectory>({
       path: `./${directoryParams.name}`
     });
 

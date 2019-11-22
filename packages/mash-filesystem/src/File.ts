@@ -1,22 +1,22 @@
-import { FileSystemNodeBasis, FileSystemNode } from "./FileSystemNode";
+import {
+  IFileBasis,
+  IFile,
+} from './types';
+import { FileSystemNode } from "./FileSystemNode";
 
-export interface FileBasis extends FileSystemNodeBasis {
-  content?: string;
-}
-
-export class File extends FileSystemNode {
+export class File extends FileSystemNode implements IFile {
   content: string;
 
-  static isBasis (obj: any): obj is FileBasis {
+  static isBasis (obj: any): obj is IFileBasis {
     return 'content' in obj;
   }
 
-  constructor (params: FileBasis) {
+  constructor (params: IFileBasis) {
     super(params);
     this.content = params.content || '';
   }
 
-  update (args: FileBasis) {
+  update (args: IFileBasis) {
     super.update(args);
     args.content && (this.content = args.content);
   }

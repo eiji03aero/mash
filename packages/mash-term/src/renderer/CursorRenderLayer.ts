@@ -1,5 +1,5 @@
 import { text } from 'mash-common';
-import { IRenderPayload, ITerminal } from '../Types';
+import { IRenderPayload, ITerminal } from '../types';
 import { BaseRenderLayer } from './BaseRenderLayer';
 
 type ids = number[];

@@ -1,11 +1,9 @@
-import { FileSystemNodeBasis, FileSystemNode } from "./FileSystemNode";
-export interface FileBasis extends FileSystemNodeBasis {
-    content?: string;
-}
-export declare class File extends FileSystemNode {
+import { IFileBasis, IFile } from './types';
+import { FileSystemNode } from "./FileSystemNode";
+export declare class File extends FileSystemNode implements IFile {
     content: string;
-    static isBasis(obj: any): obj is FileBasis;
-    constructor(params: FileBasis);
-    update(args: FileBasis): void;
+    static isBasis(obj: any): obj is IFileBasis;
+    constructor(params: IFileBasis);
+    update(args: IFileBasis): void;
 }
 //# sourceMappingURL=File.d.ts.map

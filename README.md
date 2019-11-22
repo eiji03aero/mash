@@ -14,10 +14,11 @@
 ## Todos
 
 ```
+- whole
+  - move __test__ directory into src directory
+  - rename Types.d.ts to types.ts
 - mash
-  - refactor CommandLine
-    - update arguments
-      - option arguments in different property
-      - anything else is normal arguments
-  - make Lexer put option arguments in separate token
+  - have util function to parse command line option arguments for commands
+- mash-filesystem
+  - make the crud methods separate, for file and directory
 ```

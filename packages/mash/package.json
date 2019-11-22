@@ -14,7 +14,7 @@
     "lib"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf ./lib && tsc",
     "test": "jest",
     "test:watch": "jest --watch"
   },
@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.15",
-    "mash-common": "^0.0.0"
+    "mash-common": "^0.0.0",
+    "mash-filesystem": "^0.0.0"
   }
 }

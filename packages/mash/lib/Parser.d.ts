@@ -1,14 +1,13 @@
-import { Lexer } from "./Lexer";
-import { Token } from "./Token";
+import { IParser, IToken, ILexer } from './types';
 import * as A from './Ast';
-export declare class Parser {
-    lexer: Lexer;
+export declare class Parser implements IParser {
+    lexer: ILexer;
     errors: any;
-    curToken: Token;
-    peekToken: Token;
-    constructor(lexer: Lexer);
+    curToken: IToken;
+    peekToken: IToken;
+    constructor(lexer: ILexer);
     parseProgram(): A.Program;
-    private parseStatement;
+    private parseNode;
     private parseCommandLine;
     private nextToken;
     private curTokenIs;

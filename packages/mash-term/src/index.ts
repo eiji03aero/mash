@@ -1,1 +1,2 @@
-export { Terminal } from './Terminal.ts';
+export { Terminal } from './Terminal';
+export * from './types';

@@ -1,28 +1,22 @@
 import { ErrorFactory, Errors } from "mash-common";
 
+import {
+  IDirectoryBasis,
+  IDirectory,
+  IFileBasis,
+  IFile,
+  IFileSystemCommandResult,
+} from './types';
 import { FileSystemNode } from "./FileSystemNode";
-import { Directory, DirectoryBasis } from "./Directory";
-import { File, FileBasis } from "./File";
+import { Directory } from "./Directory";
+import { File } from "./File";
 
 import { initialFileNodes, homeDirectory } from "./assets/initialFileNodes";
 
-export interface FileSystemCommandResult {
-  error?: Errors.Base
-}
-
 export class FileSystem {
   private static _instance: FileSystem;
-  currentDirectory: Directory;
-  root: Directory;
-
-  private constructor () {
-    this.root = new Directory({
-      name: 'root',
-      children: initialFileNodes,
-      __root__: true
-    });
-    this.currentDirectory = homeDirectory;
-  }
+  currentDirectory: IDirectory;
+  root: IDirectory;
 
   static bootstrap () {
     this._instance = new FileSystem();
@@ -39,11 +33,20 @@ export class FileSystem {
     return this._instance
   }
 
-  changeCurrentDirectory (args: {
+  private constructor () {
+    this.root = new Directory({
+      name: 'root',
+      children: initialFileNodes,
+      __root__: true
+    });
+    this.currentDirectory = homeDirectory;
+  }
+
+  public changeCurrentDirectory (args: {
     path: string
-  }) : FileSystemCommandResult {
+  }) : IFileSystemCommandResult {
     const { path } = args;
-    const { error, node } = this.resolveNodeFromPath(path);
+    const { error, node } = this._resolveNodeFromPath(path);
 
     if (error) return { error };
 
@@ -53,14 +56,14 @@ export class FileSystem {
     return {};
   }
 
-  createNode<T extends File | Directory> (args : {
+  createNode<T extends IFile | IDirectory> (args : {
     path: string,
-    params: FileBasis | DirectoryBasis
-  }) : FileSystemCommandResult & {
+    params: IFileBasis | IDirectoryBasis
+  }) : IFileSystemCommandResult & {
     node?: T
   } {
     const { path, params } = args;
-    const { error, node: parentDirectory } = this.resolveNodeFromPath(path);
+    const { error, node: parentDirectory } = this._resolveNodeFromPath(path);
 
     if (error) return { error };
 
@@ -68,20 +71,20 @@ export class FileSystem {
 
     const node: T = File.isBasis(params)
       ? new File(params) as T
-      : new Directory(params) as T;
-    (<Directory>parentDirectory).addChild(node);
+      : new Directory(params) as unknown as T;
+    (<IDirectory>parentDirectory).addChild(node);
     return { node };
   }
 
-  updateNode<T extends FileSystemNode> (args : {
+  public updateNode<T extends IFile | IDirectory> (args : {
     path: string,
-    params: FileBasis | DirectoryBasis
-  }) : FileSystemCommandResult & {
+    params: IFileBasis | IDirectoryBasis
+  }) : IFileSystemCommandResult & {
     node?: T
   } {
     const { path, params } = args;
-    const { parentPath, lastFragment } = this.splitLastFragmentFromPath(path);
-    const { error, node: parentDirectory } = this.resolveNodeFromPath(parentPath);
+    const { parentPath, lastFragment } = this._splitLastFragmentFromPath(path);
+    const { error, node: parentDirectory } = this._resolveNodeFromPath(parentPath);
 
     if (error) return { error };
 
@@ -98,14 +101,14 @@ export class FileSystem {
     return { node };
   }
 
-  deleteNode<T extends FileSystemNode> (args : {
+  public deleteNode<T extends FileSystemNode> (args : {
     path: string,
-  }) : FileSystemCommandResult & {
+  }) : IFileSystemCommandResult & {
     node?: T
   } {
     const { path } = args;
-    const { parentPath, lastFragment } = this.splitLastFragmentFromPath(path);
-    const { error, node: parentDirectory } = this.resolveNodeFromPath(parentPath);
+    const { parentPath, lastFragment } = this._splitLastFragmentFromPath(path);
+    const { error, node: parentDirectory } = this._resolveNodeFromPath(parentPath);
 
     if (error) return { error };
 
@@ -122,7 +125,7 @@ export class FileSystem {
     return { node };
   }
 
-  private splitLastFragmentFromPath (
+  private _splitLastFragmentFromPath (
     path: string
   ): ({
     parentPath: string,
@@ -144,7 +147,7 @@ export class FileSystem {
   //   return node === this.root;
   // }
 
-  private resolveNodeFromPath (
+  private _resolveNodeFromPath (
     path: string
   ): ({
     error?: Errors.Base,
