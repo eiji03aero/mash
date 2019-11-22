@@ -46,7 +46,12 @@ export interface IFile extends IFileSystemNode {
 
 export interface IFileSystem {
   changeCurrentDirectory(args: { path: string }): IFileSystemCommandResult;
-  createNode(args: { path: string }): IFileSystemCommandResult;
+  createFile(args: { path: string, params: IFileBasis }): IFileSystemCommandResult;
+  updateFile(args: { path: string, params: IFileBasis }): IFileSystemCommandResult;
+  deleteFile(args: { path: string }): IFileSystemCommandResult;
+  createDirectory(args: { path: string, params: IDirectoryBasis }): IFileSystemCommandResult;
+  updateDirectory(args: { path: string, params: IDirectoryBasis }): IFileSystemCommandResult;
+  deleteDirectory(args: { path: string }): IFileSystemCommandResult;
 }
 
 export interface IFileSystemCommandResult {

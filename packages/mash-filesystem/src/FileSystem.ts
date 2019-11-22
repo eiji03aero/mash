@@ -6,6 +6,7 @@ import {
   IFileBasis,
   IFile,
   IFileSystemCommandResult,
+  IFileSystem
 } from './types';
 import { FileSystemNode } from "./FileSystemNode";
 import { Directory } from "./Directory";
@@ -13,7 +14,7 @@ import { File } from "./File";
 
 import { initialFileNodes, homeDirectory } from "./assets/initialFileNodes";
 
-export class FileSystem {
+export class FileSystem implements IFileSystem {
   private static _instance: FileSystem;
   currentDirectory: IDirectory;
   root: IDirectory;
@@ -56,9 +57,9 @@ export class FileSystem {
     return {};
   }
 
-  createNode<T extends IFile | IDirectory> (args : {
+  public createFile (args : {
     path: string,
-    params: IFileBasis | IDirectoryBasis
+    params: IFileBasis
   }) : IFileSystemCommandResult & {
     node?: T
   } {
@@ -69,9 +70,7 @@ export class FileSystem {
 
     if (!parentDirectory || !parentDirectory.isDirectory) return { error: ErrorFactory.noSuchFileOrDirectory(path) };
 
-    const node: T = File.isBasis(params)
-      ? new File(params) as T
-      : new Directory(params) as unknown as T;
+    const node = new File(params);
     (<IDirectory>parentDirectory).addChild(node);
     return { node };
   }

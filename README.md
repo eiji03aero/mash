@@ -16,7 +16,6 @@
 ```
 - whole
   - move __test__ directory into src directory
-  - rename Types.d.ts to types.ts
 - mash
   - have util function to parse command line option arguments for commands
 - mash-filesystem
