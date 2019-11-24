@@ -4,13 +4,17 @@
   "main": "index.js",
   "license": "MIT",
   "private": true,
-  "workspaces": [
-    "packages/mash",
-    "packages/mash-common",
-    "packages/mash-filesystem",
-    "packages/mash-term"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/typescript",
+      "**/typescript/**"
+    ]
+  },
   "scripts": {
+    "bootstrap": "lerna clean --yes && lerna bootstrap && lerna link",
     "build": "lerna run build",
     "build:fs": "(cd packages/mash-filesystem && yarn build)",
     "test": "jest",

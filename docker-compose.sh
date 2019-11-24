@@ -16,13 +16,16 @@ stop-docker-compose () {
 
 # Required to let plugins on editor work properly,
 # otherwise local packages will not have symlinks properly
+# and not to hoist typescript cuz tsuquyomi needs it on package's root
 bootstrap () {
-  docker-compose run --rm mash /bin/bash -c "lerna clean --yes && lerna bootstrap && lerna link"
+  execute-docker-compose exec mash lerna clean --yes
+  execute-docker-compose exec mash lerna bootstrap
+  execute-docker-compose exec mash lerna link
 }
 
 if [ $COMMAND = 'up' ] && [ $# -le 1 ]; then
-  execute-docker-compose up -d
   docker-sync start
+  execute-docker-compose up -d
   execute-docker-compose exec mash bash
   stop-docker-compose
 
