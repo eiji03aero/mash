@@ -1,7 +1,7 @@
 import { Errors } from 'mash-common';
 
 export interface IFileSystemNodeBasis {
-  name: string;
+  name?: string;
   parentNode?: IFileSystemNode;
 }
 

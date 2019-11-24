@@ -14,10 +14,6 @@
 ## Todos
 
 ```
-- whole
-  - move __test__ directory into src directory
 - mash
   - have util function to parse command line option arguments for commands
-- mash-filesystem
-  - make the crud methods separate, for file and directory
 ```

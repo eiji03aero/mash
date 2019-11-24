@@ -61,7 +61,7 @@ export class FileSystem implements IFileSystem {
     path: string,
     params: IFileBasis
   }) : IFileSystemCommandResult & {
-    node?: T
+    node?: IFile
   } {
     const { path, params } = args;
     const { error, node: parentDirectory } = this._resolveNodeFromPath(path);
@@ -75,11 +75,11 @@ export class FileSystem implements IFileSystem {
     return { node };
   }
 
-  public updateNode<T extends IFile | IDirectory> (args : {
+  public updateFile (args : {
     path: string,
-    params: IFileBasis | IDirectoryBasis
+    params: IFileBasis
   }) : IFileSystemCommandResult & {
-    node?: T
+    node?: IFile
   } {
     const { path, params } = args;
     const { parentPath, lastFragment } = this._splitLastFragmentFromPath(path);
@@ -91,20 +91,18 @@ export class FileSystem implements IFileSystem {
       return { error: ErrorFactory.noSuchFileOrDirectory(path) };
     }
 
-    if (!(<Directory>parentDirectory).containsByName(lastFragment)) {
+    if (!(<IDirectory>parentDirectory).containsByName(lastFragment)) {
       return { error: ErrorFactory.noSuchFileOrDirectory(path) };
     }
 
-    const node = (<Directory>parentDirectory).findByName(lastFragment) as T;
+    const node = (<IDirectory>parentDirectory).findByName(lastFragment) as IFile;
     node.update(params);
     return { node };
   }
 
-  public deleteNode<T extends FileSystemNode> (args : {
+  public deleteFile (args : {
     path: string,
-  }) : IFileSystemCommandResult & {
-    node?: T
-  } {
+  }) : IFileSystemCommandResult {
     const { path } = args;
     const { parentPath, lastFragment } = this._splitLastFragmentFromPath(path);
     const { error, node: parentDirectory } = this._resolveNodeFromPath(parentPath);
@@ -115,13 +113,78 @@ export class FileSystem implements IFileSystem {
       return { error: ErrorFactory.noSuchFileOrDirectory(path) };
     }
 
-    if (!(<Directory>parentDirectory).containsByName(lastFragment)) {
+    if (!(<IDirectory>parentDirectory).containsByName(lastFragment)) {
       return { error: ErrorFactory.noSuchFileOrDirectory(path) };
     }
 
-    const node = (<Directory>parentDirectory).findByName(lastFragment) as T;
-    (<Directory>parentDirectory).removeChild(node);
+    const node = (<IDirectory>parentDirectory).findByName(lastFragment) as IFile;
+    (<IDirectory>parentDirectory).removeChild(node);
+    return { };
+  }
+
+  public createDirectory (args : {
+    path: string,
+    params: IDirectoryBasis
+  }) : IFileSystemCommandResult & {
+    node?: IDirectory
+  } {
+    const { path, params } = args;
+    const { error, node: parentDirectory } = this._resolveNodeFromPath(path);
+
+    if (error) return { error };
+
+    if (!parentDirectory || !parentDirectory.isDirectory) return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+
+    const node = new Directory(params);
+    (<IDirectory>parentDirectory).addChild(node);
     return { node };
+  }
+
+  public updateDirectory (args : {
+    path: string,
+    params: IDirectoryBasis
+  }) : IFileSystemCommandResult & {
+    node?: IDirectory
+  } {
+    const { path, params } = args;
+    const { parentPath, lastFragment } = this._splitLastFragmentFromPath(path);
+    const { error, node: parentDirectory } = this._resolveNodeFromPath(parentPath);
+
+    if (error) return { error };
+
+    if (!parentDirectory || !parentDirectory.isDirectory) {
+      return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+    }
+
+    if (!(<IDirectory>parentDirectory).containsByName(lastFragment)) {
+      return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+    }
+
+    const node = (<IDirectory>parentDirectory).findByName(lastFragment) as IDirectory;
+    node.update(params);
+    return { node };
+  }
+
+  public deleteDirectory (args : {
+    path: string,
+  }) : IFileSystemCommandResult {
+    const { path } = args;
+    const { parentPath, lastFragment } = this._splitLastFragmentFromPath(path);
+    const { error, node: parentDirectory } = this._resolveNodeFromPath(parentPath);
+
+    if (error) return { error };
+
+    if (!parentDirectory || !parentDirectory.isDirectory) {
+      return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+    }
+
+    if (!(<IDirectory>parentDirectory).containsByName(lastFragment)) {
+      return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+    }
+
+    const node = (<IDirectory>parentDirectory).findByName(lastFragment) as IDirectory;
+    (<IDirectory>parentDirectory).removeChild(node);
+    return { };
   }
 
   private _splitLastFragmentFromPath (
@@ -183,11 +246,11 @@ export class FileSystem implements IFileSystem {
         if (!resolvedNode.isDirectory) {
           return { error: ErrorFactory.notDirectory(fragment) };
         }
-        if (!(<Directory>resolvedNode).containsByName(fragment)) {
+        if (!(<IDirectory>resolvedNode).containsByName(fragment)) {
           return { error: ErrorFactory.noSuchFileOrDirectory(path) };
         }
 
-        resolvedNode = (<Directory>resolvedNode).findByName(fragment) as FileSystemNode;
+        resolvedNode = (<IDirectory>resolvedNode).findByName(fragment) as FileSystemNode;
         continue;
       }
     }

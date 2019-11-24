@@ -13,7 +13,7 @@ export class FileSystemNode implements IFileSystemNode {
 
   constructor (params: IFileSystemNodeBasis) {
     this.cid = cid.generate();
-    this.name = params.name;
+    this.name = params.name || '';
     this.parentNode = params.parentNode;
     this.createdAt = date.getCurrentTime();
     this.updatedAt = date.getCurrentTime();

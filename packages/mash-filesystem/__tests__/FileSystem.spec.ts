@@ -1,10 +1,5 @@
-import {
-  IFile,
-  IDirectory
-} from '../src/types';
 import { FileSystem } from "../src/FileSystem";
 import { Directory } from "../src/Directory";
-import { File } from "../src/File";
 
 
 describe('FileSystem', () => {
@@ -35,7 +30,7 @@ describe('FileSystem', () => {
       name: 'application_child',
       content: 'application content'
     };
-    const result = fs.createNode({
+    const result = fs.createFile({
       path: '.',
       params: fileParams
     });
@@ -49,7 +44,7 @@ describe('FileSystem', () => {
       name: 'application_child_directory',
       children: []
     };
-    const result = fs.createNode({
+    const result = fs.createDirectory({
       path: '.',
       params: directoryParams
     });
@@ -63,7 +58,7 @@ describe('FileSystem', () => {
       name: 'file',
       content: 'hm'
     };
-    fs.createNode({
+    fs.createFile({
       path: '.',
       params: fileParams
     });
@@ -72,7 +67,7 @@ describe('FileSystem', () => {
       name: 'updated_file',
       content: 'yay'
     };
-    const result = fs.updateNode<File>({
+    const result = fs.updateFile({
       path: `./${fileParams.name}`,
       params: updatedFileParams,
     });
@@ -91,7 +86,7 @@ describe('FileSystem', () => {
     const directoryParams = {
       name: 'dir',
     };
-    fs.createNode<IDirectory>({
+    fs.createDirectory({
       path: '.',
       params: directoryParams
     });
@@ -99,7 +94,7 @@ describe('FileSystem', () => {
     const updatedDirectoryParams = {
       name: 'updated_dir',
     };
-    const result = fs.updateNode<IDirectory>({
+    const result = fs.updateDirectory({
       path: `./${directoryParams.name}`,
       params: updatedDirectoryParams,
     });
@@ -117,12 +112,12 @@ describe('FileSystem', () => {
       name: 'file',
       content: 'application content'
     };
-    fs.createNode<IFile>({
+    fs.createFile({
       path: '.',
       params: fileParams
     });
 
-    const result = fs.deleteNode<IFile>({
+    const result = fs.deleteDirectory({
       path: `./${fileParams.name}`
     });
 
@@ -135,12 +130,12 @@ describe('FileSystem', () => {
       name: 'dir',
       content: 'application content'
     };
-    fs.createNode<IDirectory>({
+    fs.createDirectory({
       path: '.',
       params: directoryParams
     });
 
-    const result = fs.deleteNode<IDirectory>({
+    const result = fs.deleteDirectory({
       path: `./${directoryParams.name}`
     });
 
