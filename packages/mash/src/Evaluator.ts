@@ -1,32 +1,64 @@
 import {
+  IFileSystem
+} from 'mash-filesystem';
+
+import {
   IAstNode,
   IEvaluator,
-  IEnvironment
+  IEnvironment,
+  ExitStatus
 } from './types';
 import {
-  // Statement,
-  Program,
-  // CommandLine
+  AstProgram,
+  AstCommandLine
 } from "./Ast";
-// import { Environment } from "./Environment";
+import { builtins } from './builtins';
 
 export class Evaluator implements IEvaluator {
-  public eval (node: IAstNode, env: IEnvironment) {
+  private _fileSystem: IFileSystem;
+  private _environment: IEnvironment;
+
+  constructor (
+    fs: IFileSystem,
+    env: IEnvironment
+  ) {
+    this._environment = env;
+    this._fileSystem = fs;
+  }
+
+  public eval (node: IAstNode) {
     // Have to make use of constructor instead of interface,
     // since switch-case based on implement-interface is currently not supported
     switch (node.constructor) {
-      case Program:
-        return this._evalProgram(node as Program, env);
+      case AstProgram:
+        return this._evalProgram(node as AstProgram);
+      case AstCommandLine:
+        return this._evalCommandLine(node as AstCommandLine);
     }
   }
 
-  private _evalProgram (program: Program, env: IEnvironment) {
-    let result: any;
-
+  private _evalProgram (program: AstProgram) {
     for (let node of program.nodes) {
-      result = this.eval(node, env);
+      this.eval(node);
+      if (this._environment.exitStatus !== ExitStatus.Success) {
+        break;
+      }
+    }
+  }
+
+  private _evalCommandLine (commandLine: AstCommandLine) {
+    const command = commandLine.args[0].tokenLiteral();
+    const func = builtins[command];
+
+    if (typeof func !== "function") {
+      this._environment.error(1, `command not found: ${command}`);
+      return;
     }
 
-    return result;
+    func({
+      args: commandLine.args,
+      fileSystem: this._fileSystem,
+      environment: this._environment
+    });
   }
 }

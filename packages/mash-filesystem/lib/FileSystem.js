@@ -40,20 +40,18 @@ var FileSystem = /** @class */ (function () {
         this.currentDirectory = node;
         return {};
     };
-    FileSystem.prototype.createNode = function (args) {
+    FileSystem.prototype.createFile = function (args) {
         var path = args.path, params = args.params;
         var _a = this._resolveNodeFromPath(path), error = _a.error, parentDirectory = _a.node;
         if (error)
             return { error: error };
         if (!parentDirectory || !parentDirectory.isDirectory)
             return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
-        var node = File_1.File.isBasis(params)
-            ? new File_1.File(params)
-            : new Directory_1.Directory(params);
+        var node = new File_1.File(params);
         parentDirectory.addChild(node);
         return { node: node };
     };
-    FileSystem.prototype.updateNode = function (args) {
+    FileSystem.prototype.updateFile = function (args) {
         var path = args.path, params = args.params;
         var _a = this._splitLastFragmentFromPath(path), parentPath = _a.parentPath, lastFragment = _a.lastFragment;
         var _b = this._resolveNodeFromPath(parentPath), error = _b.error, parentDirectory = _b.node;
@@ -69,7 +67,7 @@ var FileSystem = /** @class */ (function () {
         node.update(params);
         return { node: node };
     };
-    FileSystem.prototype.deleteNode = function (args) {
+    FileSystem.prototype.deleteFile = function (args) {
         var path = args.path;
         var _a = this._splitLastFragmentFromPath(path), parentPath = _a.parentPath, lastFragment = _a.lastFragment;
         var _b = this._resolveNodeFromPath(parentPath), error = _b.error, parentDirectory = _b.node;
@@ -83,7 +81,50 @@ var FileSystem = /** @class */ (function () {
         }
         var node = parentDirectory.findByName(lastFragment);
         parentDirectory.removeChild(node);
+        return {};
+    };
+    FileSystem.prototype.createDirectory = function (args) {
+        var path = args.path, params = args.params;
+        var _a = this._resolveNodeFromPath(path), error = _a.error, parentDirectory = _a.node;
+        if (error)
+            return { error: error };
+        if (!parentDirectory || !parentDirectory.isDirectory)
+            return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
+        var node = new Directory_1.Directory(params);
+        parentDirectory.addChild(node);
         return { node: node };
+    };
+    FileSystem.prototype.updateDirectory = function (args) {
+        var path = args.path, params = args.params;
+        var _a = this._splitLastFragmentFromPath(path), parentPath = _a.parentPath, lastFragment = _a.lastFragment;
+        var _b = this._resolveNodeFromPath(parentPath), error = _b.error, parentDirectory = _b.node;
+        if (error)
+            return { error: error };
+        if (!parentDirectory || !parentDirectory.isDirectory) {
+            return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
+        }
+        if (!parentDirectory.containsByName(lastFragment)) {
+            return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
+        }
+        var node = parentDirectory.findByName(lastFragment);
+        node.update(params);
+        return { node: node };
+    };
+    FileSystem.prototype.deleteDirectory = function (args) {
+        var path = args.path;
+        var _a = this._splitLastFragmentFromPath(path), parentPath = _a.parentPath, lastFragment = _a.lastFragment;
+        var _b = this._resolveNodeFromPath(parentPath), error = _b.error, parentDirectory = _b.node;
+        if (error)
+            return { error: error };
+        if (!parentDirectory || !parentDirectory.isDirectory) {
+            return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
+        }
+        if (!parentDirectory.containsByName(lastFragment)) {
+            return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
+        }
+        var node = parentDirectory.findByName(lastFragment);
+        parentDirectory.removeChild(node);
+        return {};
     };
     FileSystem.prototype._splitLastFragmentFromPath = function (path) {
         var lastIndex = path[path.length - 1] === '/'
@@ -111,8 +152,8 @@ var FileSystem = /** @class */ (function () {
             resolvedNode = this.currentDirectory;
             fragments = path.split('/');
         }
-        for (var _i = 0, fragments_1 = fragments; _i < fragments_1.length; _i++) {
-            var fragment = fragments_1[_i];
+        for (var i = 0; i < fragments.length; i++) {
+            var fragment = fragments[i];
             if (fragment === '..') {
                 if (resolvedNode.parentNode instanceof FileSystemNode_1.FileSystemNode) {
                     resolvedNode = resolvedNode.parentNode;
@@ -126,6 +167,9 @@ var FileSystem = /** @class */ (function () {
                 continue;
             }
             else if (fragment === '') {
+                if (i === fragments.length - 1) {
+                    break;
+                }
                 return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
             }
             else {

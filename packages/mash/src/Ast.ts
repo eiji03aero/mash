@@ -1,14 +1,30 @@
 import {
   IToken,
   IAstNode,
-  IProgram,
-  ICommandLine
+  IAstProgram,
+  IAstCommandLine,
+  IAstString
 } from './types';
 
-export class Program implements IProgram {
+export class AstNode implements IAstNode {
+  constructor (
+    public token: IToken
+  ) { }
+
+  public tokenLiteral () {
+    return this.token.literal;
+  }
+
+  public toString () {
+    return this.token.literal;
+  }
+}
+
+export class AstProgram extends AstNode implements IAstProgram {
   public nodes: IAstNode[];
 
-  constructor () {
+  constructor (token: IToken) {
+    super(token);
     this.nodes = [] as IAstNode[];
   }
 
@@ -25,18 +41,24 @@ export class Program implements IProgram {
   }
 }
 
-export class CommandLine implements ICommandLine {
-  public args: IToken[];
+export class AstCommandLine extends AstNode implements IAstCommandLine {
+  public args: IAstNode[];
 
-  constructor (option: { tokens: IToken[] }) {
-    this.args = option.tokens;
-  }
-
-  public tokenLiteral () {
-    return this.args[0].literal;
+  constructor (token: IToken, args: IAstNode[]) {
+    super(token);
+    this.args = args;
   }
 
   public toString () {
-    return this.args.map(t => t.literal).join(', ');
+    return this.args.map(t => t.toString()).join(', ');
+  }
+}
+
+export class AstString extends AstNode implements IAstString {
+  public value: string;
+
+  constructor (token: IToken) {
+    super(token);
+    this.value = token.literal;
   }
 }

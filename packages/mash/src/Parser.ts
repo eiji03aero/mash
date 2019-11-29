@@ -1,10 +1,17 @@
 import {
   IParser,
   IToken,
-  ILexer
+  ILexer,
+  IAstNode
 } from './types';
 import { Tokens } from "./Token";
 import * as A from './Ast';
+
+// TODO: have to deal with the tokens for program and commandline
+const placeholderToken: IToken = {
+  type: 'placeholder',
+  literal: ''
+};
 
 export class Parser implements IParser {
   public lexer: ILexer;
@@ -24,7 +31,7 @@ export class Parser implements IParser {
   }
 
   public parseProgram () {
-    const program = new A.Program();
+    const program = new A.AstProgram(placeholderToken);
 
     while (!this.curTokenIs(Tokens.EOF)) {
       const node = this.parseNode();
@@ -47,12 +54,12 @@ export class Parser implements IParser {
   }
 
   private parseCommandLine () {
-    const tokens: IToken[] = [];
+    const args: IAstNode[] = [];
     while (!this.curTokenIs(Tokens.EOF) && !this.curTokenIs(Tokens.NEWLINE)) {
-      tokens.push(this.curToken);
+      args.push(new A.AstString(this.curToken));
       this.nextToken();
     }
-    return new A.CommandLine({ tokens });
+    return new A.AstCommandLine(placeholderToken, args);
   }
 
   private nextToken () {

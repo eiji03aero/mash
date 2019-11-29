@@ -227,7 +227,9 @@ export class FileSystem implements IFileSystem {
       fragments = path.split('/');
     }
 
-    for (let fragment of fragments) {
+    for (let i = 0; i < fragments.length; i++) {
+      const fragment = fragments[i];
+
       if (fragment === '..') {
         if (resolvedNode.parentNode instanceof FileSystemNode) {
           resolvedNode = resolvedNode.parentNode;
@@ -240,6 +242,9 @@ export class FileSystem implements IFileSystem {
         continue;
       }
       else if (fragment === '') {
+        if (i === fragments.length - 1) {
+          break;
+        }
         return { error: ErrorFactory.noSuchFileOrDirectory(path) };
       }
       else {

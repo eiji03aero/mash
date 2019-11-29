@@ -1,16 +1,23 @@
 import readline from 'readline';
+import { FileSystem } from 'mash-filesystem';
+import { text } from 'mash-common';
 
-import {
-  IAstNode
-} from './types';
-import { Lexer } from "./Lexer";
-import { Parser } from "./Parser";
+import { Environment } from "./Environment";
 
-const prompt = 'mash > ';
+const fileSystem = FileSystem.bootstrap();
+const environment = Environment.bootstrap(fileSystem);
+environment.onWrite((row: text.row) => {
+  const str = row
+    .map((t: text.TextObject) => t.text)
+    .join('');
+  console.log(str);
+});
+
+const getPrompt = () => `mash ${fileSystem.currentDirectory.name} > `;
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
-  prompt
+  prompt: getPrompt()
 });
 
 console.log(`
@@ -21,20 +28,8 @@ Ctl + C to finish
 rl.prompt();
 
 rl.on('line', (input: string) => {
-  const lexer = new Lexer(input);
-  const parser = new Parser(lexer);
-  const program = parser.parseProgram();
-  const parsed = program.nodes
-    .map((sm: IAstNode) => {
-      return sm.toString();
-    })
-    .join('\n');
+  environment.eval(input);
 
-  console.log(`
-  input: ${input}
-  parsed program: ${parsed}
-  `);
-
-  rl.setPrompt(prompt);
+  rl.setPrompt(getPrompt());
   rl.prompt();
 });

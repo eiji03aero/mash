@@ -4,7 +4,7 @@ var mash_common_1 = require("mash-common");
 var FileSystemNode = /** @class */ (function () {
     function FileSystemNode(params) {
         this.cid = mash_common_1.cid.generate();
-        this.name = params.name;
+        this.name = params.name || '';
         this.parentNode = params.parentNode;
         this.createdAt = mash_common_1.date.getCurrentTime();
         this.updatedAt = mash_common_1.date.getCurrentTime();

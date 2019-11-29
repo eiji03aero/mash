@@ -44,9 +44,9 @@ function testCommandLine (
   args: string[],
   node: IAstNode
 ) {
-  if (node instanceof A.CommandLine) {
+  if (node instanceof A.AstCommandLine) {
     for (let i = 0; i < args.length; i++) {
-      expect(args[i]).toBe(node.args[i].literal);
+      expect(args[i]).toBe(node.args[i].tokenLiteral());
     }
   }
 }

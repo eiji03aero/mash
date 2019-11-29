@@ -1,6 +1,5 @@
-import { IDirectoryBasis, IDirectory, IFileBasis, IFile, IFileSystemCommandResult } from './types';
-import { FileSystemNode } from "./FileSystemNode";
-export declare class FileSystem {
+import { IDirectoryBasis, IDirectory, IFileBasis, IFile, IFileSystemCommandResult, IFileSystem } from './types';
+export declare class FileSystem implements IFileSystem {
     private static _instance;
     currentDirectory: IDirectory;
     root: IDirectory;
@@ -11,23 +10,36 @@ export declare class FileSystem {
     changeCurrentDirectory(args: {
         path: string;
     }): IFileSystemCommandResult;
-    createNode<T extends IFile | IDirectory>(args: {
+    createFile(args: {
         path: string;
-        params: IFileBasis | IDirectoryBasis;
+        params: IFileBasis;
     }): IFileSystemCommandResult & {
-        node?: T;
+        node?: IFile;
     };
-    updateNode<T extends IFile | IDirectory>(args: {
+    updateFile(args: {
         path: string;
-        params: IFileBasis | IDirectoryBasis;
+        params: IFileBasis;
     }): IFileSystemCommandResult & {
-        node?: T;
+        node?: IFile;
     };
-    deleteNode<T extends FileSystemNode>(args: {
+    deleteFile(args: {
         path: string;
+    }): IFileSystemCommandResult;
+    createDirectory(args: {
+        path: string;
+        params: IDirectoryBasis;
     }): IFileSystemCommandResult & {
-        node?: T;
+        node?: IDirectory;
     };
+    updateDirectory(args: {
+        path: string;
+        params: IDirectoryBasis;
+    }): IFileSystemCommandResult & {
+        node?: IDirectory;
+    };
+    deleteDirectory(args: {
+        path: string;
+    }): IFileSystemCommandResult;
     private _splitLastFragmentFromPath;
     private _resolveNodeFromPath;
 }

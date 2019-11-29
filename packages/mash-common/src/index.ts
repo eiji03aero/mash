@@ -3,12 +3,12 @@ import * as date from './date';
 import * as text from './text';
 import * as Errors from './Errors';
 
-import { ErrorFactory } from "./ErrorFactory";
+const { ErrorFactory } = Errors;
 
 export {
   cid,
   date,
   text,
   Errors,
-  ErrorFactory,
+  ErrorFactory
 }

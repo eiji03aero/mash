@@ -1,6 +1,6 @@
 import { Errors } from 'mash-common';
 export interface IFileSystemNodeBasis {
-    name: string;
+    name?: string;
     parentNode?: IFileSystemNode;
 }
 export interface IFileSystemNode {
@@ -37,7 +37,26 @@ export interface IFileSystem {
     changeCurrentDirectory(args: {
         path: string;
     }): IFileSystemCommandResult;
-    createNode(args: {
+    createFile(args: {
+        path: string;
+        params: IFileBasis;
+    }): IFileSystemCommandResult;
+    updateFile(args: {
+        path: string;
+        params: IFileBasis;
+    }): IFileSystemCommandResult;
+    deleteFile(args: {
+        path: string;
+    }): IFileSystemCommandResult;
+    createDirectory(args: {
+        path: string;
+        params: IDirectoryBasis;
+    }): IFileSystemCommandResult;
+    updateDirectory(args: {
+        path: string;
+        params: IDirectoryBasis;
+    }): IFileSystemCommandResult;
+    deleteDirectory(args: {
         path: string;
     }): IFileSystemCommandResult;
 }

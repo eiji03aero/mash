@@ -1,3 +1,10 @@
+import {
+  IFileSystem
+} from 'mash-filesystem';
+import {
+  text
+} from 'mash-common';
+
 export type TokenType = string;
 export interface IToken {
   type: TokenType;
@@ -17,33 +24,58 @@ export interface IParser {
   errors: any;
   curToken: IToken;
   peekToken: IToken;
-  parseProgram(): IProgram;
+  parseProgram(): IAstProgram;
 }
 
 
 export interface IAstNode {
+  token: IToken;
   tokenLiteral(): string;
   toString(): string;
 }
 
-export interface IProgram extends IAstNode {
+export interface IAstProgram extends IAstNode {
   nodes: IAstNode[];
   append(node: IAstNode): void;
 }
 
-export interface ICommandLine extends IAstNode {
-  args: IToken[];
+export interface IAstCommandLine extends IAstNode {
+  args: IAstNode[];
 }
+
+export interface IAstString extends IAstNode {
+  value: string;
+}
+
+export enum ExitStatus {
+  Success = 0,
+  Failure = 1
+}
+
+export type CommandPayload = {
+  args: IAstNode[];
+  fileSystem: IFileSystem;
+  environment: IEnvironment;
+}
+
+export type Command = (args: CommandPayload) => void;
+
+export interface ICommandMap {
+  [index: string]: Command;
+}
+
+export type EnvironmentWriteHandler = (row: text.row) => void;
 
 export interface IEnvironment {
-
-}
-
-export interface IStore {
-  [index: string]: string;
+  exitStatus: ExitStatus;
+  error(code: ExitStatus, message?: string): void;
+  writeln(row: text.row): void;
+  eval(str: string): void;
+  onWrite(func: EnvironmentWriteHandler): void;
 }
 
 export interface IEvaluator {
   // TODO: update return type for eval
+  // looking up builtins here
   eval(node: IAstNode, env: IEnvironment): any;
 }
