@@ -9,8 +9,11 @@
 - Program
   nodes: AstNode[]
 - ASTNode
-  - CommandLine
+  - AstProgram
+  - AstCommandLine
     - args: Token[]
+  - AstString
+    - value: string
 
 - Evaluator
 - Environment
