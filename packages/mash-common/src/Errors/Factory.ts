@@ -3,7 +3,7 @@ import { NoSuchFileOrDirectory } from './NoSuchFileOrDirectory';
 import { NotDirectory } from './NotDirectory';
 import { Script } from './Script';
 
-export class ErrorFactory {
+export class Factory {
   private constructor () {}
 
   static standard (msg: string) {

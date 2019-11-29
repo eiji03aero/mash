@@ -15,6 +15,4 @@ var text = __importStar(require("./text"));
 exports.text = text;
 var Errors = __importStar(require("./Errors"));
 exports.Errors = Errors;
-var ErrorFactory = Errors.ErrorFactory;
-exports.ErrorFactory = ErrorFactory;
 //# sourceMappingURL=index.js.map

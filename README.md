@@ -26,6 +26,5 @@
     - builtins
 - mash-common
   - refactor
-    - TextObject related might as well be namespaced or at least renamed in Pascal case
     - put all the Errors related object under Errors
 ```

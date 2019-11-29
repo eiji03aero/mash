@@ -36,7 +36,7 @@ var FileSystem = /** @class */ (function () {
         if (error)
             return { error: error };
         if (!node || !node.isDirectory)
-            return { error: mash_common_1.ErrorFactory.notDirectory(path) };
+            return { error: mash_common_1.Errors.Factory.notDirectory(path) };
         this.currentDirectory = node;
         return {};
     };
@@ -46,7 +46,7 @@ var FileSystem = /** @class */ (function () {
         if (error)
             return { error: error };
         if (!parentDirectory || !parentDirectory.isDirectory)
-            return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
         var node = new File_1.File(params);
         parentDirectory.addChild(node);
         return { node: node };
@@ -58,10 +58,10 @@ var FileSystem = /** @class */ (function () {
         if (error)
             return { error: error };
         if (!parentDirectory || !parentDirectory.isDirectory) {
-            return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
         }
         if (!parentDirectory.containsByName(lastFragment)) {
-            return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
         }
         var node = parentDirectory.findByName(lastFragment);
         node.update(params);
@@ -74,10 +74,10 @@ var FileSystem = /** @class */ (function () {
         if (error)
             return { error: error };
         if (!parentDirectory || !parentDirectory.isDirectory) {
-            return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
         }
         if (!parentDirectory.containsByName(lastFragment)) {
-            return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
         }
         var node = parentDirectory.findByName(lastFragment);
         parentDirectory.removeChild(node);
@@ -89,7 +89,7 @@ var FileSystem = /** @class */ (function () {
         if (error)
             return { error: error };
         if (!parentDirectory || !parentDirectory.isDirectory)
-            return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
         var node = new Directory_1.Directory(params);
         parentDirectory.addChild(node);
         return { node: node };
@@ -101,10 +101,10 @@ var FileSystem = /** @class */ (function () {
         if (error)
             return { error: error };
         if (!parentDirectory || !parentDirectory.isDirectory) {
-            return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
         }
         if (!parentDirectory.containsByName(lastFragment)) {
-            return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
         }
         var node = parentDirectory.findByName(lastFragment);
         node.update(params);
@@ -117,10 +117,10 @@ var FileSystem = /** @class */ (function () {
         if (error)
             return { error: error };
         if (!parentDirectory || !parentDirectory.isDirectory) {
-            return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
         }
         if (!parentDirectory.containsByName(lastFragment)) {
-            return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
         }
         var node = parentDirectory.findByName(lastFragment);
         parentDirectory.removeChild(node);
@@ -160,7 +160,7 @@ var FileSystem = /** @class */ (function () {
                     continue;
                 }
                 else {
-                    return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
+                    return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
                 }
             }
             else if (fragment === '.') {
@@ -170,14 +170,14 @@ var FileSystem = /** @class */ (function () {
                 if (i === fragments.length - 1) {
                     break;
                 }
-                return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
+                return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
             }
             else {
                 if (!resolvedNode.isDirectory) {
-                    return { error: mash_common_1.ErrorFactory.notDirectory(fragment) };
+                    return { error: mash_common_1.Errors.Factory.notDirectory(fragment) };
                 }
                 if (!resolvedNode.containsByName(fragment)) {
-                    return { error: mash_common_1.ErrorFactory.noSuchFileOrDirectory(path) };
+                    return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
                 }
                 resolvedNode = resolvedNode.findByName(fragment);
                 continue;

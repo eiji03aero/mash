@@ -4,22 +4,22 @@ var Standard_1 = require("./Standard");
 var NoSuchFileOrDirectory_1 = require("./NoSuchFileOrDirectory");
 var NotDirectory_1 = require("./NotDirectory");
 var Script_1 = require("./Script");
-var ErrorFactory = /** @class */ (function () {
-    function ErrorFactory() {
+var Factory = /** @class */ (function () {
+    function Factory() {
     }
-    ErrorFactory.standard = function (msg) {
+    Factory.standard = function (msg) {
         return new Standard_1.Standard({ msg: msg });
     };
-    ErrorFactory.noSuchFileOrDirectory = function (path) {
+    Factory.noSuchFileOrDirectory = function (path) {
         return new NoSuchFileOrDirectory_1.NoSuchFileOrDirectory({ path: path });
     };
-    ErrorFactory.notDirectory = function (name) {
+    Factory.notDirectory = function (name) {
         return new NotDirectory_1.NotDirectory({ name: name });
     };
-    ErrorFactory.script = function (fileName, errorMessage) {
+    Factory.script = function (fileName, errorMessage) {
         return new Script_1.Script({ fileName: fileName, errorMessage: errorMessage });
     };
-    return ErrorFactory;
+    return Factory;
 }());
-exports.ErrorFactory = ErrorFactory;
-//# sourceMappingURL=ErrorFactory.js.map
+exports.Factory = Factory;
+//# sourceMappingURL=Factory.js.map

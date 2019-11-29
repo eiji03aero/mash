@@ -1,4 +1,4 @@
-import { ErrorFactory, Errors } from "mash-common";
+import { Errors } from "mash-common";
 
 import {
   IDirectoryBasis,
@@ -51,7 +51,7 @@ export class FileSystem implements IFileSystem {
 
     if (error) return { error };
 
-    if (!node || !node.isDirectory) return { error: ErrorFactory.notDirectory(path) };
+    if (!node || !node.isDirectory) return { error: Errors.Factory.notDirectory(path) };
 
     this.currentDirectory = node as Directory;
     return {};
@@ -68,7 +68,7 @@ export class FileSystem implements IFileSystem {
 
     if (error) return { error };
 
-    if (!parentDirectory || !parentDirectory.isDirectory) return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+    if (!parentDirectory || !parentDirectory.isDirectory) return { error: Errors.Factory.noSuchFileOrDirectory(path) };
 
     const node = new File(params);
     (<IDirectory>parentDirectory).addChild(node);
@@ -88,11 +88,11 @@ export class FileSystem implements IFileSystem {
     if (error) return { error };
 
     if (!parentDirectory || !parentDirectory.isDirectory) {
-      return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+      return { error: Errors.Factory.noSuchFileOrDirectory(path) };
     }
 
     if (!(<IDirectory>parentDirectory).containsByName(lastFragment)) {
-      return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+      return { error: Errors.Factory.noSuchFileOrDirectory(path) };
     }
 
     const node = (<IDirectory>parentDirectory).findByName(lastFragment) as IFile;
@@ -110,11 +110,11 @@ export class FileSystem implements IFileSystem {
     if (error) return { error };
 
     if (!parentDirectory || !parentDirectory.isDirectory) {
-      return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+      return { error: Errors.Factory.noSuchFileOrDirectory(path) };
     }
 
     if (!(<IDirectory>parentDirectory).containsByName(lastFragment)) {
-      return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+      return { error: Errors.Factory.noSuchFileOrDirectory(path) };
     }
 
     const node = (<IDirectory>parentDirectory).findByName(lastFragment) as IFile;
@@ -133,7 +133,7 @@ export class FileSystem implements IFileSystem {
 
     if (error) return { error };
 
-    if (!parentDirectory || !parentDirectory.isDirectory) return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+    if (!parentDirectory || !parentDirectory.isDirectory) return { error: Errors.Factory.noSuchFileOrDirectory(path) };
 
     const node = new Directory(params);
     (<IDirectory>parentDirectory).addChild(node);
@@ -153,11 +153,11 @@ export class FileSystem implements IFileSystem {
     if (error) return { error };
 
     if (!parentDirectory || !parentDirectory.isDirectory) {
-      return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+      return { error: Errors.Factory.noSuchFileOrDirectory(path) };
     }
 
     if (!(<IDirectory>parentDirectory).containsByName(lastFragment)) {
-      return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+      return { error: Errors.Factory.noSuchFileOrDirectory(path) };
     }
 
     const node = (<IDirectory>parentDirectory).findByName(lastFragment) as IDirectory;
@@ -175,11 +175,11 @@ export class FileSystem implements IFileSystem {
     if (error) return { error };
 
     if (!parentDirectory || !parentDirectory.isDirectory) {
-      return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+      return { error: Errors.Factory.noSuchFileOrDirectory(path) };
     }
 
     if (!(<IDirectory>parentDirectory).containsByName(lastFragment)) {
-      return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+      return { error: Errors.Factory.noSuchFileOrDirectory(path) };
     }
 
     const node = (<IDirectory>parentDirectory).findByName(lastFragment) as IDirectory;
@@ -235,7 +235,7 @@ export class FileSystem implements IFileSystem {
           resolvedNode = resolvedNode.parentNode;
           continue;
         } else {
-          return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+          return { error: Errors.Factory.noSuchFileOrDirectory(path) };
         }
       }
       else if (fragment === '.') {
@@ -245,14 +245,14 @@ export class FileSystem implements IFileSystem {
         if (i === fragments.length - 1) {
           break;
         }
-        return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+        return { error: Errors.Factory.noSuchFileOrDirectory(path) };
       }
       else {
         if (!resolvedNode.isDirectory) {
-          return { error: ErrorFactory.notDirectory(fragment) };
+          return { error: Errors.Factory.notDirectory(fragment) };
         }
         if (!(<IDirectory>resolvedNode).containsByName(fragment)) {
-          return { error: ErrorFactory.noSuchFileOrDirectory(path) };
+          return { error: Errors.Factory.noSuchFileOrDirectory(path) };
         }
 
         resolvedNode = (<IDirectory>resolvedNode).findByName(fragment) as FileSystemNode;

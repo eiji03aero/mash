@@ -8,5 +8,5 @@ __export(require("./Standard"));
 __export(require("./NoSuchFileOrDirectory"));
 __export(require("./NotDirectory"));
 __export(require("./Script"));
-__export(require("./ErrorFactory"));
+__export(require("./Factory"));
 //# sourceMappingURL=index.js.map
