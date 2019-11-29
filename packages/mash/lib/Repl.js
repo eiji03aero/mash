@@ -4,27 +4,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var readline_1 = __importDefault(require("readline"));
-var Lexer_1 = require("./Lexer");
-var Parser_1 = require("./Parser");
-var prompt = 'mash > ';
+var mash_filesystem_1 = require("mash-filesystem");
+var Environment_1 = require("./Environment");
+var fileSystem = mash_filesystem_1.FileSystem.bootstrap();
+var environment = Environment_1.Environment.bootstrap(fileSystem);
+environment.onWrite(function (row) {
+    var str = row
+        .map(function (t) { return t.text; })
+        .join('');
+    console.log(str);
+});
+var getPrompt = function () { return "mash " + fileSystem.currentDirectory.name + " > "; };
 var rl = readline_1.default.createInterface({
     input: process.stdin,
     output: process.stdout,
-    prompt: prompt
+    prompt: getPrompt()
 });
 console.log("\nWelcome to mash!\nCtl + C to finish\n");
 rl.prompt();
 rl.on('line', function (input) {
-    var lexer = new Lexer_1.Lexer(input);
-    var parser = new Parser_1.Parser(lexer);
-    var program = parser.parseProgram();
-    var parsed = program.nodes
-        .map(function (sm) {
-        return sm.toString();
-    })
-        .join('\n');
-    console.log("\n  input: " + input + "\n  parsed program: " + parsed + "\n  ");
-    rl.setPrompt(prompt);
+    environment.eval(input);
+    rl.setPrompt(getPrompt());
     rl.prompt();
 });
 //# sourceMappingURL=Repl.js.map

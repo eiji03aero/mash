@@ -1,14 +1,56 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var types_1 = require("./types");
+var Evaluator_1 = require("./Evaluator");
+var Lexer_1 = require("./Lexer");
+var Parser_1 = require("./Parser");
 var Environment = /** @class */ (function () {
-    function Environment() {
-        this._store = {};
+    function Environment(_fileSystem) {
+        this._fileSystem = _fileSystem;
+        this._exitStatus = types_1.ExitStatus.Success;
+        this._environmentWriteHandler = function (_a) { };
     }
-    Environment.prototype.get = function (name) {
-        return this._store[name];
+    Environment.bootstrap = function (fs) {
+        this._instance = new this(fs);
+        return this._instance;
     };
-    Environment.prototype.set = function (name, value) {
-        this._store[name] = value;
+    Object.defineProperty(Environment, "instance", {
+        get: function () {
+            return this._instance;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Environment.prototype, "exitStatus", {
+        get: function () {
+            return this._exitStatus;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Environment.prototype.eval = function (str) {
+        this._resetEnvironment();
+        var lexer = new Lexer_1.Lexer(str);
+        var parser = new Parser_1.Parser(lexer);
+        var program = parser.parseProgram();
+        var evaluator = new Evaluator_1.Evaluator(this._fileSystem, this);
+        evaluator.eval(program);
+    };
+    Environment.prototype.error = function (code, message) {
+        if (message) {
+            var msg = "mash " + message;
+            this._environmentWriteHandler([{ text: msg }]);
+        }
+        this._exitStatus = code;
+    };
+    Environment.prototype.writeln = function (row) {
+        this._environmentWriteHandler(row);
+    };
+    Environment.prototype.onWrite = function (func) {
+        this._environmentWriteHandler = func;
+    };
+    Environment.prototype._resetEnvironment = function () {
+        this._exitStatus = types_1.ExitStatus.Success;
     };
     return Environment;
 }());

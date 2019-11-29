@@ -6,7 +6,7 @@ import { Environment } from "./Environment";
 
 const fileSystem = FileSystem.bootstrap();
 const environment = Environment.bootstrap(fileSystem);
-environment.onWrite((row: text.row) => {
+environment.onWrite((row: text.Row) => {
   const str = row
     .map((t: text.TextObject) => t.text)
     .join('');

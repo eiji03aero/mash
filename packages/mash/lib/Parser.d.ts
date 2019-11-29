@@ -6,7 +6,7 @@ export declare class Parser implements IParser {
     curToken: IToken;
     peekToken: IToken;
     constructor(lexer: ILexer);
-    parseProgram(): A.Program;
+    parseProgram(): A.AstProgram;
     private parseNode;
     private parseCommandLine;
     private nextToken;

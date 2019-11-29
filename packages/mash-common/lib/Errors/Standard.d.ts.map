@@ -1,0 +1,1 @@
+{"version":3,"file":"Standard.d.ts","sourceRoot":"","sources":["../../src/Errors/Standard.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,IAAI,EAAE,SAAS,EAAE,MAAM,QAAQ,CAAC;AAEzC,UAAU,aAAc,SAAQ,SAAS;IACvC,GAAG,EAAE,MAAM,CAAC;CACb;AAED,qBAAa,QAAS,SAAQ,IAAI;IAChC,GAAG,EAAE,MAAM,CAAC;gBAEC,MAAM,EAAE,aAAa;IAKlC,OAAO;CAGR"}

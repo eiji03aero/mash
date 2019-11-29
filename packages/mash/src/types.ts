@@ -64,12 +64,12 @@ export interface ICommandMap {
   [index: string]: Command;
 }
 
-export type EnvironmentWriteHandler = (row: text.row) => void;
+export type EnvironmentWriteHandler = (row: text.Row) => void;
 
 export interface IEnvironment {
   exitStatus: ExitStatus;
   error(code: ExitStatus, message?: string): void;
-  writeln(row: text.row): void;
+  writeln(row: text.Row): void;
   eval(str: string): void;
   onWrite(func: EnvironmentWriteHandler): void;
 }

@@ -1,32 +1,71 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Program = /** @class */ (function () {
-    function Program() {
-        this.nodes = [];
+var AstNode = /** @class */ (function () {
+    function AstNode(token) {
+        this.token = token;
     }
-    Program.prototype.append = function (node) {
+    AstNode.prototype.tokenLiteral = function () {
+        return this.token.literal;
+    };
+    AstNode.prototype.toString = function () {
+        return this.token.literal;
+    };
+    return AstNode;
+}());
+exports.AstNode = AstNode;
+var AstProgram = /** @class */ (function (_super) {
+    __extends(AstProgram, _super);
+    function AstProgram(token) {
+        var _this = _super.call(this, token) || this;
+        _this.nodes = [];
+        return _this;
+    }
+    AstProgram.prototype.append = function (node) {
         this.nodes.push(node);
     };
-    Program.prototype.tokenLiteral = function () {
+    AstProgram.prototype.tokenLiteral = function () {
         return this.nodes.toString();
     };
-    Program.prototype.toString = function () {
+    AstProgram.prototype.toString = function () {
         return this.nodes.toString();
     };
-    return Program;
-}());
-exports.Program = Program;
-var CommandLine = /** @class */ (function () {
-    function CommandLine(option) {
-        this.args = option.tokens;
+    return AstProgram;
+}(AstNode));
+exports.AstProgram = AstProgram;
+var AstCommandLine = /** @class */ (function (_super) {
+    __extends(AstCommandLine, _super);
+    function AstCommandLine(token, args) {
+        var _this = _super.call(this, token) || this;
+        _this.args = args;
+        return _this;
     }
-    CommandLine.prototype.tokenLiteral = function () {
-        return this.args[0].literal;
+    AstCommandLine.prototype.toString = function () {
+        return this.args.map(function (t) { return t.toString(); }).join(', ');
     };
-    CommandLine.prototype.toString = function () {
-        return this.args.map(function (t) { return t.literal; }).join(', ');
-    };
-    return CommandLine;
-}());
-exports.CommandLine = CommandLine;
+    return AstCommandLine;
+}(AstNode));
+exports.AstCommandLine = AstCommandLine;
+var AstString = /** @class */ (function (_super) {
+    __extends(AstString, _super);
+    function AstString(token) {
+        var _this = _super.call(this, token) || this;
+        _this.value = token.literal;
+        return _this;
+    }
+    return AstString;
+}(AstNode));
+exports.AstString = AstString;
 //# sourceMappingURL=Ast.js.map

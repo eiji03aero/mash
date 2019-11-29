@@ -11,6 +11,7 @@ exports.Tokens = {
     IDENT: "IDENT",
     INT: "INT",
     STRING: "STRING",
+    COMMANDLINE: "COMMANDLINE",
     ASSIGN: "=",
     COMMA: ",",
     COLON: ":",

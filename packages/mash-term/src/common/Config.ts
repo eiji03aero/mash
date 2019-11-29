@@ -2,7 +2,7 @@ import { text } from 'mash-common';
 import { IConfig } from '../types';
 
 export const defaultConfig: IConfig = {
-  prompt: [] as text.row,
+  prompt: [] as text.Row,
   cursorInitialPauseMs: 2000,
   cursorIntervalMs: 500,
   terminalBg: '#182F40',

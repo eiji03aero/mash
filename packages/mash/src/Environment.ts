@@ -57,7 +57,7 @@ export class Environment implements IEnvironment {
     this._exitStatus = code;
   }
 
-  public writeln (row: text.row) {
+  public writeln (row: text.Row) {
     this._environmentWriteHandler(row);
   }
 

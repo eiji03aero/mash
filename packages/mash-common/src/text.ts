@@ -3,5 +3,5 @@ export interface TextObject {
   color?: string;
 }
 
-export type row = TextObject[];
-export type rows = row[];
+export type Row = TextObject[];
+export type Rows = Row[];

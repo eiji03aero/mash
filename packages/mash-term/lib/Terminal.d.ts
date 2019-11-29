@@ -4,7 +4,7 @@ export declare class Terminal implements ITerminal {
     container: HTMLElement;
     textarea: HTMLTextAreaElement;
     config: IConfig;
-    rows: text.rows;
+    rows: text.Rows;
     rowPosition: number;
     isCursorShown: boolean;
     renderer: IRenderer;
@@ -17,8 +17,8 @@ export declare class Terminal implements ITerminal {
     focus(): void;
     blur(): void;
     prompt(): void;
-    writeln(texts: text.row): void;
-    appendRow(texts: text.row): void;
+    writeln(texts: text.Row): void;
+    appendRow(texts: text.Row): void;
     scroll(numberToScroll: number): void;
     scrollToBottom(): void;
     onKeyPress(fn: KeyboardEventHandler): void;

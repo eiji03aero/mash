@@ -9,6 +9,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Token_1 = require("./Token");
 var A = __importStar(require("./Ast"));
+// TODO: have to deal with the tokens for program and commandline
+var placeholderToken = {
+    type: 'placeholder',
+    literal: ''
+};
 var Parser = /** @class */ (function () {
     function Parser(lexer) {
         this.lexer = lexer;
@@ -19,7 +24,7 @@ var Parser = /** @class */ (function () {
         this.peekToken = this.lexer.nextToken();
     }
     Parser.prototype.parseProgram = function () {
-        var program = new A.Program();
+        var program = new A.AstProgram(placeholderToken);
         while (!this.curTokenIs(Token_1.Tokens.EOF)) {
             var node = this.parseNode();
             if (node !== null) {
@@ -38,12 +43,12 @@ var Parser = /** @class */ (function () {
         }
     };
     Parser.prototype.parseCommandLine = function () {
-        var tokens = [];
+        var args = [];
         while (!this.curTokenIs(Token_1.Tokens.EOF) && !this.curTokenIs(Token_1.Tokens.NEWLINE)) {
-            tokens.push(this.curToken);
+            args.push(new A.AstString(this.curToken));
             this.nextToken();
         }
-        return new A.CommandLine({ tokens: tokens });
+        return new A.AstCommandLine(placeholderToken, args);
     };
     Parser.prototype.nextToken = function () {
         this.curToken = this.peekToken;

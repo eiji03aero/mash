@@ -16,12 +16,12 @@ export class Terminal implements ITerminal {
   public container: HTMLElement;
   public textarea: HTMLTextAreaElement;
   public config: IConfig;
-  public rows: text.rows;
+  public rows: text.Rows;
   public rowPosition: number;
   public isCursorShown: boolean;
   public renderer: IRenderer;
   public calculateService: ICalculateService;
-  private _cachedRows: text.rows;
+  private _cachedRows: text.Rows;
   private _onKeyPressHandler: (e: KeyboardEvent) => void;
 
   constructor (
@@ -34,10 +34,10 @@ export class Terminal implements ITerminal {
     this.textarea.setAttribute('style', 'width: 0; height: 0; position: absolute;');
     this.container.appendChild(this.textarea);
     this.config = getConfig(config);
-    this.rows = [] as text.rows;
+    this.rows = [] as text.Rows;
     this.rowPosition = 0;
     this.isCursorShown = true;
-    this._cachedRows = [] as text.rows;
+    this._cachedRows = [] as text.Rows;
     this.renderer = new Renderer(this);
     this.calculateService = new CalculateService(this);
 
@@ -81,7 +81,7 @@ export class Terminal implements ITerminal {
     this._render();
   }
 
-  public writeln (texts: text.row) {
+  public writeln (texts: text.Row) {
     if (this._isOnBottom) {
       this.rowPosition += 1;
     }
@@ -90,7 +90,7 @@ export class Terminal implements ITerminal {
     this._render();
   }
 
-  public appendRow (texts: text.row) {
+  public appendRow (texts: text.Row) {
     this.rows.push(texts);
     this._updateCachedRows();
   }
@@ -149,20 +149,20 @@ export class Terminal implements ITerminal {
 
   private _updateCachedRows () {
     const start = window.performance.now();
-    this._cachedRows = this.rows.reduce((accum: text.rows, cur: text.row) => {
+    this._cachedRows = this.rows.reduce((accum: text.Rows, cur: text.Row) => {
       const splitRows = this._splitRowWithLimit(cur);
       return accum.concat(splitRows);
-    }, [] as text.rows);
+    }, [] as text.Rows);
     console.log(performance.now() - start);
   }
 
-  private _splitRowWithLimit (row: text.row) {
+  private _splitRowWithLimit (row: text.Row) {
     const { rowLeftMargin, rowRightMargin } = this.config;
     const availableWidth = this.container.offsetWidth - rowLeftMargin - rowRightMargin;
-    const rs = [] as text.rows;
+    const rs = [] as text.Rows;
     let tmpWidth = 0;
 
-    rs.push([] as text.row);
+    rs.push([] as text.Row);
 
     for (let ti = 0; ti < row.length; ti++) {
       const t = row[ti];
@@ -179,7 +179,7 @@ export class Terminal implements ITerminal {
           lastTextObject.text += c;
         }
         else {
-          const newRow = [] as text.row;
+          const newRow = [] as text.Row;
           const newTextObject = { ...t, text: c };
           newRow.push(newTextObject);
           rs.push(newRow);

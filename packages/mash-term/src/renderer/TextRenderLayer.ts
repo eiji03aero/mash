@@ -19,7 +19,7 @@ export class TextRenderLayer extends BaseRenderLayer {
     this.ctx.restore();
   }
 
-  renderRow (row: text.row, index: number, config: IConfig) {
+  renderRow (row: text.Row, index: number, config: IConfig) {
     let xPosition: number = config.rowLeftMargin;
     const yPosition = (index + 1) * this.terminal.rowHeight - this.terminal.config.rowBottomMargin;
     this.ctx.save();

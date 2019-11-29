@@ -7,6 +7,7 @@ export declare const Tokens: {
     IDENT: string;
     INT: string;
     STRING: string;
+    COMMANDLINE: string;
     ASSIGN: string;
     COMMA: string;
     COLON: string;

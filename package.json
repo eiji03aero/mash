@@ -17,7 +17,7 @@
     "bootstrap": "lerna clean --yes && lerna bootstrap && lerna link",
     "build": "lerna run build",
     "build:fs": "(cd packages/mash-filesystem && yarn build)",
-    "test": "jest",
+    "test": "lerna run test --stream",
     "dev:t": "(cd packages/mash-term && yarn run dev)",
     "test:watch:m": "(cd packages/mash && yarn run test:watch)",
     "test:watch:fs": "(cd packages/mash-filesystem && yarn run test:watch)"
