@@ -15,14 +15,14 @@
 
 ```
 - whole
-  - should create package provide environment including filesystem?
+  - [WIP] should create package provide environment including filesystem?
+    - not to do this for now. keep them inside mash
   - should change how text treated? should be just string with dedicated escape sequence?
 - mash
   - have util function to parse command line option arguments for commands
   - [WIP] refactor token for commandline and program
     - kind of don't know what to do
   - commands (along with test)
-    - pwd
     - dirname
     - basename
     - touch
@@ -39,8 +39,14 @@
     - test command
     - grep command
     - pipe
+    - redirect
     - argument variables
     - let user defined script run
+- mash-filesystem
+  - serialize nodes for saving
 - mash-common
-  - refactor
+- web
+  - create basis
+    - react
+    - restful? graphql?
 ```
