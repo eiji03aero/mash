@@ -23,8 +23,6 @@
   - [WIP] refactor token for commandline and program
     - kind of don't know what to do
   - commands (along with test)
-    - dirname
-    - basename
     - touch
     - mkdir
     - ls
