@@ -34,9 +34,11 @@ export interface IFile extends IFileSystemNode {
     content: string;
 }
 export interface IFileSystem {
+    currentDirectory: IDirectory;
     changeCurrentDirectory(args: {
         path: string;
     }): IFileSystemCommandResult;
+    resolveAbsolutePath(node: IFileSystemNode): string;
     createFile(args: {
         path: string;
         params: IFileBasis;

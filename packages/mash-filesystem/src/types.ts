@@ -1,5 +1,6 @@
 import { Errors } from 'mash-common';
 
+
 export interface IFileSystemNodeBasis {
   name?: string;
   parentNode?: IFileSystemNode;
@@ -45,7 +46,9 @@ export interface IFile extends IFileSystemNode {
 
 
 export interface IFileSystem {
+  currentDirectory: IDirectory;
   changeCurrentDirectory(args: { path: string }): IFileSystemCommandResult;
+  resolveAbsolutePath(node: IFileSystemNode): string;
   createFile(args: { path: string, params: IFileBasis }): IFileSystemCommandResult;
   updateFile(args: { path: string, params: IFileBasis }): IFileSystemCommandResult;
   deleteFile(args: { path: string }): IFileSystemCommandResult;

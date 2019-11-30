@@ -16,6 +16,7 @@
   "scripts": {
     "bootstrap": "lerna clean --yes && lerna bootstrap && lerna link",
     "build": "lerna run build",
+    "build:watch": "lerna run --parallel build:watch",
     "build:fs": "(cd packages/mash-filesystem && yarn build)",
     "test": "lerna run test --stream",
     "dev:t": "(cd packages/mash-term && yarn run dev)",

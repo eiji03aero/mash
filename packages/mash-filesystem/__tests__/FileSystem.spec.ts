@@ -25,6 +25,11 @@ describe('FileSystem', () => {
     expect(fs.currentDirectory.name).toEqual('home');
   });
 
+  it('should resolve absolute path for node', () => {
+    const result = fs.resolveAbsolutePath(fs.currentDirectory);
+    expect(result).toEqual('/home');
+  });
+
   it('should create file', () => {
     const fileParams = {
       name: 'application_child',

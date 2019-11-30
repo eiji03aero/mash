@@ -1,8 +1,8 @@
-import { IDirectoryBasis, IDirectory, IFileBasis, IFile, IFileSystemCommandResult, IFileSystem } from './types';
+import { IDirectoryBasis, IDirectory, IFileBasis, IFile, IFileSystemNode, IFileSystemCommandResult, IFileSystem } from './types';
 export declare class FileSystem implements IFileSystem {
-    private static _instance;
     currentDirectory: IDirectory;
     root: IDirectory;
+    private static _instance;
     static bootstrap(): FileSystem;
     static get instance(): FileSystem;
     static reboot(): FileSystem;
@@ -10,6 +10,7 @@ export declare class FileSystem implements IFileSystem {
     changeCurrentDirectory(args: {
         path: string;
     }): IFileSystemCommandResult;
+    resolveAbsolutePath(node: IFileSystemNode): string;
     createFile(args: {
         path: string;
         params: IFileBasis;
@@ -41,6 +42,7 @@ export declare class FileSystem implements IFileSystem {
         path: string;
     }): IFileSystemCommandResult;
     private _splitLastFragmentFromPath;
+    private _isRootDirectory;
     private _resolveNodeFromPath;
 }
 //# sourceMappingURL=FileSystem.d.ts.map

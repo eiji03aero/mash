@@ -40,6 +40,15 @@ var FileSystem = /** @class */ (function () {
         this.currentDirectory = node;
         return {};
     };
+    FileSystem.prototype.resolveAbsolutePath = function (node) {
+        var currentNode = node;
+        var nodeNames = [node.name];
+        while (!this._isRootDirectory(currentNode.parentNode)) {
+            currentNode = currentNode.parentNode;
+            nodeNames.unshift(currentNode.name);
+        }
+        return "/" + nodeNames.join('/');
+    };
     FileSystem.prototype.createFile = function (args) {
         var path = args.path, params = args.params;
         var _a = this._resolveNodeFromPath(path), error = _a.error, parentDirectory = _a.node;
@@ -137,9 +146,9 @@ var FileSystem = /** @class */ (function () {
             lastFragment: path.slice(lastIndex + 1),
         };
     };
-    // private isRoot (node: FileSystemNode): boolean {
-    //   return node === this.root;
-    // }
+    FileSystem.prototype._isRootDirectory = function (node) {
+        return node === this.root;
+    };
     FileSystem.prototype._resolveNodeFromPath = function (path) {
         var isAbsolutePath = path[0] === '/';
         var resolvedNode;

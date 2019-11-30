@@ -15,6 +15,7 @@
   ],
   "scripts": {
     "build": "rm -rf ./lib && tsc",
+    "build:watch": "tsc --watch",
     "test": "jest",
     "test:watch": "jest --watch"
   },

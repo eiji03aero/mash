@@ -5,6 +5,7 @@ import {
   IDirectory,
   IFileBasis,
   IFile,
+  IFileSystemNode,
   IFileSystemCommandResult,
   IFileSystem
 } from './types';
@@ -15,9 +16,9 @@ import { File } from "./File";
 import { initialFileNodes, homeDirectory } from "./assets/initialFileNodes";
 
 export class FileSystem implements IFileSystem {
+  public currentDirectory: IDirectory;
+  public root: IDirectory;
   private static _instance: FileSystem;
-  currentDirectory: IDirectory;
-  root: IDirectory;
 
   static bootstrap () {
     this._instance = new FileSystem();
@@ -55,6 +56,18 @@ export class FileSystem implements IFileSystem {
 
     this.currentDirectory = node as Directory;
     return {};
+  }
+
+  public resolveAbsolutePath (node: IFileSystemNode) {
+    let currentNode = node;
+    const nodeNames = [node.name];
+
+    while (!this._isRootDirectory(currentNode.parentNode as IFileSystemNode)) {
+      currentNode = currentNode.parentNode as IFileSystemNode;
+      nodeNames.unshift(currentNode.name);
+    }
+
+    return `/${nodeNames.join('/')}`;
   }
 
   public createFile (args : {
@@ -205,9 +218,9 @@ export class FileSystem implements IFileSystem {
     };
   }
 
-  // private isRoot (node: FileSystemNode): boolean {
-  //   return node === this.root;
-  // }
+  private _isRootDirectory (node: FileSystemNode): boolean {
+    return node === this.root;
+  }
 
   private _resolveNodeFromPath (
     path: string
