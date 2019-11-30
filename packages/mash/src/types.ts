@@ -53,7 +53,7 @@ export enum ExitStatus {
 }
 
 export type CommandPayload = {
-  args: IAstNode[];
+  args: string[];
   fileSystem: IFileSystem;
   environment: IEnvironment;
 }

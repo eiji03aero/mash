@@ -25,10 +25,10 @@
     - echo
     - ls
     - pwd
-    - mkdir
-    - touch
     - dirname
     - basename
+    - mkdir
+    - touch
     - cat
     - rm
       - option -rf

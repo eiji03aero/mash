@@ -56,7 +56,7 @@ export class Evaluator implements IEvaluator {
     }
 
     func({
-      args: commandLine.args,
+      args: commandLine.args.map((a: IAstNode) => a.toString()),
       fileSystem: this._fileSystem,
       environment: this._environment
     });

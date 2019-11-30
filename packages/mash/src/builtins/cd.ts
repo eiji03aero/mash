@@ -12,7 +12,7 @@ export default ({
     return;
   }
 
-  const path = args[1].tokenLiteral();
+  const path = args[1];
 
   const { error } = fileSystem.changeCurrentDirectory({ path });
 
