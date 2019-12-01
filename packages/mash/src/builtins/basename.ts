@@ -1,6 +1,4 @@
-import {
-  CommandPayload
-} from '../types';
+import { CommandPayload } from '../types';
 
 export default ({
   args,

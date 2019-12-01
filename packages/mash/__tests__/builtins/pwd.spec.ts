@@ -1,8 +1,8 @@
-import * as context from '../shared/context';
+import { sharedContext } from '../shared';
 
 describe('builtins.pwd', () => {
   it('should print the current working directory', () => {
-    const { env, onWriteMock } = context.hasMockEnvironment();
+    const { env, onWriteMock } = sharedContext.hasMockEnvironment();
     env.eval('pwd');
     expect(onWriteMock).toBeCalledWith([{ text: '/home' }]);
   });
