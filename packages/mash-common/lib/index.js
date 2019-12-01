@@ -15,4 +15,6 @@ var text = __importStar(require("./text"));
 exports.text = text;
 var Errors = __importStar(require("./Errors"));
 exports.Errors = Errors;
+var paths = __importStar(require("./paths"));
+exports.paths = paths;
 //# sourceMappingURL=index.js.map

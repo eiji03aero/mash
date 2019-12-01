@@ -16,12 +16,13 @@
   "scripts": {
     "bootstrap": "lerna clean --yes && lerna bootstrap && lerna link",
     "build": "lerna run build",
-    "build:watch": "lerna run --parallel build:watch",
+    "build:watch": "lerna run --stream build:watch",
     "build:fs": "(cd packages/mash-filesystem && yarn build)",
     "test": "lerna run test --stream",
     "dev:t": "(cd packages/mash-term && yarn run dev)",
     "test:watch:m": "(cd packages/mash && yarn run test:watch)",
-    "test:watch:fs": "(cd packages/mash-filesystem && yarn run test:watch)"
+    "test:watch:fs": "(cd packages/mash-filesystem && yarn run test:watch)",
+    "test:watch:c": "(cd packages/mash-common && yarn run test:watch)"
   },
   "devDependencies": {
     "@types/jest": "^24.0.11",

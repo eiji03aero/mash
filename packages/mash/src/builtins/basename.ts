@@ -1,3 +1,4 @@
+import { paths } from 'mash-common';
 import { CommandPayload } from '../types';
 
 export default ({
@@ -9,10 +10,7 @@ export default ({
     return;
   }
 
-  const path = args[1];
-  const split = path.split('/');
-
   environment.writeln([
-    { text: split[split.length - 1] }
+    { text: paths.basename(args[1]) }
   ]);
 };

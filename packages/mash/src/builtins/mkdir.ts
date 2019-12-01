@@ -13,7 +13,7 @@ export default ({
 
   const pathName = args[1];
 
-  const { error } = fileSystem.createFile({
+  const { error } = fileSystem.createDirectory({
     path: paths.dirname(pathName),
     params: { name: paths.basename(pathName) }
   });

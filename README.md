@@ -23,7 +23,6 @@
   - [WIP] refactor token for commandline and program
     - kind of don't know what to do
   - commands (along with test)
-    - touch
     - mkdir
     - ls
     - cat
@@ -43,6 +42,9 @@
 - mash-filesystem
   - serialize nodes for saving
 - mash-common
+  - paths util
+    - dirname
+    - basename
 - web
   - create basis
     - react
