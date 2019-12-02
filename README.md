@@ -23,7 +23,6 @@
   - [WIP] refactor token for commandline and program
     - kind of don't know what to do
   - commands (along with test)
-    - mkdir
     - ls
     - cat
     - rm
@@ -33,6 +32,8 @@
   - write test
   - tbd features
     - string interpolation
+    - ls command
+      - align feature
     - test command
     - grep command
     - pipe
@@ -49,4 +50,16 @@
   - create basis
     - react
     - restful? graphql?
+```
+
+## Structure
+
+```
+
+- Environment
+  - exitStatus
+  - stdin
+  - stdout
+  - stderr
+  - screenWidth
 ```

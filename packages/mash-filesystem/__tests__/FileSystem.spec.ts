@@ -25,6 +25,12 @@ describe('FileSystem', () => {
     expect(fs.currentDirectory.name).toEqual('home');
   });
 
+  it('should resolve node from path', () => {
+    const result = fs.resolveNodeFromPath('/home');
+    expect(result).not.toHaveProperty('error');
+    expect(result.node!.name).toEqual('home');
+  });
+
   it('should resolve absolute path for node', () => {
     const result = fs.resolveAbsolutePath(fs.currentDirectory);
     expect(result).toEqual('/home');

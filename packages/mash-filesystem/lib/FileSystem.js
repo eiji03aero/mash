@@ -32,7 +32,7 @@ var FileSystem = /** @class */ (function () {
     };
     FileSystem.prototype.changeCurrentDirectory = function (args) {
         var path = args.path;
-        var _a = this._resolveNodeFromPath(path), error = _a.error, node = _a.node;
+        var _a = this.resolveNodeFromPath(path), error = _a.error, node = _a.node;
         if (error)
             return { error: error };
         if (!node || !node.isDirectory)
@@ -40,116 +40,7 @@ var FileSystem = /** @class */ (function () {
         this.currentDirectory = node;
         return {};
     };
-    FileSystem.prototype.resolveAbsolutePath = function (node) {
-        var currentNode = node;
-        var nodeNames = [node.name];
-        while (!this._isRootDirectory(currentNode.parentNode)) {
-            currentNode = currentNode.parentNode;
-            nodeNames.unshift(currentNode.name);
-        }
-        return "/" + nodeNames.join('/');
-    };
-    FileSystem.prototype.createFile = function (args) {
-        var path = args.path, params = args.params;
-        var _a = this._resolveNodeFromPath(path), error = _a.error, parentDirectory = _a.node;
-        if (error)
-            return { error: error };
-        if (!parentDirectory || !parentDirectory.isDirectory)
-            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
-        var node = new File_1.File(params);
-        parentDirectory.addChild(node);
-        return { node: node };
-    };
-    FileSystem.prototype.updateFile = function (args) {
-        var path = args.path, params = args.params;
-        var _a = this._splitLastFragmentFromPath(path), parentPath = _a.parentPath, lastFragment = _a.lastFragment;
-        var _b = this._resolveNodeFromPath(parentPath), error = _b.error, parentDirectory = _b.node;
-        if (error)
-            return { error: error };
-        if (!parentDirectory || !parentDirectory.isDirectory) {
-            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
-        }
-        if (!parentDirectory.containsByName(lastFragment)) {
-            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
-        }
-        var node = parentDirectory.findByName(lastFragment);
-        node.update(params);
-        return { node: node };
-    };
-    FileSystem.prototype.deleteFile = function (args) {
-        var path = args.path;
-        var _a = this._splitLastFragmentFromPath(path), parentPath = _a.parentPath, lastFragment = _a.lastFragment;
-        var _b = this._resolveNodeFromPath(parentPath), error = _b.error, parentDirectory = _b.node;
-        if (error)
-            return { error: error };
-        if (!parentDirectory || !parentDirectory.isDirectory) {
-            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
-        }
-        if (!parentDirectory.containsByName(lastFragment)) {
-            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
-        }
-        var node = parentDirectory.findByName(lastFragment);
-        parentDirectory.removeChild(node);
-        return {};
-    };
-    FileSystem.prototype.createDirectory = function (args) {
-        var path = args.path, params = args.params;
-        var _a = this._resolveNodeFromPath(path), error = _a.error, parentDirectory = _a.node;
-        if (error)
-            return { error: error };
-        if (!parentDirectory || !parentDirectory.isDirectory)
-            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
-        var node = new Directory_1.Directory(params);
-        parentDirectory.addChild(node);
-        return { node: node };
-    };
-    FileSystem.prototype.updateDirectory = function (args) {
-        var path = args.path, params = args.params;
-        var _a = this._splitLastFragmentFromPath(path), parentPath = _a.parentPath, lastFragment = _a.lastFragment;
-        var _b = this._resolveNodeFromPath(parentPath), error = _b.error, parentDirectory = _b.node;
-        if (error)
-            return { error: error };
-        if (!parentDirectory || !parentDirectory.isDirectory) {
-            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
-        }
-        if (!parentDirectory.containsByName(lastFragment)) {
-            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
-        }
-        var node = parentDirectory.findByName(lastFragment);
-        node.update(params);
-        return { node: node };
-    };
-    FileSystem.prototype.deleteDirectory = function (args) {
-        var path = args.path;
-        var _a = this._splitLastFragmentFromPath(path), parentPath = _a.parentPath, lastFragment = _a.lastFragment;
-        var _b = this._resolveNodeFromPath(parentPath), error = _b.error, parentDirectory = _b.node;
-        if (error)
-            return { error: error };
-        if (!parentDirectory || !parentDirectory.isDirectory) {
-            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
-        }
-        if (!parentDirectory.containsByName(lastFragment)) {
-            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
-        }
-        var node = parentDirectory.findByName(lastFragment);
-        parentDirectory.removeChild(node);
-        return {};
-    };
-    FileSystem.prototype._splitLastFragmentFromPath = function (path) {
-        var lastIndex = path[path.length - 1] === '/'
-            ? path.lastIndexOf('/', path.length - 2)
-            : path.lastIndexOf('/');
-        return {
-            parentPath: lastIndex === -1
-                ? '.'
-                : path.slice(0, lastIndex),
-            lastFragment: path.slice(lastIndex + 1),
-        };
-    };
-    FileSystem.prototype._isRootDirectory = function (node) {
-        return node === this.root;
-    };
-    FileSystem.prototype._resolveNodeFromPath = function (path) {
+    FileSystem.prototype.resolveNodeFromPath = function (path) {
         var isAbsolutePath = path[0] === '/';
         var resolvedNode;
         var fragments;
@@ -193,6 +84,115 @@ var FileSystem = /** @class */ (function () {
             }
         }
         return { node: resolvedNode };
+    };
+    FileSystem.prototype.resolveAbsolutePath = function (node) {
+        var currentNode = node;
+        var nodeNames = [node.name];
+        while (!this._isRootDirectory(currentNode.parentNode)) {
+            currentNode = currentNode.parentNode;
+            nodeNames.unshift(currentNode.name);
+        }
+        return "/" + nodeNames.join('/');
+    };
+    FileSystem.prototype.createFile = function (args) {
+        var path = args.path, params = args.params;
+        var _a = this.resolveNodeFromPath(path), error = _a.error, parentDirectory = _a.node;
+        if (error)
+            return { error: error };
+        if (!parentDirectory || !parentDirectory.isDirectory)
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
+        var node = new File_1.File(params);
+        parentDirectory.addChild(node);
+        return { node: node };
+    };
+    FileSystem.prototype.updateFile = function (args) {
+        var path = args.path, params = args.params;
+        var _a = this._splitLastFragmentFromPath(path), parentPath = _a.parentPath, lastFragment = _a.lastFragment;
+        var _b = this.resolveNodeFromPath(parentPath), error = _b.error, parentDirectory = _b.node;
+        if (error)
+            return { error: error };
+        if (!parentDirectory || !parentDirectory.isDirectory) {
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
+        }
+        if (!parentDirectory.containsByName(lastFragment)) {
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
+        }
+        var node = parentDirectory.findByName(lastFragment);
+        node.update(params);
+        return { node: node };
+    };
+    FileSystem.prototype.deleteFile = function (args) {
+        var path = args.path;
+        var _a = this._splitLastFragmentFromPath(path), parentPath = _a.parentPath, lastFragment = _a.lastFragment;
+        var _b = this.resolveNodeFromPath(parentPath), error = _b.error, parentDirectory = _b.node;
+        if (error)
+            return { error: error };
+        if (!parentDirectory || !parentDirectory.isDirectory) {
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
+        }
+        if (!parentDirectory.containsByName(lastFragment)) {
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
+        }
+        var node = parentDirectory.findByName(lastFragment);
+        parentDirectory.removeChild(node);
+        return {};
+    };
+    FileSystem.prototype.createDirectory = function (args) {
+        var path = args.path, params = args.params;
+        var _a = this.resolveNodeFromPath(path), error = _a.error, parentDirectory = _a.node;
+        if (error)
+            return { error: error };
+        if (!parentDirectory || !parentDirectory.isDirectory)
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
+        var node = new Directory_1.Directory(params);
+        parentDirectory.addChild(node);
+        return { node: node };
+    };
+    FileSystem.prototype.updateDirectory = function (args) {
+        var path = args.path, params = args.params;
+        var _a = this._splitLastFragmentFromPath(path), parentPath = _a.parentPath, lastFragment = _a.lastFragment;
+        var _b = this.resolveNodeFromPath(parentPath), error = _b.error, parentDirectory = _b.node;
+        if (error)
+            return { error: error };
+        if (!parentDirectory || !parentDirectory.isDirectory) {
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
+        }
+        if (!parentDirectory.containsByName(lastFragment)) {
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
+        }
+        var node = parentDirectory.findByName(lastFragment);
+        node.update(params);
+        return { node: node };
+    };
+    FileSystem.prototype.deleteDirectory = function (args) {
+        var path = args.path;
+        var _a = this._splitLastFragmentFromPath(path), parentPath = _a.parentPath, lastFragment = _a.lastFragment;
+        var _b = this.resolveNodeFromPath(parentPath), error = _b.error, parentDirectory = _b.node;
+        if (error)
+            return { error: error };
+        if (!parentDirectory || !parentDirectory.isDirectory) {
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
+        }
+        if (!parentDirectory.containsByName(lastFragment)) {
+            return { error: mash_common_1.Errors.Factory.noSuchFileOrDirectory(path) };
+        }
+        var node = parentDirectory.findByName(lastFragment);
+        parentDirectory.removeChild(node);
+        return {};
+    };
+    FileSystem.prototype._splitLastFragmentFromPath = function (path) {
+        var lastIndex = path[path.length - 1] === '/'
+            ? path.lastIndexOf('/', path.length - 2)
+            : path.lastIndexOf('/');
+        return {
+            parentPath: lastIndex === -1
+                ? '.'
+                : path.slice(0, lastIndex),
+            lastFragment: path.slice(lastIndex + 1),
+        };
+    };
+    FileSystem.prototype._isRootDirectory = function (node) {
+        return node === this.root;
     };
     return FileSystem;
 }());

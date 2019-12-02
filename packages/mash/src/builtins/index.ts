@@ -7,6 +7,7 @@ import echo from './echo';
 import pwd from './pwd';
 import touch from './touch';
 import mkdir from './mkdir';
+import ls from './ls';
 
 export const builtins: ICommandMap = {
   basename,
@@ -16,4 +17,5 @@ export const builtins: ICommandMap = {
   pwd,
   touch,
   mkdir,
+  ls,
 };

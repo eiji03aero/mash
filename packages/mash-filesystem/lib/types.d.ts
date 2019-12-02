@@ -38,31 +38,35 @@ export interface IFileSystem {
     changeCurrentDirectory(args: {
         path: string;
     }): IFileSystemCommandResult;
+    resolveNodeFromPath(path: string): IFileSystemCommandResultNode;
     resolveAbsolutePath(node: IFileSystemNode): string;
     createFile(args: {
         path: string;
         params: IFileBasis;
-    }): IFileSystemCommandResult;
+    }): IFileSystemCommandResultNode;
     updateFile(args: {
         path: string;
         params: IFileBasis;
-    }): IFileSystemCommandResult;
+    }): IFileSystemCommandResultNode;
     deleteFile(args: {
         path: string;
-    }): IFileSystemCommandResult;
+    }): IFileSystemCommandResultNode;
     createDirectory(args: {
         path: string;
         params: IDirectoryBasis;
-    }): IFileSystemCommandResult;
+    }): IFileSystemCommandResultNode;
     updateDirectory(args: {
         path: string;
         params: IDirectoryBasis;
-    }): IFileSystemCommandResult;
+    }): IFileSystemCommandResultNode;
     deleteDirectory(args: {
         path: string;
-    }): IFileSystemCommandResult;
+    }): IFileSystemCommandResultNode;
 }
 export interface IFileSystemCommandResult {
     error?: Errors.Base;
+}
+export interface IFileSystemCommandResultNode extends IFileSystemCommandResult {
+    node?: IFileSystemNode;
 }
 //# sourceMappingURL=types.d.ts.map

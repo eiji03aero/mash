@@ -48,15 +48,20 @@ export interface IFile extends IFileSystemNode {
 export interface IFileSystem {
   currentDirectory: IDirectory;
   changeCurrentDirectory(args: { path: string }): IFileSystemCommandResult;
+  resolveNodeFromPath (path: string): IFileSystemCommandResultNode;
   resolveAbsolutePath(node: IFileSystemNode): string;
-  createFile(args: { path: string, params: IFileBasis }): IFileSystemCommandResult;
-  updateFile(args: { path: string, params: IFileBasis }): IFileSystemCommandResult;
-  deleteFile(args: { path: string }): IFileSystemCommandResult;
-  createDirectory(args: { path: string, params: IDirectoryBasis }): IFileSystemCommandResult;
-  updateDirectory(args: { path: string, params: IDirectoryBasis }): IFileSystemCommandResult;
-  deleteDirectory(args: { path: string }): IFileSystemCommandResult;
+  createFile(args: { path: string, params: IFileBasis }): IFileSystemCommandResultNode;
+  updateFile(args: { path: string, params: IFileBasis }): IFileSystemCommandResultNode;
+  deleteFile(args: { path: string }): IFileSystemCommandResultNode;
+  createDirectory(args: { path: string, params: IDirectoryBasis }): IFileSystemCommandResultNode;
+  updateDirectory(args: { path: string, params: IDirectoryBasis }): IFileSystemCommandResultNode;
+  deleteDirectory(args: { path: string }): IFileSystemCommandResultNode;
 }
 
 export interface IFileSystemCommandResult {
   error?: Errors.Base;
+}
+
+export interface IFileSystemCommandResultNode extends IFileSystemCommandResult {
+  node?: IFileSystemNode;
 }

@@ -1,4 +1,4 @@
-import { IDirectoryBasis, IDirectory, IFileBasis, IFile, IFileSystemNode, IFileSystemCommandResult, IFileSystem } from './types';
+import { IDirectoryBasis, IDirectory, IFileBasis, IFileSystemNode, IFileSystemCommandResult, IFileSystemCommandResultNode, IFileSystem } from './types';
 export declare class FileSystem implements IFileSystem {
     currentDirectory: IDirectory;
     root: IDirectory;
@@ -10,39 +10,31 @@ export declare class FileSystem implements IFileSystem {
     changeCurrentDirectory(args: {
         path: string;
     }): IFileSystemCommandResult;
+    resolveNodeFromPath(path: string): IFileSystemCommandResultNode;
     resolveAbsolutePath(node: IFileSystemNode): string;
     createFile(args: {
         path: string;
         params: IFileBasis;
-    }): IFileSystemCommandResult & {
-        node?: IFile;
-    };
+    }): IFileSystemCommandResultNode;
     updateFile(args: {
         path: string;
         params: IFileBasis;
-    }): IFileSystemCommandResult & {
-        node?: IFile;
-    };
+    }): IFileSystemCommandResultNode;
     deleteFile(args: {
         path: string;
     }): IFileSystemCommandResult;
     createDirectory(args: {
         path: string;
         params: IDirectoryBasis;
-    }): IFileSystemCommandResult & {
-        node?: IDirectory;
-    };
+    }): IFileSystemCommandResultNode;
     updateDirectory(args: {
         path: string;
         params: IDirectoryBasis;
-    }): IFileSystemCommandResult & {
-        node?: IDirectory;
-    };
+    }): IFileSystemCommandResultNode;
     deleteDirectory(args: {
         path: string;
     }): IFileSystemCommandResult;
     private _splitLastFragmentFromPath;
     private _isRootDirectory;
-    private _resolveNodeFromPath;
 }
 //# sourceMappingURL=FileSystem.d.ts.map
