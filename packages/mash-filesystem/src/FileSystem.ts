@@ -8,7 +8,8 @@ import {
   IFileSystemNode,
   IFileSystemCommandResult,
   IFileSystemCommandResultNode,
-  IFileSystem
+  IFileSystem,
+  FileSystemCommandOption
 } from './types';
 import { FileSystemNode } from "./FileSystemNode";
 import { Directory } from "./Directory";
@@ -61,7 +62,7 @@ export class FileSystem implements IFileSystem {
 
   public resolveNodeFromPath (
     path: string
-  ): IFileSystemCommandResultNode {
+  ): IFileSystemCommandResultNode<IFileSystemNode> {
     const isAbsolutePath = path[0] === '/';
     let resolvedNode: FileSystemNode;
     let fragments: string[];
@@ -125,7 +126,7 @@ export class FileSystem implements IFileSystem {
   public createFile (args : {
     path: string,
     params: IFileBasis
-  }) : IFileSystemCommandResultNode {
+  }) : IFileSystemCommandResultNode<IFile> {
     const { path, params } = args;
     const { error, node: parentDirectory } = this.resolveNodeFromPath(path);
 
@@ -141,7 +142,7 @@ export class FileSystem implements IFileSystem {
   public updateFile (args : {
     path: string,
     params: IFileBasis
-  }) : IFileSystemCommandResultNode {
+  }) : IFileSystemCommandResultNode<IFile> {
     const { path, params } = args;
     const { parentPath, lastFragment } = this._splitLastFragmentFromPath(path);
     const { error, node: parentDirectory } = this.resolveNodeFromPath(parentPath);
@@ -186,7 +187,7 @@ export class FileSystem implements IFileSystem {
   public createDirectory (args : {
     path: string,
     params: IDirectoryBasis
-  }) : IFileSystemCommandResultNode {
+  }) : IFileSystemCommandResultNode<IDirectory> {
     const { path, params } = args;
     const { error, node: parentDirectory } = this.resolveNodeFromPath(path);
 
@@ -202,7 +203,7 @@ export class FileSystem implements IFileSystem {
   public updateDirectory (args : {
     path: string,
     params: IDirectoryBasis
-  }) : IFileSystemCommandResultNode {
+  }) : IFileSystemCommandResultNode<IDirectory> {
     const { path, params } = args;
     const { parentPath, lastFragment } = this._splitLastFragmentFromPath(path);
     const { error, node: parentDirectory } = this.resolveNodeFromPath(parentPath);
@@ -241,6 +242,29 @@ export class FileSystem implements IFileSystem {
 
     const node = (<IDirectory>parentDirectory).findByName(lastFragment) as IDirectory;
     (<IDirectory>parentDirectory).removeChild(node);
+    return { };
+  }
+
+  public deleteNodeFromPath (
+    path: string,
+    option?: FileSystemCommandOption
+  ): IFileSystemCommandResult {
+    option = option || {} as FileSystemCommandOption;
+    const { error, node } = this.resolveNodeFromPath(path);
+    if (error) return { error };
+
+    if (node!.isFile) {
+      const { error } = this.deleteFile({ path });
+      if (error) return { error };
+    }
+    else if (node!.isDirectory) {
+      if (!option.recursive) {
+        return { error: Errors.Factory.standard(`${node!.name}: is a directory`) };
+      }
+      const { error } = this.deleteDirectory({ path });
+      if (error) return { error };
+    }
+
     return { };
   }
 

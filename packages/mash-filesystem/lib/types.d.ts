@@ -9,6 +9,7 @@ export interface IFileSystemNode {
     parentNode?: IFileSystemNode;
     createdAt: string;
     updatedAt: string;
+    isFile: boolean;
     isDirectory: boolean;
     update(args: IFileSystemNodeBasis): void;
     setParentNode(node: IFileSystemNode): void;
@@ -38,35 +39,39 @@ export interface IFileSystem {
     changeCurrentDirectory(args: {
         path: string;
     }): IFileSystemCommandResult;
-    resolveNodeFromPath(path: string): IFileSystemCommandResultNode;
+    resolveNodeFromPath(path: string): IFileSystemCommandResultNode<IFileSystemNode>;
     resolveAbsolutePath(node: IFileSystemNode): string;
     createFile(args: {
         path: string;
         params: IFileBasis;
-    }): IFileSystemCommandResultNode;
+    }): IFileSystemCommandResultNode<IFile>;
     updateFile(args: {
         path: string;
         params: IFileBasis;
-    }): IFileSystemCommandResultNode;
+    }): IFileSystemCommandResultNode<IFile>;
     deleteFile(args: {
         path: string;
-    }): IFileSystemCommandResultNode;
+    }): IFileSystemCommandResultNode<IFile>;
     createDirectory(args: {
         path: string;
         params: IDirectoryBasis;
-    }): IFileSystemCommandResultNode;
+    }): IFileSystemCommandResultNode<IDirectory>;
     updateDirectory(args: {
         path: string;
         params: IDirectoryBasis;
-    }): IFileSystemCommandResultNode;
+    }): IFileSystemCommandResultNode<IDirectory>;
     deleteDirectory(args: {
         path: string;
-    }): IFileSystemCommandResultNode;
+    }): IFileSystemCommandResultNode<IDirectory>;
+    deleteNodeFromPath(path: string, option?: {}): IFileSystemCommandResult;
 }
+export declare type FileSystemCommandOption = {
+    recursive?: boolean;
+};
 export interface IFileSystemCommandResult {
     error?: Errors.Base;
 }
-export interface IFileSystemCommandResultNode extends IFileSystemCommandResult {
-    node?: IFileSystemNode;
+export interface IFileSystemCommandResultNode<T extends IFileSystemNode> extends IFileSystemCommandResult {
+    node?: T;
 }
 //# sourceMappingURL=types.d.ts.map

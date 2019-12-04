@@ -153,4 +153,36 @@ describe('FileSystem', () => {
     expect(result).not.toHaveProperty('error');
     expect(fs.currentDirectory.containsByName(directoryParams.name)).toBe(false);
   });
+
+  it('should delete file from path', () => {
+    const fileParams = {
+      name: 'file',
+      content: 'application content'
+    };
+    fs.createFile({
+      path: '.',
+      params: fileParams
+    });
+
+    const result = fs.deleteNodeFromPath(`./${fileParams.name}`);
+
+    expect(result).not.toHaveProperty('error');
+    expect(fs.currentDirectory.containsByName(fileParams.name)).toBe(false);
+  })
+
+  it('should delete directory from path', () => {
+    const fileParams = {
+      name: 'file',
+      content: 'application content'
+    };
+    fs.createFile({
+      path: '.',
+      params: fileParams
+    });
+
+    const result = fs.deleteNodeFromPath(`./${fileParams.name}`);
+
+    expect(result).not.toHaveProperty('error');
+    expect(fs.currentDirectory.containsByName(fileParams.name)).toBe(false);
+  })
 });

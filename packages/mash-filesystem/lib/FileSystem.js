@@ -180,6 +180,26 @@ var FileSystem = /** @class */ (function () {
         parentDirectory.removeChild(node);
         return {};
     };
+    FileSystem.prototype.deleteNodeFromPath = function (path, option) {
+        option = option || {};
+        var _a = this.resolveNodeFromPath(path), error = _a.error, node = _a.node;
+        if (error)
+            return { error: error };
+        if (node.isFile) {
+            var error_1 = this.deleteFile({ path: path }).error;
+            if (error_1)
+                return { error: error_1 };
+        }
+        else if (node.isDirectory) {
+            if (!option.recursive) {
+                return { error: mash_common_1.Errors.Factory.standard(node.name + ": is a directory") };
+            }
+            var error_2 = this.deleteDirectory({ path: path }).error;
+            if (error_2)
+                return { error: error_2 };
+        }
+        return {};
+    };
     FileSystem.prototype._splitLastFragmentFromPath = function (path) {
         var lastIndex = path[path.length - 1] === '/'
             ? path.lastIndexOf('/', path.length - 2)

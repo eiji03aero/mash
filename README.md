@@ -24,12 +24,13 @@
     - kind of don't know what to do
   - commands (along with test)
     - rm
-      - option -rf
+      - option -r
         - have to ponder on how to parse
       - environment should have yesno function
-  - write test
   - tbd features
     - string interpolation
+    - rm -f
+      - need to create access to prompt for commands
     - ls command
       - align feature
     - test command

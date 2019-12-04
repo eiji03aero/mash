@@ -58,6 +58,15 @@ export type CommandPayload = {
   environment: IEnvironment;
 }
 
+export type CommandOptionMap = {
+  [index: string]: string | boolean
+}
+
+export type ParsedCommandArgs = {
+  args: string[];
+  options: CommandOptionMap;
+}
+
 export type Command = (args: CommandPayload) => void;
 
 export interface ICommandMap {

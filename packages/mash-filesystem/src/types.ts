@@ -12,6 +12,7 @@ export interface IFileSystemNode {
   parentNode?: IFileSystemNode;
   createdAt: string;
   updatedAt: string;
+  isFile: boolean;
   isDirectory: boolean;
   update(args: IFileSystemNodeBasis): void;
   setParentNode(node: IFileSystemNode): void;
@@ -48,20 +49,27 @@ export interface IFile extends IFileSystemNode {
 export interface IFileSystem {
   currentDirectory: IDirectory;
   changeCurrentDirectory(args: { path: string }): IFileSystemCommandResult;
-  resolveNodeFromPath (path: string): IFileSystemCommandResultNode;
+  resolveNodeFromPath (path: string): IFileSystemCommandResultNode<IFileSystemNode>;
   resolveAbsolutePath(node: IFileSystemNode): string;
-  createFile(args: { path: string, params: IFileBasis }): IFileSystemCommandResultNode;
-  updateFile(args: { path: string, params: IFileBasis }): IFileSystemCommandResultNode;
-  deleteFile(args: { path: string }): IFileSystemCommandResultNode;
-  createDirectory(args: { path: string, params: IDirectoryBasis }): IFileSystemCommandResultNode;
-  updateDirectory(args: { path: string, params: IDirectoryBasis }): IFileSystemCommandResultNode;
-  deleteDirectory(args: { path: string }): IFileSystemCommandResultNode;
+  createFile(args: { path: string, params: IFileBasis }): IFileSystemCommandResultNode<IFile>;
+  updateFile(args: { path: string, params: IFileBasis }): IFileSystemCommandResultNode<IFile>;
+  deleteFile(args: { path: string }): IFileSystemCommandResultNode<IFile>;
+  createDirectory(args: { path: string, params: IDirectoryBasis }): IFileSystemCommandResultNode<IDirectory>;
+  updateDirectory(args: { path: string, params: IDirectoryBasis }): IFileSystemCommandResultNode<IDirectory>;
+  deleteDirectory(args: { path: string }): IFileSystemCommandResultNode<IDirectory>;
+  deleteNodeFromPath(path: string, option?: {}): IFileSystemCommandResult;
+}
+
+export type FileSystemCommandOption = {
+  recursive?: boolean
 }
 
 export interface IFileSystemCommandResult {
   error?: Errors.Base;
 }
 
-export interface IFileSystemCommandResultNode extends IFileSystemCommandResult {
-  node?: IFileSystemNode;
+export interface IFileSystemCommandResultNode<
+  T extends IFileSystemNode
+> extends IFileSystemCommandResult {
+  node?: T;
 }

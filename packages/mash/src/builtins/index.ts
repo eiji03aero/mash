@@ -9,6 +9,7 @@ import touch from './touch';
 import mkdir from './mkdir';
 import ls from './ls';
 import cat from './cat';
+import rm from './rm';
 
 export const builtins: ICommandMap = {
   basename,
@@ -20,4 +21,5 @@ export const builtins: ICommandMap = {
   mkdir,
   ls,
   cat,
+  rm,
 };

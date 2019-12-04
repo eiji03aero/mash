@@ -9,6 +9,13 @@ var FileSystemNode = /** @class */ (function () {
         this.createdAt = mash_common_1.date.getCurrentTime();
         this.updatedAt = mash_common_1.date.getCurrentTime();
     }
+    Object.defineProperty(FileSystemNode.prototype, "isFile", {
+        get: function () {
+            return this.constructor.name === 'File';
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(FileSystemNode.prototype, "isDirectory", {
         get: function () {
             return this.constructor.name === 'Directory';
