@@ -1,19 +1,16 @@
-import { Errors } from "mash-common";
+import { Errors, Either, paths, Monad } from "mash-common";
 
 import {
-  IDirectoryBasis,
   IDirectory,
-  IFileBasis,
   IFile,
   IFileSystemNode,
-  IFileSystemCommandResult,
-  IFileSystemCommandResultNode,
   IFileSystem,
-  FileSystemCommandOption
+  TargetNodePathStat,
 } from './types';
 import { FileSystemNode } from "./FileSystemNode";
 import { Directory } from "./Directory";
 import { File } from "./File";
+import * as utils from './utils';
 
 import { initialFileNodes, homeDirectory } from "./assets/initialFileNodes";
 
@@ -46,23 +43,20 @@ export class FileSystem implements IFileSystem {
     this.currentDirectory = homeDirectory;
   }
 
-  public changeCurrentDirectory (args: {
-    path: string
-  }) : IFileSystemCommandResult {
-    const { path } = args;
-    const { error, node } = this.resolveNodeFromPath(path);
+  public changeCurrentDirectory (path: string): Either {
+    const result = this.resolveNodeFromPath(path);
 
-    if (error) return { error };
+    if (result.isError) return result;
 
-    if (!node || !node.isDirectory) return { error: Errors.Factory.notDirectory(path) };
+    if (!(utils.isDirectory(result.value))) {
+      return Monad.either.left(Errors.Factory.notDirectory(result.value.name));
+    }
 
-    this.currentDirectory = node as Directory;
-    return {};
+    this.currentDirectory = result.value;
+    return Monad.either.right(null);
   }
 
-  public resolveNodeFromPath (
-    path: string
-  ): IFileSystemCommandResultNode<IFileSystemNode> {
+  public resolveNodeFromPath (path: string): Either<IFileSystemNode> {
     const isAbsolutePath = path[0] === '/';
     let resolvedNode: FileSystemNode;
     let fragments: string[];
@@ -83,7 +77,7 @@ export class FileSystem implements IFileSystem {
           resolvedNode = resolvedNode.parentNode;
           continue;
         } else {
-          return { error: Errors.Factory.noSuchFileOrDirectory(path) };
+          return Monad.either.left(Errors.Factory.noSuchFileOrDirectory(path));
         }
       }
       else if (fragment === '.') {
@@ -93,14 +87,14 @@ export class FileSystem implements IFileSystem {
         if (i === fragments.length - 1) {
           break;
         }
-        return { error: Errors.Factory.noSuchFileOrDirectory(path) };
+        return Monad.either.left(Errors.Factory.noSuchFileOrDirectory(path));
       }
       else {
-        if (!resolvedNode.isDirectory) {
-          return { error: Errors.Factory.notDirectory(fragment) };
+        if (!(utils.isDirectory(resolvedNode))) {
+          return Monad.either.left(Errors.Factory.notDirectory(fragment));
         }
         if (!(<IDirectory>resolvedNode).containsByName(fragment)) {
-          return { error: Errors.Factory.noSuchFileOrDirectory(path) };
+          return Monad.either.left(Errors.Factory.noSuchFileOrDirectory(path));
         }
 
         resolvedNode = (<IDirectory>resolvedNode).findByName(fragment) as FileSystemNode;
@@ -108,7 +102,7 @@ export class FileSystem implements IFileSystem {
       }
     }
 
-    return { node: resolvedNode };
+    return Monad.either.right<IFileSystemNode>(resolvedNode);
   }
 
   public resolveAbsolutePath (node: IFileSystemNode) {
@@ -123,170 +117,91 @@ export class FileSystem implements IFileSystem {
     return `/${nodeNames.join('/')}`;
   }
 
-  public createFile (args : {
-    path: string,
-    params: IFileBasis
-  }) : IFileSystemCommandResultNode<IFile> {
-    const { path, params } = args;
-    const { error, node: parentDirectory } = this.resolveNodeFromPath(path);
+  public createFile (path: string): Either<IFile> {
+    const result = this._expectValidTargetNodePath(path);
 
-    if (error) return { error };
+    if (result.isError) return result;
 
-    if (!parentDirectory || !parentDirectory.isDirectory) return { error: Errors.Factory.noSuchFileOrDirectory(path) };
+    const { basename, parentDirectory } = result.value;
 
-    const node = new File(params);
-    (<IDirectory>parentDirectory).addChild(node);
-    return { node };
+    const node = new File({ name: basename });
+    parentDirectory.addChild(node);
+    return Monad.either.right<IFile>(node);
   }
 
-  public updateFile (args : {
-    path: string,
-    params: IFileBasis
-  }) : IFileSystemCommandResultNode<IFile> {
-    const { path, params } = args;
-    const { parentPath, lastFragment } = this._splitLastFragmentFromPath(path);
-    const { error, node: parentDirectory } = this.resolveNodeFromPath(parentPath);
+  public deleteFile (path: string): Either {
+    const result = this._expectValidTargetNodePath(path);
 
-    if (error) return { error };
-
-    if (!parentDirectory || !parentDirectory.isDirectory) {
-      return { error: Errors.Factory.noSuchFileOrDirectory(path) };
+    if (result.isError) return result;
+    if (!result.value.isBaseExists) {
+      return Monad.either.left(Errors.Factory.noSuchFileOrDirectory(path));
     }
 
-    if (!(<IDirectory>parentDirectory).containsByName(lastFragment)) {
-      return { error: Errors.Factory.noSuchFileOrDirectory(path) };
-    }
+    const { parentDirectory, basename } = result.value;
 
-    const node = (<IDirectory>parentDirectory).findByName(lastFragment) as IFile;
-    node.update(params);
-    return { node };
+    const node = parentDirectory.findByName(basename) as IFile;
+    parentDirectory.removeChild(node);
+    return Monad.either.right(null);
   }
 
-  public deleteFile (args : {
-    path: string,
-  }) : IFileSystemCommandResult {
-    const { path } = args;
-    const { parentPath, lastFragment } = this._splitLastFragmentFromPath(path);
-    const { error, node: parentDirectory } = this.resolveNodeFromPath(parentPath);
+  public createDirectory (path: string): Either<IDirectory> {
+    const result = this._expectValidTargetNodePath(path);
 
-    if (error) return { error };
+    if (result.isError) return result;
 
-    if (!parentDirectory || !parentDirectory.isDirectory) {
-      return { error: Errors.Factory.noSuchFileOrDirectory(path) };
-    }
+    const { basename, parentDirectory } = result.value;
 
-    if (!(<IDirectory>parentDirectory).containsByName(lastFragment)) {
-      return { error: Errors.Factory.noSuchFileOrDirectory(path) };
-    }
-
-    const node = (<IDirectory>parentDirectory).findByName(lastFragment) as IFile;
-    (<IDirectory>parentDirectory).removeChild(node);
-    return { };
+    const node = new Directory({ name: basename });
+    parentDirectory.addChild(node);
+    return Monad.either.right<IDirectory>(node);
   }
 
-  public createDirectory (args : {
-    path: string,
-    params: IDirectoryBasis
-  }) : IFileSystemCommandResultNode<IDirectory> {
-    const { path, params } = args;
-    const { error, node: parentDirectory } = this.resolveNodeFromPath(path);
+  public deleteDirectory (path: string): Either {
+    const result = this._expectValidTargetNodePath(path);
 
-    if (error) return { error };
+    if (result.isError) return result;
+    if (!result.value.isBaseExists) {
+      return Monad.either.left(Errors.Factory.noSuchFileOrDirectory(path));
+    }
 
-    if (!parentDirectory || !parentDirectory.isDirectory) return { error: Errors.Factory.noSuchFileOrDirectory(path) };
+    const { basename, parentDirectory } = result.value;
 
-    const node = new Directory(params);
-    (<IDirectory>parentDirectory).addChild(node);
-    return { node };
+    const node = parentDirectory.findByName(basename) as IDirectory;
+    parentDirectory.removeChild(node);
+    return Monad.either.right(null);
   }
 
-  public updateDirectory (args : {
-    path: string,
-    params: IDirectoryBasis
-  }) : IFileSystemCommandResultNode<IDirectory> {
-    const { path, params } = args;
-    const { parentPath, lastFragment } = this._splitLastFragmentFromPath(path);
-    const { error, node: parentDirectory } = this.resolveNodeFromPath(parentPath);
+  public updateNodeName (path: string, name: string): Either {
+    const result = this.resolveNodeFromPath(path);
 
-    if (error) return { error };
+    if (result.isError) return result;
 
-    if (!parentDirectory || !parentDirectory.isDirectory) {
-      return { error: Errors.Factory.noSuchFileOrDirectory(path) };
-    }
-
-    if (!(<IDirectory>parentDirectory).containsByName(lastFragment)) {
-      return { error: Errors.Factory.noSuchFileOrDirectory(path) };
-    }
-
-    const node = (<IDirectory>parentDirectory).findByName(lastFragment) as IDirectory;
-    node.update(params);
-    return { node };
-  }
-
-  public deleteDirectory (args : {
-    path: string,
-  }) : IFileSystemCommandResult {
-    const { path } = args;
-    const { parentPath, lastFragment } = this._splitLastFragmentFromPath(path);
-    const { error, node: parentDirectory } = this.resolveNodeFromPath(parentPath);
-
-    if (error) return { error };
-
-    if (!parentDirectory || !parentDirectory.isDirectory) {
-      return { error: Errors.Factory.noSuchFileOrDirectory(path) };
-    }
-
-    if (!(<IDirectory>parentDirectory).containsByName(lastFragment)) {
-      return { error: Errors.Factory.noSuchFileOrDirectory(path) };
-    }
-
-    const node = (<IDirectory>parentDirectory).findByName(lastFragment) as IDirectory;
-    (<IDirectory>parentDirectory).removeChild(node);
-    return { };
-  }
-
-  public deleteNodeFromPath (
-    path: string,
-    option?: FileSystemCommandOption
-  ): IFileSystemCommandResult {
-    option = option || {} as FileSystemCommandOption;
-    const { error, node } = this.resolveNodeFromPath(path);
-    if (error) return { error };
-
-    if (node!.isFile) {
-      const { error } = this.deleteFile({ path });
-      if (error) return { error };
-    }
-    else if (node!.isDirectory) {
-      if (!option.recursive) {
-        return { error: Errors.Factory.standard(`${node!.name}: is a directory`) };
-      }
-      const { error } = this.deleteDirectory({ path });
-      if (error) return { error };
-    }
-
-    return { };
-  }
-
-  private _splitLastFragmentFromPath (
-    path: string
-  ): ({
-    parentPath: string,
-    lastFragment: string
-  }) {
-    const lastIndex = path[path.length - 1] === '/'
-      ? path.lastIndexOf('/', path.length - 2)
-      : path.lastIndexOf('/');
-
-    return {
-      parentPath: lastIndex === -1
-        ? '.'
-        : path.slice(0, lastIndex),
-      lastFragment: path.slice(lastIndex + 1),
-    };
+    result.value.name = name;
+    return Monad.either.right(null);
   }
 
   private _isRootDirectory (node: FileSystemNode): boolean {
     return node === this.root;
+  }
+
+  private _expectValidTargetNodePath (path: string): Either<TargetNodePathStat> {
+    const { dirname, basename } = paths.inspect(path);
+    const result = this.resolveNodeFromPath(dirname);
+
+    if (
+      result.isError
+      || (!result.value || !(utils.isDirectory(result.value)))
+    ) {
+      return Monad.either.left(Errors.Factory.noSuchFileOrDirectory(path));
+    }
+
+    const parentDirectory = result.value;
+
+    return Monad.either.right({
+      dirname,
+      basename,
+      parentDirectory,
+      isBaseExists: parentDirectory.containsByName(basename)
+    });
   }
 }

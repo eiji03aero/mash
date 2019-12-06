@@ -1,4 +1,5 @@
-import { IDirectoryBasis, IDirectory, IFileBasis, IFile, IFileSystemNode, IFileSystemCommandResult, IFileSystemCommandResultNode, IFileSystem, FileSystemCommandOption } from './types';
+import { Either } from "mash-common";
+import { IDirectory, IFile, IFileSystemNode, IFileSystem } from './types';
 export declare class FileSystem implements IFileSystem {
     currentDirectory: IDirectory;
     root: IDirectory;
@@ -7,35 +8,15 @@ export declare class FileSystem implements IFileSystem {
     static get instance(): FileSystem;
     static reboot(): FileSystem;
     private constructor();
-    changeCurrentDirectory(args: {
-        path: string;
-    }): IFileSystemCommandResult;
-    resolveNodeFromPath(path: string): IFileSystemCommandResultNode<IFileSystemNode>;
+    changeCurrentDirectory(path: string): Either;
+    resolveNodeFromPath(path: string): Either<IFileSystemNode>;
     resolveAbsolutePath(node: IFileSystemNode): string;
-    createFile(args: {
-        path: string;
-        params: IFileBasis;
-    }): IFileSystemCommandResultNode<IFile>;
-    updateFile(args: {
-        path: string;
-        params: IFileBasis;
-    }): IFileSystemCommandResultNode<IFile>;
-    deleteFile(args: {
-        path: string;
-    }): IFileSystemCommandResult;
-    createDirectory(args: {
-        path: string;
-        params: IDirectoryBasis;
-    }): IFileSystemCommandResultNode<IDirectory>;
-    updateDirectory(args: {
-        path: string;
-        params: IDirectoryBasis;
-    }): IFileSystemCommandResultNode<IDirectory>;
-    deleteDirectory(args: {
-        path: string;
-    }): IFileSystemCommandResult;
-    deleteNodeFromPath(path: string, option?: FileSystemCommandOption): IFileSystemCommandResult;
-    private _splitLastFragmentFromPath;
+    createFile(path: string): Either<IFile>;
+    deleteFile(path: string): Either;
+    createDirectory(path: string): Either<IDirectory>;
+    deleteDirectory(path: string): Either;
+    updateNodeName(path: string, name: string): Either;
     private _isRootDirectory;
+    private _expectValidTargetNodePath;
 }
 //# sourceMappingURL=FileSystem.d.ts.map

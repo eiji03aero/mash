@@ -1,3 +1,4 @@
+import { Monad } from 'mash-common';
 import { FileSystem } from "../src/FileSystem";
 import { Directory } from "../src/Directory";
 
@@ -16,19 +17,21 @@ describe('FileSystem', () => {
   });
 
   it('should change current directory', () => {
-    const result = fs.changeCurrentDirectory({ path: './Applications' });
+    const result = fs.changeCurrentDirectory('./Applications');
     expect(result).not.toHaveProperty('error');
     expect(fs.currentDirectory.name).toEqual('Applications');
 
-    const result2 = fs.changeCurrentDirectory({ path: '../' });
+    const result2 = fs.changeCurrentDirectory('../');
     expect(result2).not.toHaveProperty('error');
     expect(fs.currentDirectory.name).toEqual('home');
   });
 
   it('should resolve node from path', () => {
     const result = fs.resolveNodeFromPath('/home');
-    expect(result).not.toHaveProperty('error');
-    expect(result.node!.name).toEqual('home');
+    expect(result.isError).toBeFalsy();
+    if (Monad.either.isRight(result)) {
+      expect(result.value.name).toEqual('home');
+    }
   });
 
   it('should resolve absolute path for node', () => {
@@ -37,152 +40,37 @@ describe('FileSystem', () => {
   });
 
   it('should create file', () => {
-    const fileParams = {
-      name: 'application_child',
-      content: 'application content'
-    };
-    const result = fs.createFile({
-      path: '.',
-      params: fileParams
-    });
-    expect(result).not.toHaveProperty('error');
-    expect(fs.currentDirectory.containsByName(fileParams.name)).toBe(true);
-    expect(result.node!.parentNode).toBe(fs.currentDirectory);
+    const name = 'application_child';
+    const result = fs.createFile(name);
+    expect(result.isError).toBeFalsy();
+    expect(fs.currentDirectory.containsByName(name)).toBe(true);
   });
 
   it('should create directory', () => {
-    const directoryParams = {
-      name: 'application_child_directory',
-      children: []
-    };
-    const result = fs.createDirectory({
-      path: '.',
-      params: directoryParams
-    });
-    expect(result).not.toHaveProperty('error');
-    expect(fs.currentDirectory.containsByName(directoryParams.name)).toBe(true);
-    expect(result.node!.parentNode).toBe(fs.currentDirectory);
-  });
-
-  it('should update file', () => {
-    const fileParams = {
-      name: 'file',
-      content: 'hm'
-    };
-    fs.createFile({
-      path: '.',
-      params: fileParams
-    });
-
-    const updatedFileParams = {
-      name: 'updated_file',
-      content: 'yay'
-    };
-    const result = fs.updateFile({
-      path: `./${fileParams.name}`,
-      params: updatedFileParams,
-    });
-
-    expect(result).not.toHaveProperty('error');
-    expect(fs.currentDirectory.containsByName(updatedFileParams.name)).toBe(true);
-
-    const file = result.node!;
-    expect(file.parentNode).toBe(fs.currentDirectory);
-    expect(file.name).toBe(updatedFileParams.name);
-    expect(file.content).toBe(updatedFileParams.content);
-  });
-
-
-  it('should update directory', () => {
-    const directoryParams = {
-      name: 'dir',
-    };
-    fs.createDirectory({
-      path: '.',
-      params: directoryParams
-    });
-
-    const updatedDirectoryParams = {
-      name: 'updated_dir',
-    };
-    const result = fs.updateDirectory({
-      path: `./${directoryParams.name}`,
-      params: updatedDirectoryParams,
-    });
-
-    expect(result).not.toHaveProperty('error');
-    expect(fs.currentDirectory.containsByName(updatedDirectoryParams.name)).toBe(true);
-
-    const directory = result.node!;
-    expect(directory.parentNode).toBe(fs.currentDirectory);
-    expect(directory.name).toBe(updatedDirectoryParams.name);
+    const name = 'application_child_directory';
+    const result = fs.createDirectory(name);
+    expect(result.isError).toBeFalsy();
+    expect(fs.currentDirectory.containsByName(name)).toBe(true);
   });
 
   it('should delete file', () => {
-    const fileParams = {
-      name: 'file',
-      content: 'application content'
-    };
-    fs.createFile({
-      path: '.',
-      params: fileParams
-    });
+    const name = 'file';
+    fs.createFile(name);
 
-    const result = fs.deleteDirectory({
-      path: `./${fileParams.name}`
-    });
-
-    expect(result).not.toHaveProperty('error');
-    expect(fs.currentDirectory.containsByName(fileParams.name)).toBe(false);
+    const result = fs.deleteFile(name);
+    expect(result.isError).toBeFalsy();
+    expect(fs.currentDirectory.containsByName(name)).toBe(false);
   });
 
   it('should delete directory', () => {
-    const directoryParams = {
-      name: 'dir',
-      content: 'application content'
-    };
-    fs.createDirectory({
-      path: '.',
-      params: directoryParams
-    });
+    const name = 'dir';
+    fs.createDirectory(name);
 
-    const result = fs.deleteDirectory({
-      path: `./${directoryParams.name}`
-    });
-
-    expect(result).not.toHaveProperty('error');
-    expect(fs.currentDirectory.containsByName(directoryParams.name)).toBe(false);
+    const result = fs.deleteDirectory(name);
+    expect(result.isError).toBeFalsy();
+    expect(fs.currentDirectory.containsByName(name)).toBeFalsy();
   });
 
-  it('should delete file from path', () => {
-    const fileParams = {
-      name: 'file',
-      content: 'application content'
-    };
-    fs.createFile({
-      path: '.',
-      params: fileParams
-    });
-
-    const result = fs.deleteNodeFromPath(`./${fileParams.name}`);
-
-    expect(result).not.toHaveProperty('error');
-    expect(fs.currentDirectory.containsByName(fileParams.name)).toBe(false);
-  })
-
-  it('should delete directory from path', () => {
-    const fileParams = {
-      name: 'file',
-      content: 'application content'
-    };
-    fs.createFile({
-      path: '.',
-      params: fileParams
-    });
-
-    const result = fs.deleteNodeFromPath(`./${fileParams.name}`);
-
-    expect(result).not.toHaveProperty('error');
-    expect(fs.currentDirectory.containsByName(fileParams.name)).toBe(false);
-  })
+  it.todo('should change file name');
+  it.todo('should change directory name');
 });

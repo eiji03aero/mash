@@ -11,10 +11,9 @@ export default ({
   }
 
   const path = args[1];
+  const result = fileSystem.changeCurrentDirectory(path);
 
-  const { error } = fileSystem.changeCurrentDirectory({ path });
-
-  if (error) {
-    environment.error(1, error.message());
+  if (result.isError) {
+    environment.error(1, result.error.message());
   }
 }

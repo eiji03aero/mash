@@ -1,3 +1,4 @@
+import { utils as futils } from 'mash-filesystem';
 import { CommandPayload } from '../types';
 import * as utils from '../utils';
 
@@ -16,12 +17,27 @@ export default ({
   }
 
   const path = args[1];
-  const { error } = fileSystem.deleteNodeFromPath(path, {
-    recursive: options.r
-  });
+  let result = fileSystem.resolveNodeFromPath(path);
 
-  if (error) {
-    console.log(error.message());
-    environment.error(1, error.message());
+  if (result.isError) {
+    environment.error(1, result.error.message());
+    return;
+  }
+
+  const node = result.value;
+
+  if (futils.isDirectory(node)) {
+    if (!options.r) {
+      environment.error(1, `${node.name}: is a directory`);
+      return;
+    }
+    result = fileSystem.deleteDirectory(path);
+  }
+  else if (futils.isFile(node)) {
+    result = fileSystem.deleteFile(path);
+  }
+
+  if (result.isError) {
+    environment.error(1, result.error.message());
   }
 };

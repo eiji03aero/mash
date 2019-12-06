@@ -4,7 +4,7 @@ describe('builtins.rm', () => {
   it('should delete file', () => {
     const fileName = 'hoge.txt';
     const { env, fs } = sharedContext.hasMockEnvironment();
-    fs.createFile({ path: '.', params: { name: fileName }});
+    fs.createFile(fileName);
     env.eval(`rm ${fileName}`);
     expect(fs.currentDirectory.containsByName(fileName)).toBeFalsy();
   });
@@ -12,7 +12,7 @@ describe('builtins.rm', () => {
   it('should delete directory', () => {
     const dirName = 'hoge';
     const { env, fs } = sharedContext.hasMockEnvironment();
-    fs.createDirectory({ path: '.', params: { name: dirName }});
+    fs.createDirectory(dirName);
     env.eval(`rm ${dirName} -r`);
     expect(fs.currentDirectory.containsByName(dirName)).toBeFalsy();
   });
@@ -26,7 +26,7 @@ describe('builtins.rm', () => {
   it('should exit when target is directory but no -r option', () => {
     const { env, fs } = sharedContext.hasMockEnvironment();
     const dirName = 'hoge';
-    fs.createDirectory({ path: '.', params: { name: dirName } });
+    fs.createDirectory(dirName);
     env.eval(`rm ${dirName}`);
     sharedTest.expectExitFail(env);
   });

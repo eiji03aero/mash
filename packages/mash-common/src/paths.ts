@@ -12,3 +12,10 @@ export const dirname = (path: string) => {
   const split = path.split('/');
   return split.slice(0, split.length - 1).join('/');
 };
+
+export const inspect = (path: string) => {
+  return {
+    basename: basename(path),
+    dirname: dirname(path),
+  };
+};

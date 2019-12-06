@@ -19,14 +19,6 @@ export class FileSystemNode implements IFileSystemNode {
     this.updatedAt = date.getCurrentTime();
   }
 
-  get isFile (): boolean {
-    return this.constructor.name === 'File';
-  }
-
-  get isDirectory (): boolean {
-    return this.constructor.name === 'Directory';
-  }
-
   update (args: IFileSystemNodeBasis) {
     args.name && (this.name = args.name);
     args.parentNode && (this.parentNode = args.parentNode);

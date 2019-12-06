@@ -23,6 +23,14 @@ bootstrap () {
   execute-docker-compose exec mash lerna link
 }
 
+clean () {
+  docker-sync stop
+  execute-docker-compose stop
+  docker-sync clean
+  execute-docker-compose down --volumes
+  docker volume rm c-mash-sync
+}
+
 if [ $COMMAND = 'up' ] && [ $# -le 1 ]; then
   docker-sync start
   execute-docker-compose up -d
@@ -34,6 +42,9 @@ elif [ $COMMAND = 'bash' ]; then
 
 elif [ $COMMAND = 'bootstrap' ]; then
   bootstrap
+
+elif [ $COMMAND = 'clean' ]; then
+  clean
 
 else
   execute-docker-compose $@

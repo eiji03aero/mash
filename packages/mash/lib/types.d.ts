@@ -39,9 +39,16 @@ export declare enum ExitStatus {
     Failure = 1
 }
 export declare type CommandPayload = {
-    args: IAstNode[];
+    args: string[];
     fileSystem: IFileSystem;
     environment: IEnvironment;
+};
+export declare type CommandOptionMap = {
+    [index: string]: string | boolean;
+};
+export declare type ParsedCommandArgs = {
+    args: string[];
+    options: CommandOptionMap;
 };
 export declare type Command = (args: CommandPayload) => void;
 export interface ICommandMap {

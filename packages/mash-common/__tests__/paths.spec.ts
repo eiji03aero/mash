@@ -30,4 +30,20 @@ describe('paths', () => {
       }
     });
   });
+
+  describe('inspect', () => {
+    it('should return inspected value', () => {
+      const tests = [
+        ['domo/hoge', 'domo', 'hoge'],
+        ['hoge', '.', 'hoge'],
+        ['/root/home/app.ts', '/root/home', 'app.ts'],
+      ];
+
+      for (let t of tests) {
+        const result = paths.inspect(t[0]);
+        expect(result.dirname).toEqual(t[1]);
+        expect(result.basename).toEqual(t[2]);
+      }
+    })
+  })
 });

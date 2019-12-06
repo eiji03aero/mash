@@ -12,4 +12,10 @@ exports.dirname = function (path) {
     var split = path.split('/');
     return split.slice(0, split.length - 1).join('/');
 };
+exports.inspect = function (path) {
+    return {
+        basename: exports.basename(path),
+        dirname: exports.dirname(path),
+    };
+};
 //# sourceMappingURL=paths.js.map

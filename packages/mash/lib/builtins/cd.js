@@ -6,7 +6,7 @@ exports.default = (function (_a) {
         environment.error(1, 'needs 1 argument. usage required here');
         return;
     }
-    var path = args[1].tokenLiteral();
+    var path = args[1];
     var error = fileSystem.changeCurrentDirectory({ path: path }).error;
     if (error) {
         environment.error(1, error.message());

@@ -1,4 +1,3 @@
-import { paths } from 'mash-common';
 import { CommandPayload } from '../types';
 
 export default ({
@@ -11,14 +10,10 @@ export default ({
     return;
   }
 
-  const pathName = args[1];
+  const path = args[1];
+  const result = fileSystem.createFile(path);
 
-  const { error } = fileSystem.createFile({
-    path: paths.dirname(pathName),
-    params: { name: paths.basename(pathName) }
-  });
-
-  if (error) {
-    environment.error(1, error.message());
+  if (result.isError) {
+    environment.error(1, result.error.message());
   }
 };

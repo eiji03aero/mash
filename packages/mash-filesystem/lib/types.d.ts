@@ -1,4 +1,4 @@
-import { Errors } from 'mash-common';
+import { Errors, Either } from 'mash-common';
 export interface IFileSystemNodeBasis {
     name?: string;
     parentNode?: IFileSystemNode;
@@ -9,8 +9,6 @@ export interface IFileSystemNode {
     parentNode?: IFileSystemNode;
     createdAt: string;
     updatedAt: string;
-    isFile: boolean;
-    isDirectory: boolean;
     update(args: IFileSystemNodeBasis): void;
     setParentNode(node: IFileSystemNode): void;
 }
@@ -36,42 +34,25 @@ export interface IFile extends IFileSystemNode {
 }
 export interface IFileSystem {
     currentDirectory: IDirectory;
-    changeCurrentDirectory(args: {
-        path: string;
-    }): IFileSystemCommandResult;
-    resolveNodeFromPath(path: string): IFileSystemCommandResultNode<IFileSystemNode>;
+    changeCurrentDirectory(path: string): Either;
+    resolveNodeFromPath(path: string): Either<IFileSystemNode>;
     resolveAbsolutePath(node: IFileSystemNode): string;
-    createFile(args: {
-        path: string;
-        params: IFileBasis;
-    }): IFileSystemCommandResultNode<IFile>;
-    updateFile(args: {
-        path: string;
-        params: IFileBasis;
-    }): IFileSystemCommandResultNode<IFile>;
-    deleteFile(args: {
-        path: string;
-    }): IFileSystemCommandResultNode<IFile>;
-    createDirectory(args: {
-        path: string;
-        params: IDirectoryBasis;
-    }): IFileSystemCommandResultNode<IDirectory>;
-    updateDirectory(args: {
-        path: string;
-        params: IDirectoryBasis;
-    }): IFileSystemCommandResultNode<IDirectory>;
-    deleteDirectory(args: {
-        path: string;
-    }): IFileSystemCommandResultNode<IDirectory>;
-    deleteNodeFromPath(path: string, option?: {}): IFileSystemCommandResult;
+    createFile(path: string): Either<IFile>;
+    deleteFile(path: string): Either;
+    createDirectory(path: string): Either<IDirectory>;
+    deleteDirectory(path: string): Either;
+    updateNodeName(path: string, name: string): Either;
 }
-export declare type FileSystemCommandOption = {
-    recursive?: boolean;
-};
 export interface IFileSystemCommandResult {
     error?: Errors.Base;
 }
 export interface IFileSystemCommandResultNode<T extends IFileSystemNode> extends IFileSystemCommandResult {
     node?: T;
 }
+export declare type TargetNodePathStat = {
+    dirname: string;
+    basename: string;
+    parentDirectory: IDirectory;
+    isBaseExists: boolean;
+};
 //# sourceMappingURL=types.d.ts.map

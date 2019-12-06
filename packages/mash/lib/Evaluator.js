@@ -35,7 +35,7 @@ var Evaluator = /** @class */ (function () {
             return;
         }
         func({
-            args: commandLine.args,
+            args: commandLine.args.map(function (a) { return a.toString(); }),
             fileSystem: this._fileSystem,
             environment: this._environment
         });

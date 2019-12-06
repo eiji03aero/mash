@@ -17,4 +17,6 @@ var Errors = __importStar(require("./Errors"));
 exports.Errors = Errors;
 var paths = __importStar(require("./paths"));
 exports.paths = paths;
+var Monad = __importStar(require("./Monad"));
+exports.Monad = Monad;
 //# sourceMappingURL=index.js.map
