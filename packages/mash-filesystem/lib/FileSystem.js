@@ -8,24 +8,20 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var mash_common_1 = require("mash-common");
-var FileSystemNode_1 = require("./FileSystemNode");
 var Directory_1 = require("./Directory");
 var File_1 = require("./File");
+var FileSystemNode_1 = require("./FileSystemNode");
 var utils = __importStar(require("./utils"));
 var initialFileNodes_1 = require("./assets/initialFileNodes");
 var FileSystem = /** @class */ (function () {
     function FileSystem() {
         this.root = new Directory_1.Directory({
-            name: 'root',
+            name: "root",
             children: initialFileNodes_1.initialFileNodes,
-            __root__: true
+            root: true,
         });
         this.currentDirectory = initialFileNodes_1.homeDirectory;
     }
-    FileSystem.bootstrap = function () {
-        this._instance = new FileSystem();
-        return this._instance;
-    };
     Object.defineProperty(FileSystem, "instance", {
         get: function () {
             return this._instance;
@@ -33,6 +29,10 @@ var FileSystem = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    FileSystem.bootstrap = function () {
+        this._instance = new FileSystem();
+        return this._instance;
+    };
     FileSystem.reboot = function () {
         delete this._instance;
         this.bootstrap();
@@ -40,8 +40,9 @@ var FileSystem = /** @class */ (function () {
     };
     FileSystem.prototype.changeCurrentDirectory = function (path) {
         var result = this.resolveNodeFromPath(path);
-        if (result.isError)
+        if (result.isError) {
             return result;
+        }
         if (!(utils.isDirectory(result.value))) {
             return mash_common_1.Monad.either.left(mash_common_1.Errors.Factory.notDirectory(result.value.name));
         }
@@ -49,20 +50,20 @@ var FileSystem = /** @class */ (function () {
         return mash_common_1.Monad.either.right(null);
     };
     FileSystem.prototype.resolveNodeFromPath = function (path) {
-        var isAbsolutePath = path[0] === '/';
+        var isAbsolutePath = path[0] === "/";
         var resolvedNode;
         var fragments;
         if (isAbsolutePath) {
             resolvedNode = this.root;
-            fragments = path.substring(1).split('/');
+            fragments = path.substring(1).split("/");
         }
         else {
             resolvedNode = this.currentDirectory;
-            fragments = path.split('/');
+            fragments = path.split("/");
         }
         for (var i = 0; i < fragments.length; i++) {
             var fragment = fragments[i];
-            if (fragment === '..') {
+            if (fragment === "..") {
                 if (resolvedNode.parentNode instanceof FileSystemNode_1.FileSystemNode) {
                     resolvedNode = resolvedNode.parentNode;
                     continue;
@@ -71,10 +72,10 @@ var FileSystem = /** @class */ (function () {
                     return mash_common_1.Monad.either.left(mash_common_1.Errors.Factory.noSuchFileOrDirectory(path));
                 }
             }
-            else if (fragment === '.') {
+            else if (fragment === ".") {
                 continue;
             }
-            else if (fragment === '') {
+            else if (fragment === "") {
                 if (i === fragments.length - 1) {
                     break;
                 }
@@ -100,12 +101,13 @@ var FileSystem = /** @class */ (function () {
             currentNode = currentNode.parentNode;
             nodeNames.unshift(currentNode.name);
         }
-        return "/" + nodeNames.join('/');
+        return "/" + nodeNames.join("/");
     };
     FileSystem.prototype.createFile = function (path) {
         var result = this._expectValidTargetNodePath(path);
-        if (result.isError)
+        if (result.isError) {
             return result;
+        }
         var _a = result.value, basename = _a.basename, parentDirectory = _a.parentDirectory;
         var node = new File_1.File({ name: basename });
         parentDirectory.addChild(node);
@@ -113,8 +115,9 @@ var FileSystem = /** @class */ (function () {
     };
     FileSystem.prototype.deleteFile = function (path) {
         var result = this._expectValidTargetNodePath(path);
-        if (result.isError)
+        if (result.isError) {
             return result;
+        }
         if (!result.value.isBaseExists) {
             return mash_common_1.Monad.either.left(mash_common_1.Errors.Factory.noSuchFileOrDirectory(path));
         }
@@ -125,8 +128,9 @@ var FileSystem = /** @class */ (function () {
     };
     FileSystem.prototype.createDirectory = function (path) {
         var result = this._expectValidTargetNodePath(path);
-        if (result.isError)
+        if (result.isError) {
             return result;
+        }
         var _a = result.value, basename = _a.basename, parentDirectory = _a.parentDirectory;
         var node = new Directory_1.Directory({ name: basename });
         parentDirectory.addChild(node);
@@ -134,8 +138,9 @@ var FileSystem = /** @class */ (function () {
     };
     FileSystem.prototype.deleteDirectory = function (path) {
         var result = this._expectValidTargetNodePath(path);
-        if (result.isError)
+        if (result.isError) {
             return result;
+        }
         if (!result.value.isBaseExists) {
             return mash_common_1.Monad.either.left(mash_common_1.Errors.Factory.noSuchFileOrDirectory(path));
         }
@@ -146,8 +151,9 @@ var FileSystem = /** @class */ (function () {
     };
     FileSystem.prototype.updateNodeName = function (path, name) {
         var result = this.resolveNodeFromPath(path);
-        if (result.isError)
+        if (result.isError) {
             return result;
+        }
         result.value.name = name;
         return mash_common_1.Monad.either.right(null);
     };
@@ -166,7 +172,7 @@ var FileSystem = /** @class */ (function () {
             dirname: dirname,
             basename: basename,
             parentDirectory: parentDirectory,
-            isBaseExists: parentDirectory.containsByName(basename)
+            isBaseExists: parentDirectory.containsByName(basename),
         });
     };
     return FileSystem;

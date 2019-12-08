@@ -1,1 +1,1 @@
-{"version":3,"file":"either.d.ts","sourceRoot":"","sources":["../../src/Monad/either.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,UAAU,EAAE,WAAW,EAAE,MAAM,UAAU,CAAC;AAC3D,OAAO,KAAM,MAAM,MAAM,WAAW,CAAC;AAErC,eAAO,MAAM,MAAM;;;;;CAalB,CAAC"}
+{"version":3,"file":"either.d.ts","sourceRoot":"","sources":["../../src/Monad/either.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,MAAM,MAAM,WAAW,CAAC;AACpC,OAAO,EAAE,MAAM,EAAE,WAAW,EAAE,YAAY,EAAE,MAAM,UAAU,CAAC;AAE7D,eAAO,MAAM,MAAM;;;;;CAalB,CAAC"}

@@ -1,2 +1,2 @@
-export { Renderer } from './Renderer';
+export { Renderer } from "./Renderer";
 //# sourceMappingURL=index.d.ts.map

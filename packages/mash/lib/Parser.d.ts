@@ -1,5 +1,5 @@
-import { IParser, IToken, ILexer } from './types';
-import * as A from './Ast';
+import * as A from "./Ast";
+import { ILexer, IParser, IToken } from "./types";
 export declare class Parser implements IParser {
     lexer: ILexer;
     errors: any;

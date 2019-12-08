@@ -8,14 +8,14 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("./index");
-document.addEventListener('DOMContentLoaded', function (_) {
+document.addEventListener("DOMContentLoaded", function (_) {
     var promptObj = [
         { text: "Eiji's MBP " },
-        { text: "/home ", color: 'blue' },
+        { text: "/home ", color: "blue" },
         { text: "$ " },
     ];
-    var terminal = new index_1.Terminal(document.querySelector('#app'), {
-        prompt: promptObj
+    var terminal = new index_1.Terminal(document.querySelector("#app"), {
+        prompt: promptObj,
     });
     var dummy = [
         "this is not going to end well",
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function (_) {
         terminal.prompt();
     }, dummy.length * 100);
     terminal.onKeyPress(function (e) {
-        if (e.key === 'Enter') {
+        if (e.key === "Enter") {
             e.preventDefault();
             terminal.prompt();
         }

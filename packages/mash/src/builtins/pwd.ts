@@ -1,12 +1,12 @@
-import { CommandPayload } from '../types';
+import { ICommandPayload } from "../types";
 
 export default ({
   fileSystem,
-  environment
-}: CommandPayload) => {
+  environment,
+}: ICommandPayload) => {
   const currentDirectory = fileSystem.currentDirectory;
   const path = fileSystem.resolveAbsolutePath(currentDirectory);
   environment.writeln([
-    { text: path }
+    { text: path },
   ]);
 };

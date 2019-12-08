@@ -1,4 +1,5 @@
-export interface BaseBasis {
+export interface IBaseBasis {
+    _?: any;
 }
 export declare class Base {
     createdAt: string;

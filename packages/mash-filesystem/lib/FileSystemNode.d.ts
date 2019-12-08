@@ -1,4 +1,4 @@
-import { IFileSystemNodeBasis, IFileSystemNode } from './types';
+import { IFileSystemNode, IFileSystemNodeBasis } from "./types";
 export declare class FileSystemNode implements IFileSystemNode {
     cid: string;
     name: string;

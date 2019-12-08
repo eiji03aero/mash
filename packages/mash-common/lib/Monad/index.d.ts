@@ -1,2 +1,2 @@
-export { either } from './either';
+export { either } from "./either";
 //# sourceMappingURL=index.d.ts.map

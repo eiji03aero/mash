@@ -1,9 +1,9 @@
-import { IDirectoryBasis, IDirectory, IFileSystemNode, Nodes } from './types';
 import { FileSystemNode } from "./FileSystemNode";
+import { IDirectory, IDirectoryBasis, IFileSystemNode, Nodes } from "./types";
 export declare class Directory extends FileSystemNode implements IDirectory {
-    children: Nodes;
-    private __root__;
     static isBasis(obj: any): obj is IDirectoryBasis;
+    children: Nodes;
+    private _root;
     constructor(params: IDirectoryBasis);
     update(args: IDirectoryBasis): void;
     addChild(node: IFileSystemNode): void;

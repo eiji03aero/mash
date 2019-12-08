@@ -1,5 +1,5 @@
-import { IRenderPayload, ITerminal } from '../types';
-import { BaseRenderLayer } from './BaseRenderLayer';
+import { IRenderPayload, ITerminal } from "../types";
+import { BaseRenderLayer } from "./BaseRenderLayer";
 export declare class CursorRenderLayer extends BaseRenderLayer {
     private _blinkTimeoutIds;
     private _blinkIntervalIds;

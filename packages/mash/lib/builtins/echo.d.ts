@@ -1,4 +1,4 @@
-import { CommandPayload } from '../types';
-declare const _default: ({ args, environment }: CommandPayload) => void;
+import { ICommandPayload } from "../types";
+declare const _default: ({ args, environment, }: ICommandPayload) => void;
 export default _default;
 //# sourceMappingURL=echo.d.ts.map

@@ -1,18 +1,18 @@
-import { Base, BaseBasis } from "./Base";
+import { Base, IBaseBasis } from "./Base";
 
-interface StandardBasis extends BaseBasis {
+interface IStandardBasis extends IBaseBasis {
   msg: string;
 }
 
 export class Standard extends Base {
-  msg: string;
+  public msg: string;
 
-  constructor (params: StandardBasis) {
+  constructor(params: IStandardBasis) {
     super();
     this.msg = params.msg;
   }
 
-  message () {
+  public message() {
     return this.msg;
   }
 }

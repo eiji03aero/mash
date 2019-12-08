@@ -1,16 +1,16 @@
-import { Terminal } from './index';
+import { Terminal } from "./index";
 
-document.addEventListener('DOMContentLoaded', (_: Event) => {
+document.addEventListener("DOMContentLoaded", (_: Event) => {
   const promptObj = [
     { text: "Eiji's MBP " },
-    { text: "/home ", color: 'blue' },
+    { text: "/home ", color: "blue" },
     { text: "$ " },
   ];
   const terminal = new Terminal(
-    document.querySelector('#app') as HTMLElement,
+    document.querySelector("#app") as HTMLElement,
     {
-      prompt: promptObj
-    }
+      prompt: promptObj,
+    },
   );
 
   const dummy = [
@@ -21,9 +21,9 @@ document.addEventListener('DOMContentLoaded', (_: Event) => {
   ];
 
   let count = 0;
-  for (let t of dummy) {
+  for (const t of dummy) {
     count += 1;
-    let c = count;
+    const c = count;
     setTimeout(() => {
       terminal.writeln([...promptObj, {text: t}]);
     }, c * 100);
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', (_: Event) => {
   }, dummy.length * 100);
 
   terminal.onKeyPress((e: KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       terminal.prompt();
     }

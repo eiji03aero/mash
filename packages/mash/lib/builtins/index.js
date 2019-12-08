@@ -4,15 +4,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var basename_1 = __importDefault(require("./basename"));
+var cat_1 = __importDefault(require("./cat"));
 var cd_1 = __importDefault(require("./cd"));
 var dirname_1 = __importDefault(require("./dirname"));
 var echo_1 = __importDefault(require("./echo"));
-var pwd_1 = __importDefault(require("./pwd"));
-var touch_1 = __importDefault(require("./touch"));
-var mkdir_1 = __importDefault(require("./mkdir"));
 var ls_1 = __importDefault(require("./ls"));
-var cat_1 = __importDefault(require("./cat"));
+var mkdir_1 = __importDefault(require("./mkdir"));
+var pwd_1 = __importDefault(require("./pwd"));
 var rm_1 = __importDefault(require("./rm"));
+var touch_1 = __importDefault(require("./touch"));
 exports.builtins = {
     basename: basename_1.default,
     cd: cd_1.default,

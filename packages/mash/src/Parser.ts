@@ -1,16 +1,16 @@
+import * as A from "./Ast";
+import { tokens } from "./Token";
 import {
+  IAstNode,
+  ILexer,
   IParser,
   IToken,
-  ILexer,
-  IAstNode
-} from './types';
-import { Tokens } from "./Token";
-import * as A from './Ast';
+} from "./types";
 
 // TODO: have to deal with the tokens for program and commandline
 const placeholderToken: IToken = {
-  type: 'placeholder',
-  literal: ''
+  type: "placeholder",
+  literal: "",
 };
 
 export class Parser implements IParser {
@@ -20,7 +20,7 @@ export class Parser implements IParser {
   public curToken: IToken;
   public peekToken: IToken;
 
-  constructor (lexer: ILexer) {
+  constructor(lexer: ILexer) {
     this.lexer = lexer;
 
     // Need to set both curToken and peekToken before get started
@@ -30,10 +30,10 @@ export class Parser implements IParser {
     this.peekToken = this.lexer.nextToken();
   }
 
-  public parseProgram () {
+  public parseProgram() {
     const program = new A.AstProgram(placeholderToken);
 
-    while (!this.curTokenIs(Tokens.EOF)) {
+    while (!this.curTokenIs(tokens.EOF)) {
       const node = this.parseNode();
       if (node !== null) {
         program.append(node);
@@ -44,30 +44,30 @@ export class Parser implements IParser {
     return program;
   }
 
-  private parseNode () {
+  private parseNode() {
     switch (this.curToken.type) {
-      case Tokens.NEWLINE:
+      case tokens.NEWLINE:
         return null;
       default:
         return this.parseCommandLine();
     }
   }
 
-  private parseCommandLine () {
+  private parseCommandLine() {
     const args: IAstNode[] = [];
-    while (!this.curTokenIs(Tokens.EOF) && !this.curTokenIs(Tokens.NEWLINE)) {
+    while (!this.curTokenIs(tokens.EOF) && !this.curTokenIs(tokens.NEWLINE)) {
       args.push(new A.AstString(this.curToken));
       this.nextToken();
     }
     return new A.AstCommandLine(placeholderToken, args);
   }
 
-  private nextToken () {
+  private nextToken() {
     this.curToken = this.peekToken;
     this.peekToken = this.lexer.nextToken();
   }
 
-  private curTokenIs (t: string) {
+  private curTokenIs(t: string) {
     return t === this.curToken.type;
   }
 }

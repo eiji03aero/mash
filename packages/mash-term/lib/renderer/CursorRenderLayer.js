@@ -65,10 +65,10 @@ var CursorRenderLayer = /** @class */ (function (_super) {
         get: function () {
             var selectionStart = this.terminal.textarea.selectionStart;
             var value = this.terminal.textarea.value;
-            var isEmpty = value === '';
+            var isEmpty = value === "";
             var isAtEnd = selectionStart === value.length;
             return isEmpty || isAtEnd
-                ? ' '
+                ? " "
                 : this.terminal.textarea.value.slice(selectionStart, selectionStart + 1);
         },
         enumerable: true,

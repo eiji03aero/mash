@@ -1,6 +1,6 @@
-import { IToken } from './types';
+import { IToken } from "./types";
 export declare const newToken: () => IToken;
-export declare const Tokens: {
+export declare const tokens: {
     ILLEGAL: string;
     NEWLINE: string;
     EOF: string;

@@ -1,12 +1,12 @@
-import { IFileSystemNode, utils } from 'mash-filesystem';
-import { CommandPayload } from '../types';
+import { IFileSystemNode, utils } from "mash-filesystem";
+import { ICommandPayload } from "../types";
 
 export default ({
   args,
   environment,
-  fileSystem
-}: CommandPayload) => {
-  const path = args[1] || '.';
+  fileSystem,
+}: ICommandPayload) => {
+  const path = args[1] || ".";
 
   const result = fileSystem.resolveNodeFromPath(path);
 
@@ -18,12 +18,11 @@ export default ({
   if (utils.isDirectory(result.value)) {
     const text = result.value.children
       .map((c: IFileSystemNode) => c.name)
-      .join(' ');
+      .join(" ");
     environment.writeln([{ text }]);
-  }
-  else {
+  } else {
     environment.writeln([
-      { text: result.value.name }
+      { text: result.value.name },
     ]);
   }
-}
+};

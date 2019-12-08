@@ -1,4 +1,4 @@
-import { ICalculateService, ITerminal } from '../types';
+import { ICalculateService, ITerminal } from "../types";
 export declare class CalculateService implements ICalculateService {
     private _terminal;
     private _canvas;

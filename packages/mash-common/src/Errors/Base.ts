@@ -1,15 +1,17 @@
 import { date } from "../";
 
-export interface BaseBasis { }
+export interface IBaseBasis {
+  _?: any;
+}
 
 export class Base {
-  createdAt: string;
+  public createdAt: string;
 
-  constructor () {
+  constructor() {
     this.createdAt = date.getCurrentTime();
   }
 
-  message (): string {
+  public message(): string {
     return this.createdAt;
   }
 }

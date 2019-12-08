@@ -1,12 +1,12 @@
 import { Either } from "mash-common";
-import { IDirectory, IFile, IFileSystemNode, IFileSystem } from './types';
+import { IDirectory, IFile, IFileSystem, IFileSystemNode } from "./types";
 export declare class FileSystem implements IFileSystem {
+    static get instance(): FileSystem;
+    static bootstrap(): FileSystem;
+    static reboot(): FileSystem;
+    private static _instance;
     currentDirectory: IDirectory;
     root: IDirectory;
-    private static _instance;
-    static bootstrap(): FileSystem;
-    static get instance(): FileSystem;
-    static reboot(): FileSystem;
     private constructor();
     changeCurrentDirectory(path: string): Either;
     resolveNodeFromPath(path: string): Either<IFileSystemNode>;

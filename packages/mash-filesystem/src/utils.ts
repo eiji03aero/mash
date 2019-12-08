@@ -1,10 +1,10 @@
+import { Directory } from "./Directory";
+import { File } from "./File";
 import {
-  IFileSystemNode,
   IDirectory,
   IFile,
-} from './types';
-import { Directory } from './Directory';
-import { File } from './File';
+  IFileSystemNode,
+} from "./types";
 
 export const isDirectory = (node: IFileSystemNode): node is IDirectory => {
   return node instanceof Directory;

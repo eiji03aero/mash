@@ -1,19 +1,19 @@
-import { ICalculateService, ITerminal } from '../types';
+import { ICalculateService, ITerminal } from "../types";
 
 export class CalculateService implements ICalculateService {
   private _canvas: HTMLCanvasElement;
 
-  constructor (
-    private _terminal: ITerminal
+  constructor(
+    private _terminal: ITerminal,
   ) {
-    this._canvas = document.createElement('canvas');
+    this._canvas = document.createElement("canvas");
   }
 
-  public get ctx () {
-    return this._canvas.getContext('2d') as CanvasRenderingContext2D;
+  public get ctx() {
+    return this._canvas.getContext("2d") as CanvasRenderingContext2D;
   }
 
-  public measureText (text: string) {
+  public measureText(text: string) {
     this.ctx.save();
     this.setTextBaseStyle();
     const metrics = this.ctx.measureText(text);
@@ -21,8 +21,8 @@ export class CalculateService implements ICalculateService {
     return metrics;
   }
 
-  private setTextBaseStyle () {
+  private setTextBaseStyle() {
     this.ctx.font = `${this._terminal.config.fontSize}px ${this._terminal.config.fontFamily}`;
-    this.ctx.textBaseline = 'alphabetic';
+    this.ctx.textBaseline = "alphabetic";
   }
 }

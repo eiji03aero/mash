@@ -13,63 +13,63 @@ var Lexer = /** @class */ (function () {
         var tok = Token_1.newToken();
         this.skipSpace();
         switch (this.ch) {
-            case '\n':
-                tok.type = Token_1.Tokens.NEWLINE;
-                tok.literal = '\n';
+            case "\n":
+                tok.type = Token_1.tokens.NEWLINE;
+                tok.literal = "\n";
                 break;
-            case '=':
-                tok.type = Token_1.Tokens.ASSIGN;
-                tok.literal = '=';
+            case "=":
+                tok.type = Token_1.tokens.ASSIGN;
+                tok.literal = "=";
                 break;
-            case '$':
-                tok.type = Token_1.Tokens.DOLLAR;
-                tok.literal = '$';
+            case "$":
+                tok.type = Token_1.tokens.DOLLAR;
+                tok.literal = "$";
                 break;
-            case '{':
-                tok.type = Token_1.Tokens.LBRACE;
-                tok.literal = '{';
+            case "{":
+                tok.type = Token_1.tokens.LBRACE;
+                tok.literal = "{";
                 break;
-            case '}':
-                tok.type = Token_1.Tokens.RBRACE;
-                tok.literal = '}';
+            case "}":
+                tok.type = Token_1.tokens.RBRACE;
+                tok.literal = "}";
                 break;
-            case '(':
-                tok.type = Token_1.Tokens.LPAREN;
-                tok.literal = '(';
+            case "(":
+                tok.type = Token_1.tokens.LPAREN;
+                tok.literal = "(";
                 break;
-            case ')':
-                tok.type = Token_1.Tokens.RPAREN;
-                tok.literal = ')';
+            case ")":
+                tok.type = Token_1.tokens.RPAREN;
+                tok.literal = ")";
                 break;
-            case '|':
-                if (this.expectPeek('|')) {
+            case "|":
+                if (this.expectPeek("|")) {
                     this.readChar();
-                    tok.type = Token_1.Tokens.OR;
-                    tok.literal = '||';
+                    tok.type = Token_1.tokens.OR;
+                    tok.literal = "||";
                 }
                 else {
-                    tok.type = Token_1.Tokens.PIPE;
-                    tok.literal = '|';
+                    tok.type = Token_1.tokens.PIPE;
+                    tok.literal = "|";
                 }
                 break;
-            case '&':
+            case "&":
                 this.readChar();
-                tok.type = Token_1.Tokens.AND;
-                tok.literal = '&&';
+                tok.type = Token_1.tokens.AND;
+                tok.literal = "&&";
                 break;
-            case ':':
-                tok.type = Token_1.Tokens.COLON;
-                tok.literal = ':';
+            case ":":
+                tok.type = Token_1.tokens.COLON;
+                tok.literal = ":";
                 break;
-            case ';':
-                tok.type = Token_1.Tokens.SEMICOLON;
-                tok.literal = ';';
+            case ";":
+                tok.type = Token_1.tokens.SEMICOLON;
+                tok.literal = ";";
                 break;
-            case 'EOF':
-                tok.type = Token_1.Tokens.EOF;
+            case "EOF":
+                tok.type = Token_1.tokens.EOF;
                 break;
             default:
-                tok.type = Token_1.Tokens.STRING;
+                tok.type = Token_1.tokens.STRING;
                 tok.literal = this.readString();
         }
         this.readChar();
@@ -83,14 +83,14 @@ var Lexer = /** @class */ (function () {
         configurable: true
     });
     Lexer.prototype.isSpace = function (character) {
-        return (character === ' ' ||
-            character === '\t');
+        return (character === " " ||
+            character === "\t");
     };
     Lexer.prototype.isNewLine = function (character) {
-        return character === '\n';
+        return character === "\n";
     };
     Lexer.prototype.isEOF = function (character) {
-        return character === 'EOF';
+        return character === "EOF";
     };
     Lexer.prototype.skipSpace = function () {
         while (this.isSpace(this.ch)) {
@@ -105,7 +105,7 @@ var Lexer = /** @class */ (function () {
     };
     Lexer.prototype.readChar = function () {
         if (this.readPosition >= this.input.length) {
-            this.ch = 'EOF';
+            this.ch = "EOF";
         }
         else {
             this.ch = this.input[this.readPosition];

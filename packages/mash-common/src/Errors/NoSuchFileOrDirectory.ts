@@ -1,18 +1,18 @@
-import { Base, BaseBasis } from "./Base";
+import { Base, IBaseBasis } from "./Base";
 
-interface NoSuchFileOrDirectoryBasis extends BaseBasis {
+interface INoSuchFileOrDirectoryBasis extends IBaseBasis {
   path: string;
 }
 
 export class NoSuchFileOrDirectory extends Base {
-  path: string;
+  public path: string;
 
-  constructor (params: NoSuchFileOrDirectoryBasis) {
+  constructor(params: INoSuchFileOrDirectoryBasis) {
     super();
     this.path = params.path;
   }
 
-  message (): string {
+  public message(): string {
     return `${this.path}: no such file or directory`;
   }
 }

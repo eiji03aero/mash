@@ -1,4 +1,4 @@
-import { IToken, IAstNode, IAstProgram, IAstCommandLine, IAstString } from './types';
+import { IAstCommandLine, IAstNode, IAstProgram, IAstString, IToken } from "./types";
 export declare class AstNode implements IAstNode {
     token: IToken;
     constructor(token: IToken);

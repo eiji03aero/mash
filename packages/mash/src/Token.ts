@@ -1,11 +1,11 @@
-import { IToken } from './types';
+import { IToken } from "./types";
 
 export const newToken = (): IToken => ({
   type: "",
   literal: "",
 });
 
-export const Tokens = {
+export const tokens = {
   ILLEGAL: "ILLEGAL",
   NEWLINE: "NEWLINE",
   EOF: "EOF",
@@ -48,13 +48,13 @@ export const Tokens = {
   // RBRACKET: "]",
 
   // keywords
-  FUNCTION: "FUNCTION"
+  FUNCTION: "FUNCTION",
 };
 
-const Keywords: {[key: string]: string} = {
-  function: Tokens.FUNCTION,
+const keywords: {[key: string]: string} = {
+  function: tokens.FUNCTION,
 };
 
 export const lookUpIdent = (ident: string) => {
-  return Keywords[ident] || Tokens.IDENT;
+  return keywords[ident] || tokens.IDENT;
 };

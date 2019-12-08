@@ -19,7 +19,8 @@
   },
   "scripts": {
     "build": "rm -rf ./lib && tsc",
-    "dev": "webpack-dev-server"
+    "dev": "webpack-dev-server",
+    "lint": "tslint -p . --fix"
   },
   "bugs": {
     "url": "https://github.com/eiji03aero/mash/issues"
@@ -27,6 +28,7 @@
   "homepage": "https://github.com/eiji03aero/mash#readme",
   "devDependencies": {
     "ts-loader": "^6.2.1",
+    "tslint": "^5.20.1",
     "typescript": "^3.7.2",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.9",

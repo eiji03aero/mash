@@ -22,12 +22,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var lodash_1 = __importDefault(require("lodash"));
+var Config_1 = require("./common/Config");
 var renderer_1 = require("./renderer");
 var services_1 = require("./services");
-var Config_1 = require("./common/Config");
 var Terminal = /** @class */ (function () {
     function Terminal(container, config) {
         var _this = this;
+        this._onContainerWheel = lodash_1.default.throttle(function (e) {
+            var stride = Math.abs(e.deltaY);
+            var modifier = stride < 2 ? 0 :
+                stride < 8 ? 1 :
+                    stride < 24 ? 2 :
+                        stride < 48 ? 4 :
+                            6;
+            var direction = e.deltaY > 0 ? 1 : -1;
+            _this.scroll(direction * modifier);
+        }, 50);
         this._onDocumentClick = function (e) {
             if (_this.container.contains(e.target)) {
                 _this.focus();
@@ -40,16 +50,6 @@ var Terminal = /** @class */ (function () {
             _this._updateCachedRows();
             _this.renderer.resize(_this._renderPayload);
         };
-        this._onContainerWheel = lodash_1.default.throttle(function (e) {
-            var stride = Math.abs(e.deltaY);
-            var modifier = stride < 2 ? 0 :
-                stride < 8 ? 1 :
-                    stride < 24 ? 2 :
-                        stride < 48 ? 4 :
-                            6;
-            var direction = e.deltaY > 0 ? 1 : -1;
-            _this.scroll(direction * modifier);
-        }, 50);
         this._onKeyPress = function (e) {
             _this._onKeyPressHandler(e);
         };
@@ -64,8 +64,8 @@ var Terminal = /** @class */ (function () {
             _this._render();
         };
         this.container = container;
-        this.textarea = document.createElement('textarea');
-        this.textarea.setAttribute('style', 'width: 0; height: 0; position: absolute;');
+        this.textarea = document.createElement("textarea");
+        this.textarea.setAttribute("style", "width: 0; height: 0; position: absolute;");
         this.container.appendChild(this.textarea);
         this.config = Config_1.getConfig(config);
         this.rows = [];
@@ -75,11 +75,11 @@ var Terminal = /** @class */ (function () {
         this.renderer = new renderer_1.Renderer(this);
         this.calculateService = new services_1.CalculateService(this);
         this._onKeyPressHandler = function (_) { };
-        window.addEventListener('resize', this._onResize);
-        document.addEventListener('click', this._onDocumentClick);
-        this.container.addEventListener('wheel', this._onContainerWheel);
-        this.textarea.addEventListener('keyup', this._onKeyUp);
-        this.textarea.addEventListener('keypress', this._onKeyPress);
+        window.addEventListener("resize", this._onResize);
+        document.addEventListener("click", this._onDocumentClick);
+        this.container.addEventListener("wheel", this._onContainerWheel);
+        this.textarea.addEventListener("keyup", this._onKeyUp);
+        this.textarea.addEventListener("keypress", this._onKeyPress);
         this.focus();
     }
     Object.defineProperty(Terminal.prototype, "relativePromptRowPosition", {
@@ -96,6 +96,46 @@ var Terminal = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Terminal.prototype, "_renderPayload", {
+        get: function () {
+            return {
+                rows: this._cachedRows,
+                displayedRows: this._cachedRows.slice(this.rowPosition, this.rowPosition + this._numberOfDisplayedRows),
+                rowPosition: this.rowPosition,
+                rowHeight: this.rowHeight,
+                numberOfDisplayedRows: this._numberOfDisplayedRows,
+                config: this.config,
+                textarea: this.textarea,
+            };
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Terminal.prototype, "_bottomPosition", {
+        get: function () {
+            var bottomPosition = this.rows.length - this._numberOfDisplayedRows;
+            return Math.max(bottomPosition, 0);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Terminal.prototype, "_numberOfDisplayedRows", {
+        get: function () {
+            return Math.floor(this.container.offsetHeight / this.rowHeight);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Terminal.prototype, "_isOnBottom", {
+        get: function () {
+            if (this.rows.length < this._numberOfDisplayedRows) {
+                return false;
+            }
+            return this.rowPosition === this.rows.length - this._numberOfDisplayedRows;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Terminal.prototype.focus = function () {
         this.textarea.focus();
     };
@@ -108,7 +148,7 @@ var Terminal = /** @class */ (function () {
         }
         this.textarea.value = "";
         this.appendRow(__spreadArrays(this.config.prompt, [
-            { text: "" }
+            { text: "" },
         ]));
         this._render();
     };
@@ -139,56 +179,15 @@ var Terminal = /** @class */ (function () {
     Terminal.prototype.onKeyPress = function (fn) {
         this._onKeyPressHandler = fn;
     };
-    Object.defineProperty(Terminal.prototype, "_renderPayload", {
-        get: function () {
-            return {
-                rows: this._cachedRows,
-                displayedRows: this._cachedRows.slice(this.rowPosition, this.rowPosition + this._numberOfDisplayedRows),
-                rowPosition: this.rowPosition,
-                rowHeight: this.rowHeight,
-                numberOfDisplayedRows: this._numberOfDisplayedRows,
-                config: this.config,
-                textarea: this.textarea
-            };
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Terminal.prototype, "_bottomPosition", {
-        get: function () {
-            var bottomPosition = this.rows.length - this._numberOfDisplayedRows;
-            return Math.max(bottomPosition, 0);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Terminal.prototype, "_numberOfDisplayedRows", {
-        get: function () {
-            return Math.floor(this.container.offsetHeight / this.rowHeight);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Terminal.prototype, "_isOnBottom", {
-        get: function () {
-            if (this.rows.length < this._numberOfDisplayedRows)
-                return false;
-            return this.rowPosition === this.rows.length - this._numberOfDisplayedRows;
-        },
-        enumerable: true,
-        configurable: true
-    });
     Terminal.prototype._render = function () {
         this.renderer.render(this._renderPayload);
     };
     Terminal.prototype._updateCachedRows = function () {
         var _this = this;
-        var start = window.performance.now();
         this._cachedRows = this.rows.reduce(function (accum, cur) {
             var splitRows = _this._splitRowWithLimit(cur);
             return accum.concat(splitRows);
         }, []);
-        console.log(performance.now() - start);
     };
     Terminal.prototype._splitRowWithLimit = function (row) {
         var _a = this.config, rowLeftMargin = _a.rowLeftMargin, rowRightMargin = _a.rowRightMargin;
@@ -198,7 +197,7 @@ var Terminal = /** @class */ (function () {
         rs.push([]);
         for (var ti = 0; ti < row.length; ti++) {
             var t = row[ti];
-            rs[rs.length - 1].push(__assign(__assign({}, t), { text: '' }));
+            rs[rs.length - 1].push(__assign(__assign({}, t), { text: "" }));
             for (var ci = 0; ci < t.text.length; ci++) {
                 var c = t.text[ci];
                 tmpWidth += this.calculateService.measureText(c).width;

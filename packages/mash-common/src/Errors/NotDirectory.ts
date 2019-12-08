@@ -1,18 +1,18 @@
-import { Base, BaseBasis } from "./Base";
+import { Base, IBaseBasis } from "./Base";
 
-interface NotDirectoryBasis extends BaseBasis {
+interface INotDirectoryBasis extends IBaseBasis {
   name: string;
 }
 
 export class NotDirectory extends Base {
-  name: string;
+  public name: string;
 
-  constructor (params: NotDirectoryBasis) {
+  constructor(params: INotDirectoryBasis) {
     super();
     this.name = params.name;
   }
 
-  message (): string {
+  public message(): string {
     return `${this.name}: not a directory`;
   }
 }

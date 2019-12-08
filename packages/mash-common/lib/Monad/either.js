@@ -12,6 +12,6 @@ exports.either = {
     },
     isRight: function (e) {
         return !e.isError;
-    }
+    },
 };
 //# sourceMappingURL=either.js.map

@@ -1,4 +1,4 @@
-import { Errors, Either } from 'mash-common';
+import { Either, Errors } from "mash-common";
 
 export interface IFileSystemNodeBasis {
   name?: string;
@@ -17,22 +17,20 @@ export interface IFileSystemNode {
 
 export type Nodes = IFileSystemNode[];
 
-
 export interface IDirectoryBasis extends IFileSystemNodeBasis {
   children?: Nodes;
-  __root__?: boolean;
+  root?: boolean;
 }
 
 export interface IDirectory extends IFileSystemNode {
   children: Nodes;
   update(args: IDirectoryBasis): void;
   addChild(node: IFileSystemNode): void;
-  removeChild (node: IFileSystemNode): void;
+  removeChild(node: IFileSystemNode): void;
   containsByName(name: string): boolean;
   findByName(name: string): (IFileSystemNode | undefined);
   isRoot(): boolean;
 }
-
 
 export interface IFileBasis extends IFileSystemNodeBasis {
   content?: string;
@@ -42,11 +40,10 @@ export interface IFile extends IFileSystemNode {
   content: string;
 }
 
-
 export interface IFileSystem {
   currentDirectory: IDirectory;
   changeCurrentDirectory(path: string): Either;
-  resolveNodeFromPath (path: string): Either<IFileSystemNode>;
+  resolveNodeFromPath(path: string): Either<IFileSystemNode>;
   resolveAbsolutePath(node: IFileSystemNode): string;
   createFile(path: string): Either<IFile>;
   deleteFile(path: string): Either;
@@ -65,9 +62,9 @@ export interface IFileSystemCommandResultNode<
   node?: T;
 }
 
-export type TargetNodePathStat = {
-  dirname: string,
-  basename: string,
-  parentDirectory: IDirectory,
-  isBaseExists: boolean,
+export interface ITargetNodePathStat {
+  dirname: string;
+  basename: string;
+  parentDirectory: IDirectory;
+  isBaseExists: boolean;
 }

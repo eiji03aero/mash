@@ -1,7 +1,7 @@
-export interface TextObject {
+export interface ITextObject {
   text: string;
   color?: string;
 }
 
-export type Row = TextObject[];
+export type Row = ITextObject[];
 export type Rows = Row[];

@@ -1,4 +1,4 @@
-import { Errors, Either } from 'mash-common';
+import { Either, Errors } from "mash-common";
 export interface IFileSystemNodeBasis {
     name?: string;
     parentNode?: IFileSystemNode;
@@ -15,7 +15,7 @@ export interface IFileSystemNode {
 export declare type Nodes = IFileSystemNode[];
 export interface IDirectoryBasis extends IFileSystemNodeBasis {
     children?: Nodes;
-    __root__?: boolean;
+    root?: boolean;
 }
 export interface IDirectory extends IFileSystemNode {
     children: Nodes;
@@ -49,10 +49,10 @@ export interface IFileSystemCommandResult {
 export interface IFileSystemCommandResultNode<T extends IFileSystemNode> extends IFileSystemCommandResult {
     node?: T;
 }
-export declare type TargetNodePathStat = {
+export interface ITargetNodePathStat {
     dirname: string;
     basename: string;
     parentDirectory: IDirectory;
     isBaseExists: boolean;
-};
+}
 //# sourceMappingURL=types.d.ts.map

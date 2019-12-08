@@ -17,8 +17,9 @@
 - whole
   - [WIP] should create package provide environment including filesystem?
     - not to do this for now. keep them inside mash
-  - should change how text treated? should be just string with dedicated escape sequence?
   - add linter
+  - how text treated
+    - should be just string with dedicated escape sequence
 - mash
   - [WIP] refactor token for commandline and program
     - kind of don't know what to do
@@ -37,13 +38,8 @@
     - argument variables
     - let user defined script run
 - mash-filesystem
-  - refactor FileSystem with Either
-    - resolveNodeFromPath
   - serialize nodes for saving
 - mash-common
-  - paths util
-    - dirname
-    - basename
 - mash-environment
   - properties
     - term

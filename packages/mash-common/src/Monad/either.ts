@@ -1,17 +1,17 @@
-import { Either, EitherLeft, EitherRight } from '../types';
-import *  as Errors from '../Errors';
+import * as Errors from "../Errors";
+import { Either, IEitherLeft, IEitherRight } from "../types";
 
 export const either = {
-  left (err: Errors.Base): EitherLeft {
+  left(err: Errors.Base): IEitherLeft {
     return { isError: true, error: err };
   },
-  right<T = any> (value: T): EitherRight<T> {
-    return { isError: false, value: value };
+  right<T = any>(value: T): IEitherRight<T> {
+    return { isError: false, value };
   },
-  isLeft (e: Either): e is EitherLeft {
+  isLeft(e: Either): e is IEitherLeft {
     return e.isError;
   },
-  isRight<T = any> (e: Either): e is EitherRight<T> {
+  isRight<T = any>(e: Either): e is IEitherRight<T> {
     return !e.isError;
-  }
+  },
 };

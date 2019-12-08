@@ -1,10 +1,10 @@
-import { CommandPayload } from '../types';
+import { ICommandPayload } from "../types";
 
 export default ({
   args,
-  environment
-}: CommandPayload) => {
+  environment,
+}: ICommandPayload) => {
   environment.writeln([
-    { text: args.slice(1).join(' ') }
+    { text: args.slice(1).join(" ") },
   ]);
 };

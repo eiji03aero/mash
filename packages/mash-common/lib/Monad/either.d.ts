@@ -1,9 +1,9 @@
-import { Either, EitherLeft, EitherRight } from '../types';
-import * as Errors from '../Errors';
+import * as Errors from "../Errors";
+import { Either, IEitherLeft, IEitherRight } from "../types";
 export declare const either: {
-    left(err: Errors.Base): EitherLeft;
-    right<T = any>(value: T): EitherRight<T>;
-    isLeft(e: Either<any>): e is EitherLeft;
-    isRight<T_1 = any>(e: Either<any>): e is EitherRight<T_1>;
+    left(err: Errors.Base): IEitherLeft;
+    right<T = any>(value: T): IEitherRight<T>;
+    isLeft(e: Either<any>): e is IEitherLeft;
+    isRight<T_1 = any>(e: Either<any>): e is IEitherRight<T_1>;
 };
 //# sourceMappingURL=either.d.ts.map

@@ -1,17 +1,17 @@
 import {
-  IToken
+  IToken,
 } from '../src/types';
 import { Lexer } from "../src/Lexer";
-import { Tokens } from "../src/Token";
+import { tokens } from "../src/Token";
 
 
 describe('Lexer', () => {
   it ('should lex one line', () => {
     const input = "echo domo";
     const tests = [
-      { type: Tokens.STRING, literal: "echo" },
-      { type: Tokens.STRING, literal: "domo" },
-      { type: Tokens.EOF, literal: "" },
+      { type: tokens.STRING, literal: "echo" },
+      { type: tokens.STRING, literal: "domo" },
+      { type: tokens.EOF, literal: "" },
     ];
 
     const l = new Lexer(input);
@@ -34,44 +34,44 @@ describe('Lexer', () => {
     `;
 
     const tests = [
-      { type: Tokens.NEWLINE,       literal: "\n" },
+      { type: tokens.NEWLINE,       literal: "\n" },
 
-      { type: Tokens.STRING,       literal: "echo" },
-      { type: Tokens.STRING,       literal: "domo" },
-      { type: Tokens.NEWLINE,       literal: "\n" },
+      { type: tokens.STRING,       literal: "echo" },
+      { type: tokens.STRING,       literal: "domo" },
+      { type: tokens.NEWLINE,       literal: "\n" },
 
-      { type: Tokens.NEWLINE,       literal: "\n" },
+      { type: tokens.NEWLINE,       literal: "\n" },
 
-      { type: Tokens.STRING,       literal: "cd" },
-      { type: Tokens.STRING,       literal: "~/" },
-      { type: Tokens.NEWLINE,       literal: "\n" },
+      { type: tokens.STRING,       literal: "cd" },
+      { type: tokens.STRING,       literal: "~/" },
+      { type: tokens.NEWLINE,       literal: "\n" },
 
-      { type: Tokens.STRING,       literal: "mv" },
-      { type: Tokens.STRING,       literal: "./domo" },
-      { type: Tokens.STRING,    literal: "./domo.bak" },
-      { type: Tokens.NEWLINE,       literal: "\n" },
+      { type: tokens.STRING,       literal: "mv" },
+      { type: tokens.STRING,       literal: "./domo" },
+      { type: tokens.STRING,    literal: "./domo.bak" },
+      { type: tokens.NEWLINE,       literal: "\n" },
 
-      { type: Tokens.STRING,       literal: "echo" },
-      { type: Tokens.STRING,       literal: "domo" },
-      { type: Tokens.PIPE,    literal: "|" },
-      { type: Tokens.STRING,       literal: "cd" },
-      { type: Tokens.NEWLINE,       literal: "\n" },
+      { type: tokens.STRING,       literal: "echo" },
+      { type: tokens.STRING,       literal: "domo" },
+      { type: tokens.PIPE,    literal: "|" },
+      { type: tokens.STRING,       literal: "cd" },
+      { type: tokens.NEWLINE,       literal: "\n" },
 
-      { type: Tokens.AND,       literal: "&&" },
-      { type: Tokens.OR,       literal: "||" },
-      { type: Tokens.NEWLINE,       literal: "\n" },
+      { type: tokens.AND,       literal: "&&" },
+      { type: tokens.OR,       literal: "||" },
+      { type: tokens.NEWLINE,       literal: "\n" },
 
-      { type: Tokens.LBRACE,    literal: "{" },
-      { type: Tokens.RBRACE,    literal: "}" },
-      { type: Tokens.LPAREN,    literal: "(" },
-      { type: Tokens.RPAREN,    literal: ")" },
-      { type: Tokens.COLON,     literal: ":" },
-      { type: Tokens.SEMICOLON, literal: ";" },
-      { type: Tokens.ASSIGN,    literal: "=" },
+      { type: tokens.LBRACE,    literal: "{" },
+      { type: tokens.RBRACE,    literal: "}" },
+      { type: tokens.LPAREN,    literal: "(" },
+      { type: tokens.RPAREN,    literal: ")" },
+      { type: tokens.COLON,     literal: ":" },
+      { type: tokens.SEMICOLON, literal: ";" },
+      { type: tokens.ASSIGN,    literal: "=" },
 
-      { type: Tokens.NEWLINE,       literal: "\n" },
-      { type: Tokens.EOF, literal: "" }
-    ]
+      { type: tokens.NEWLINE,       literal: "\n" },
+      { type: tokens.EOF, literal: "" },
+    ];
     const l = new Lexer(input);
 
     for (let t of tests) {

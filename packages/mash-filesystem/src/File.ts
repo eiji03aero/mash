@@ -1,23 +1,23 @@
-import {
-  IFileBasis,
-  IFile,
-} from './types';
 import { FileSystemNode } from "./FileSystemNode";
+import {
+  IFile,
+  IFileBasis,
+} from "./types";
 
 export class File extends FileSystemNode implements IFile {
-  content: string;
-
-  static isBasis (obj: any): obj is IFileBasis {
-    return 'content' in obj;
+  public static isBasis(obj: any): obj is IFileBasis {
+    return "content" in obj;
   }
 
-  constructor (params: IFileBasis) {
+  public content: string;
+
+  constructor(params: IFileBasis) {
     super(params);
-    this.content = params.content || '';
+    this.content = params.content || "";
   }
 
-  update (args: IFileBasis) {
+  public update(args: IFileBasis) {
     super.update(args);
-    args.content && (this.content = args.content);
+    if (this.content) this.content = args.content as string;
   }
 }

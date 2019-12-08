@@ -1,4 +1,4 @@
-import { text } from 'mash-common';
+import { text } from "mash-common";
 
 export type KeyboardEventHandler = (e: KeyboardEvent) => void;
 

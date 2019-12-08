@@ -53,7 +53,7 @@ var AstCommandLine = /** @class */ (function (_super) {
         return _this;
     }
     AstCommandLine.prototype.toString = function () {
-        return this.args.map(function (t) { return t.toString(); }).join(', ');
+        return this.args.map(function (t) { return t.toString(); }).join(", ");
     };
     return AstCommandLine;
 }(AstNode));

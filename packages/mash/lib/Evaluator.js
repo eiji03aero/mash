@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var types_1 = require("./types");
 var Ast_1 = require("./Ast");
 var builtins_1 = require("./builtins");
+var types_1 = require("./types");
 var Evaluator = /** @class */ (function () {
     function Evaluator(fs, env) {
         this._environment = env;
@@ -37,7 +37,7 @@ var Evaluator = /** @class */ (function () {
         func({
             args: commandLine.args.map(function (a) { return a.toString(); }),
             fileSystem: this._fileSystem,
-            environment: this._environment
+            environment: this._environment,
         });
     };
     return Evaluator;

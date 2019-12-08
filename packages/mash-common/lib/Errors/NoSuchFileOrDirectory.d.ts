@@ -1,10 +1,10 @@
-import { Base, BaseBasis } from "./Base";
-interface NoSuchFileOrDirectoryBasis extends BaseBasis {
+import { Base, IBaseBasis } from "./Base";
+interface INoSuchFileOrDirectoryBasis extends IBaseBasis {
     path: string;
 }
 export declare class NoSuchFileOrDirectory extends Base {
     path: string;
-    constructor(params: NoSuchFileOrDirectoryBasis);
+    constructor(params: INoSuchFileOrDirectoryBasis);
     message(): string;
 }
 export {};

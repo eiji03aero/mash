@@ -1,5 +1,5 @@
-import { text } from 'mash-common';
-import { IRenderPayload, IRectCoords, ITerminal } from '../types';
+import { text } from "mash-common";
+import { IRectCoords, IRenderPayload, ITerminal } from "../types";
 export declare class BaseRenderLayer {
     terminal: ITerminal;
     canvas: HTMLCanvasElement;
@@ -9,7 +9,7 @@ export declare class BaseRenderLayer {
     resize(params: IRenderPayload): void;
     clear(params?: IRectCoords): void;
     protected setTextBaseStyle(): void;
-    protected setTextColorFromObject(t: text.TextObject): void;
+    protected setTextColorFromObject(t: text.ITextObject): void;
     private resizeCanvas;
 }
 //# sourceMappingURL=BaseRenderLayer.d.ts.map

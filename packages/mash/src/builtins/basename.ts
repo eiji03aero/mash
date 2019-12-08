@@ -1,16 +1,16 @@
-import { paths } from 'mash-common';
-import { CommandPayload } from '../types';
+import { paths } from "mash-common";
+import { ICommandPayload } from "../types";
 
 export default ({
   args,
-  environment
-}: CommandPayload) => {
+  environment,
+}: ICommandPayload) => {
   if (args.length < 2) {
-    environment.error(1, 'needs 1 argument. usage required here');
+    environment.error(1, "needs 1 argument. usage required here");
     return;
   }
 
   environment.writeln([
-    { text: paths.basename(args[1]) }
+    { text: paths.basename(args[1]) },
   ]);
 };

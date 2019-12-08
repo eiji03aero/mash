@@ -1,18 +1,52 @@
-import _ from 'lodash';
-import { text } from 'mash-common';
+import _ from "lodash";
+import { text } from "mash-common";
+import { getConfig } from "./common/Config";
+import { Renderer } from "./renderer";
+import { CalculateService } from "./services";
 import {
-  KeyboardEventHandler,
-  ITerminal,
-  IRenderer,
+  ICalculateService,
   IConfig,
+  IRenderer,
   IRenderPayload,
-  ICalculateService
-} from './types';
-import { Renderer } from './renderer';
-import { CalculateService } from './services';
-import { getConfig } from './common/Config';
+  ITerminal,
+  KeyboardEventHandler,
+} from "./types";
 
 export class Terminal implements ITerminal {
+
+  public get relativePromptRowPosition() {
+    return this._cachedRows.length - 1 - this.rowPosition;
+  }
+
+  public get rowHeight() {
+    return this.config.fontSize + this.config.rowTopMargin + this.config.rowBottomMargin;
+  }
+
+  private get _renderPayload(): IRenderPayload {
+    return {
+      rows: this._cachedRows,
+      displayedRows: this._cachedRows.slice(this.rowPosition, this.rowPosition + this._numberOfDisplayedRows),
+      rowPosition: this.rowPosition,
+      rowHeight: this.rowHeight,
+      numberOfDisplayedRows: this._numberOfDisplayedRows,
+      config: this.config,
+      textarea: this.textarea,
+    };
+  }
+
+  private get _bottomPosition() {
+    const bottomPosition = this.rows.length - this._numberOfDisplayedRows;
+    return Math.max(bottomPosition, 0);
+  }
+
+  private get _numberOfDisplayedRows() {
+    return Math.floor(this.container.offsetHeight / this.rowHeight);
+  }
+
+  private get _isOnBottom() {
+    if (this.rows.length < this._numberOfDisplayedRows) { return false; }
+    return this.rowPosition === this.rows.length - this._numberOfDisplayedRows;
+  }
   public container: HTMLElement;
   public textarea: HTMLTextAreaElement;
   public config: IConfig;
@@ -24,14 +58,26 @@ export class Terminal implements ITerminal {
   private _cachedRows: text.Rows;
   private _onKeyPressHandler: (e: KeyboardEvent) => void;
 
-  constructor (
+  private _onContainerWheel = _.throttle((e: WheelEvent) => {
+    const stride = Math.abs(e.deltaY);
+    const modifier =
+      stride < 2 ? 0 :
+      stride < 8 ? 1 :
+      stride < 24 ? 2 :
+      stride < 48 ? 4 :
+      6;
+    const direction = e.deltaY > 0 ? 1 : -1;
+    this.scroll(direction * modifier);
+  }, 50);
+
+  constructor(
     container: HTMLElement,
-    config: any
+    config: any,
   ) {
     this.container = container;
 
-    this.textarea = document.createElement('textarea');
-    this.textarea.setAttribute('style', 'width: 0; height: 0; position: absolute;');
+    this.textarea = document.createElement("textarea");
+    this.textarea.setAttribute("style", "width: 0; height: 0; position: absolute;");
     this.container.appendChild(this.textarea);
     this.config = getConfig(config);
     this.rows = [] as text.Rows;
@@ -43,32 +89,24 @@ export class Terminal implements ITerminal {
 
     this._onKeyPressHandler = (_: KeyboardEvent) => {};
 
-    window.addEventListener('resize', this._onResize);
-    document.addEventListener('click', this._onDocumentClick);
-    this.container.addEventListener('wheel', this._onContainerWheel);
-    this.textarea.addEventListener('keyup', this._onKeyUp);
-    this.textarea.addEventListener('keypress', this._onKeyPress);
+    window.addEventListener("resize", this._onResize);
+    document.addEventListener("click", this._onDocumentClick);
+    this.container.addEventListener("wheel", this._onContainerWheel);
+    this.textarea.addEventListener("keyup", this._onKeyUp);
+    this.textarea.addEventListener("keypress", this._onKeyPress);
 
     this.focus();
   }
 
-  public get relativePromptRowPosition () {
-    return this._cachedRows.length - 1 - this.rowPosition;
-  }
-
-  public get rowHeight () {
-    return this.config.fontSize + this.config.rowTopMargin + this.config.rowBottomMargin;
-  }
-
-  public focus () {
+  public focus() {
     this.textarea.focus();
   }
 
-  public blur () {
+  public blur() {
     this.textarea.blur();
   }
 
-  public prompt () {
+  public prompt() {
     if (this._isOnBottom) {
       this.rowPosition += 1;
     }
@@ -76,12 +114,12 @@ export class Terminal implements ITerminal {
     this.textarea.value = "";
     this.appendRow([
       ...this.config.prompt,
-      { text: "" }
+      { text: "" },
     ]);
     this._render();
   }
 
-  public writeln (texts: text.Row) {
+  public writeln(texts: text.Row) {
     if (this._isOnBottom) {
       this.rowPosition += 1;
     }
@@ -90,12 +128,12 @@ export class Terminal implements ITerminal {
     this._render();
   }
 
-  public appendRow (texts: text.Row) {
+  public appendRow(texts: text.Row) {
     this.rows.push(texts);
     this._updateCachedRows();
   }
 
-  public scroll (numberToScroll: number) {
+  public scroll(numberToScroll: number) {
     const nextPosition = this.rowPosition + numberToScroll;
     const shouldBeOnTop = nextPosition < 0;
     const shouldBeOnBottom = nextPosition >= this._bottomPosition;
@@ -108,55 +146,27 @@ export class Terminal implements ITerminal {
     this._render();
   }
 
-  public scrollToBottom () {
+  public scrollToBottom() {
     this.rowPosition = this._bottomPosition;
     this._render();
   }
 
-  public onKeyPress (fn: KeyboardEventHandler) {
+  public onKeyPress(fn: KeyboardEventHandler) {
     this._onKeyPressHandler = fn;
   }
 
-  private get _renderPayload (): IRenderPayload {
-    return {
-      rows: this._cachedRows,
-      displayedRows: this._cachedRows.slice(this.rowPosition, this.rowPosition + this._numberOfDisplayedRows),
-      rowPosition: this.rowPosition,
-      rowHeight: this.rowHeight,
-      numberOfDisplayedRows: this._numberOfDisplayedRows,
-      config: this.config,
-      textarea: this.textarea
-    };
-  }
-
-  private get _bottomPosition () {
-    const bottomPosition = this.rows.length - this._numberOfDisplayedRows;
-    return Math.max(bottomPosition, 0);
-  }
-
-  private get _numberOfDisplayedRows () {
-    return Math.floor(this.container.offsetHeight / this.rowHeight);
-  }
-
-  private get _isOnBottom () {
-    if (this.rows.length < this._numberOfDisplayedRows) return false;
-    return this.rowPosition === this.rows.length - this._numberOfDisplayedRows;
-  }
-
-  private _render () {
+  private _render() {
     this.renderer.render(this._renderPayload);
   }
 
-  private _updateCachedRows () {
-    const start = window.performance.now();
+  private _updateCachedRows() {
     this._cachedRows = this.rows.reduce((accum: text.Rows, cur: text.Row) => {
       const splitRows = this._splitRowWithLimit(cur);
       return accum.concat(splitRows);
     }, [] as text.Rows);
-    console.log(performance.now() - start);
   }
 
-  private _splitRowWithLimit (row: text.Row) {
+  private _splitRowWithLimit(row: text.Row) {
     const { rowLeftMargin, rowRightMargin } = this.config;
     const availableWidth = this.container.offsetWidth - rowLeftMargin - rowRightMargin;
     const rs = [] as text.Rows;
@@ -166,7 +176,7 @@ export class Terminal implements ITerminal {
 
     for (let ti = 0; ti < row.length; ti++) {
       const t = row[ti];
-      rs[rs.length - 1].push({ ...t, text: '' });
+      rs[rs.length - 1].push({ ...t, text: "" });
 
       for (let ci = 0; ci < t.text.length; ci++) {
         const c = t.text[ci];
@@ -177,8 +187,7 @@ export class Terminal implements ITerminal {
           const lastRow = rs[rs.length - 1];
           const lastTextObject = lastRow[lastRow.length - 1];
           lastTextObject.text += c;
-        }
-        else {
+        } else {
           const newRow = [] as text.Row;
           const newTextObject = { ...t, text: c };
           newRow.push(newTextObject);
@@ -204,18 +213,6 @@ export class Terminal implements ITerminal {
     this._updateCachedRows();
     this.renderer.resize(this._renderPayload);
   }
-
-  private _onContainerWheel = _.throttle((e: WheelEvent) => {
-    const stride = Math.abs(e.deltaY);
-    const modifier =
-      stride < 2 ? 0 :
-      stride < 8 ? 1 :
-      stride < 24 ? 2 :
-      stride < 48 ? 4 :
-      6;
-    const direction = e.deltaY > 0 ? 1 : -1;
-    this.scroll(direction * modifier);
-  }, 50);
 
   private _onKeyPress = (e: KeyboardEvent) => {
     this._onKeyPressHandler(e);

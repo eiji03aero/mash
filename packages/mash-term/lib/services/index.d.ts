@@ -1,2 +1,2 @@
-export { CalculateService } from './CalculateService';
+export { CalculateService } from "./CalculateService";
 //# sourceMappingURL=index.d.ts.map

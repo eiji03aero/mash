@@ -1,4 +1,4 @@
-import { ILexer, IToken } from './types';
+import { ILexer, IToken } from "./types";
 export declare class Lexer implements ILexer {
     input: string;
     position: number;

@@ -1,13 +1,13 @@
-import * as Errors from './Errors';
+import * as Errors from "./Errors";
 
-export type EitherLeft = {
-  isError: true,
-  error: Errors.Base
+export interface IEitherLeft {
+  isError: true;
+  error: Errors.Base;
 }
 
-export type EitherRight<T = any> = {
-  isError: false,
-  value: T
+export interface IEitherRight<T = any> {
+  isError: false;
+  value: T;
 }
 
-export type Either<T = any> = EitherLeft | EitherRight<T>;
+export type Either<T = any> = IEitherLeft | IEitherRight<T>;

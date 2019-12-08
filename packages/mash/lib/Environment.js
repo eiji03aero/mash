@@ -1,19 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var types_1 = require("./types");
 var Evaluator_1 = require("./Evaluator");
 var Lexer_1 = require("./Lexer");
 var Parser_1 = require("./Parser");
+var types_1 = require("./types");
 var Environment = /** @class */ (function () {
     function Environment(_fileSystem) {
         this._fileSystem = _fileSystem;
         this._exitStatus = types_1.ExitStatus.Success;
         this._environmentWriteHandler = function (_a) { };
     }
-    Environment.bootstrap = function (fs) {
-        this._instance = new this(fs);
-        return this._instance;
-    };
     Object.defineProperty(Environment, "instance", {
         get: function () {
             return this._instance;
@@ -28,6 +24,10 @@ var Environment = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    Environment.bootstrap = function (fs) {
+        this._instance = new this(fs);
+        return this._instance;
+    };
     Environment.prototype.eval = function (str) {
         this._resetEnvironment();
         var lexer = new Lexer_1.Lexer(str);

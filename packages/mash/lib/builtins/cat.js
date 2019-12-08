@@ -1,23 +1,27 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var mash_filesystem_1 = require("mash-filesystem");
 exports.default = (function (_a) {
     var args = _a.args, fileSystem = _a.fileSystem, environment = _a.environment;
     if (args.length < 2) {
-        environment.error(1, 'needs 1 argument. usage required here');
+        environment.error(1, "needs 1 argument. usage required here");
         return;
     }
     var path = args[1];
-    var _b = fileSystem.resolveNodeFromPath(path), error = _b.error, node = _b.node;
-    if (error) {
-        environment.error(1, error.message());
+    var result = fileSystem.resolveNodeFromPath(path);
+    if (result.isError) {
+        environment.error(1, result.error.message());
         return;
     }
-    if (node.isDirectory) {
+    var node = result.value;
+    if (mash_filesystem_1.utils.isDirectory(node)) {
         environment.error(1, node.name + ": is a directory");
         return;
     }
-    environment.writeln([
-        { text: node.content }
-    ]);
+    else if (mash_filesystem_1.utils.isFile(node)) {
+        environment.writeln([
+            { text: node.content },
+        ]);
+    }
 });
 //# sourceMappingURL=cat.js.map

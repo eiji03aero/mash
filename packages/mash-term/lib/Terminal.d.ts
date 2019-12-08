@@ -1,6 +1,12 @@
-import { text } from 'mash-common';
-import { KeyboardEventHandler, ITerminal, IRenderer, IConfig, ICalculateService } from './types';
+import { text } from "mash-common";
+import { ICalculateService, IConfig, IRenderer, ITerminal, KeyboardEventHandler } from "./types";
 export declare class Terminal implements ITerminal {
+    get relativePromptRowPosition(): number;
+    get rowHeight(): number;
+    private get _renderPayload();
+    private get _bottomPosition();
+    private get _numberOfDisplayedRows();
+    private get _isOnBottom();
     container: HTMLElement;
     textarea: HTMLTextAreaElement;
     config: IConfig;
@@ -11,9 +17,8 @@ export declare class Terminal implements ITerminal {
     calculateService: ICalculateService;
     private _cachedRows;
     private _onKeyPressHandler;
+    private _onContainerWheel;
     constructor(container: HTMLElement, config: any);
-    get relativePromptRowPosition(): number;
-    get rowHeight(): number;
     focus(): void;
     blur(): void;
     prompt(): void;
@@ -22,16 +27,11 @@ export declare class Terminal implements ITerminal {
     scroll(numberToScroll: number): void;
     scrollToBottom(): void;
     onKeyPress(fn: KeyboardEventHandler): void;
-    private get _renderPayload();
-    private get _bottomPosition();
-    private get _numberOfDisplayedRows();
-    private get _isOnBottom();
     private _render;
     private _updateCachedRows;
     private _splitRowWithLimit;
     private _onDocumentClick;
     private _onResize;
-    private _onContainerWheel;
     private _onKeyPress;
     private _onKeyUp;
 }

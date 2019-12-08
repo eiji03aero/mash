@@ -1,4 +1,4 @@
-import { IRenderer, IBaseRenderLayer, IRenderPayload, ITerminal } from '../types';
+import { IBaseRenderLayer, IRenderer, IRenderPayload, ITerminal } from "../types";
 export declare class Renderer implements IRenderer {
     renderLayers: IBaseRenderLayer[];
     constructor(terminal: ITerminal);

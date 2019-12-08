@@ -1,3 +1,3 @@
-import { ParsedCommandArgs, CommandOptionMap } from './types';
-export declare const parseCommandArgs: (args: string[], defaultOptions: CommandOptionMap) => ParsedCommandArgs;
+import { ICommandOptionMap, IParsedCommandArgs } from "./types";
+export declare const parseCommandArgs: (args: string[], defaultOptions: ICommandOptionMap) => IParsedCommandArgs;
 //# sourceMappingURL=utils.d.ts.map

@@ -2,74 +2,74 @@ import { Directory } from "../Directory";
 import { File } from "../File";
 
 export const homeDirectory = new Directory({
-  name: 'home',
+  name: "home",
   children: [
     new Directory({
-      name: 'Applications',
+      name: "Applications",
       children: [
         new File({
-          name: 'game.txt',
-          content: 'game is here',
+          name: "game.txt",
+          content: "game is here",
         }),
         new File({
-          name: 'editor.txt',
-          content: 'editor will be here',
+          name: "editor.txt",
+          content: "editor will be here",
         }),
       ],
     }),
     new Directory({
-      name: 'Desktop',
+      name: "Desktop",
       children: [
         new File({
-          name: 'memo.txt',
-          content: 'do some study',
+          name: "memo.txt",
+          content: "do some study",
         }),
         new Directory({
-          name: 'work',
+          name: "work",
           children: [
             new File({
-              name: 'todos',
-              content: 'send an email',
+              name: "todos",
+              content: "send an email",
             }),
             new File({
-              name: 'stats.excel',
-              content: 'name,domo,kore,'
+              name: "stats.excel",
+              content: "name,domo,kore,",
             }),
           ],
         }),
       ],
     }),
     new File({
-      name: 'README.txt',
-      content: 'read me here man',
+      name: "README.txt",
+      content: "read me here man",
     }),
     new File({
-      name: 'todo.txt',
-      content: 'do it man',
+      name: "todo.txt",
+      content: "do it man",
     }),
     new File({
-      name: 'site-policy',
-      content: 'there is no such thing as policy man',
+      name: "site-policy",
+      content: "there is no such thing as policy man",
     }),
   ],
 });
 
 const varDirectory = new Directory({
-  name: 'var',
+  name: "var",
   children: [
     new File({
-      name: 'error.log',
-      content: 'your error is here',
+      name: "error.log",
+      content: "your error is here",
     }),
   ],
 });
 
 const etcDirectory = new Directory({
-  name: 'etc',
+  name: "etc",
   children: [
     new File({
-      name: 'null',
-      content: 'null file is here',
+      name: "null",
+      content: "null file is here",
     }),
   ],
 });

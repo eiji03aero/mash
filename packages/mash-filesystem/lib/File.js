@@ -18,15 +18,16 @@ var File = /** @class */ (function (_super) {
     __extends(File, _super);
     function File(params) {
         var _this = _super.call(this, params) || this;
-        _this.content = params.content || '';
+        _this.content = params.content || "";
         return _this;
     }
     File.isBasis = function (obj) {
-        return 'content' in obj;
+        return "content" in obj;
     };
     File.prototype.update = function (args) {
         _super.prototype.update.call(this, args);
-        args.content && (this.content = args.content);
+        if (this.content)
+            this.content = args.content;
     };
     return File;
 }(FileSystemNode_1.FileSystemNode));

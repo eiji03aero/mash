@@ -1,32 +1,32 @@
 import {
-  IFileSystem
-} from 'mash-filesystem';
+  IFileSystem,
+} from "mash-filesystem";
 
 import {
-  IAstNode,
-  IEvaluator,
-  IEnvironment,
-  ExitStatus
-} from './types';
-import {
+  AstCommandLine,
   AstProgram,
-  AstCommandLine
 } from "./Ast";
-import { builtins } from './builtins';
+import { builtins } from "./builtins";
+import {
+  ExitStatus,
+  IAstNode,
+  IEnvironment,
+  IEvaluator,
+} from "./types";
 
 export class Evaluator implements IEvaluator {
   private _fileSystem: IFileSystem;
   private _environment: IEnvironment;
 
-  constructor (
+  constructor(
     fs: IFileSystem,
-    env: IEnvironment
+    env: IEnvironment,
   ) {
     this._environment = env;
     this._fileSystem = fs;
   }
 
-  public eval (node: IAstNode) {
+  public eval(node: IAstNode) {
     // Have to make use of constructor instead of interface,
     // since switch-case based on implement-interface is currently not supported
     switch (node.constructor) {
@@ -37,8 +37,8 @@ export class Evaluator implements IEvaluator {
     }
   }
 
-  private _evalProgram (program: AstProgram) {
-    for (let node of program.nodes) {
+  private _evalProgram(program: AstProgram) {
+    for (const node of program.nodes) {
       this.eval(node);
       if (this._environment.exitStatus !== ExitStatus.Success) {
         break;
@@ -46,7 +46,7 @@ export class Evaluator implements IEvaluator {
     }
   }
 
-  private _evalCommandLine (commandLine: AstCommandLine) {
+  private _evalCommandLine(commandLine: AstCommandLine) {
     const command = commandLine.args[0].tokenLiteral();
     const func = builtins[command];
 
@@ -58,7 +58,7 @@ export class Evaluator implements IEvaluator {
     func({
       args: commandLine.args.map((a: IAstNode) => a.toString()),
       fileSystem: this._fileSystem,
-      environment: this._environment
+      environment: this._environment,
     });
   }
 }

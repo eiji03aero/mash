@@ -1,5 +1,5 @@
-import { IFileSystem } from 'mash-filesystem';
-import { text } from 'mash-common';
+import { text } from "mash-common";
+import { IFileSystem } from "mash-filesystem";
 export declare type TokenType = string;
 export interface IToken {
     type: TokenType;
@@ -38,19 +38,19 @@ export declare enum ExitStatus {
     Success = 0,
     Failure = 1
 }
-export declare type CommandPayload = {
+export interface ICommandPayload {
     args: string[];
     fileSystem: IFileSystem;
     environment: IEnvironment;
-};
-export declare type CommandOptionMap = {
+}
+export interface ICommandOptionMap {
     [index: string]: string | boolean;
-};
-export declare type ParsedCommandArgs = {
+}
+export interface IParsedCommandArgs {
     args: string[];
-    options: CommandOptionMap;
-};
-export declare type Command = (args: CommandPayload) => void;
+    options: ICommandOptionMap;
+}
+export declare type Command = (args: ICommandPayload) => void;
 export interface ICommandMap {
     [index: string]: Command;
 }

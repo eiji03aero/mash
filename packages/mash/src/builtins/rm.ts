@@ -1,18 +1,18 @@
-import { utils as futils } from 'mash-filesystem';
-import { CommandPayload } from '../types';
-import * as utils from '../utils';
+import { utils as futils } from "mash-filesystem";
+import { ICommandPayload } from "../types";
+import * as utils from "../utils";
 
 export default ({
   args: _args,
   fileSystem,
-  environment
-}: CommandPayload) => {
+  environment,
+}: ICommandPayload) => {
   const { args, options } = utils.parseCommandArgs(_args, {
-    r: false
+    r: false,
   });
 
   if (args.length < 2) {
-    environment.error(1, 'needs 1 argument. usage required here');
+    environment.error(1, "needs 1 argument. usage required here");
     return;
   }
 
@@ -32,8 +32,7 @@ export default ({
       return;
     }
     result = fileSystem.deleteDirectory(path);
-  }
-  else if (futils.isFile(node)) {
+  } else if (futils.isFile(node)) {
     result = fileSystem.deleteFile(path);
   }
 

@@ -1,12 +1,12 @@
-import { Base, BaseBasis } from "./Base";
-interface ScriptBasis extends BaseBasis {
+import { Base, IBaseBasis } from "./Base";
+interface IScriptBasis extends IBaseBasis {
     fileName: string;
     errorMessage: string;
 }
 export declare class Script extends Base {
     fileName: string;
     errorMessage: string;
-    constructor(params: ScriptBasis);
+    constructor(params: IScriptBasis);
     message(): string;
 }
 export {};

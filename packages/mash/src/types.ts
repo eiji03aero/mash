@@ -1,9 +1,9 @@
 import {
-  IFileSystem
-} from 'mash-filesystem';
+  text,
+} from "mash-common";
 import {
-  text
-} from 'mash-common';
+  IFileSystem,
+} from "mash-filesystem";
 
 export type TokenType = string;
 export interface IToken {
@@ -27,7 +27,6 @@ export interface IParser {
   parseProgram(): IAstProgram;
 }
 
-
 export interface IAstNode {
   token: IToken;
   tokenLiteral(): string;
@@ -49,25 +48,25 @@ export interface IAstString extends IAstNode {
 
 export enum ExitStatus {
   Success = 0,
-  Failure = 1
+  Failure = 1,
 }
 
-export type CommandPayload = {
+export interface ICommandPayload {
   args: string[];
   fileSystem: IFileSystem;
   environment: IEnvironment;
 }
 
-export type CommandOptionMap = {
-  [index: string]: string | boolean
+export interface ICommandOptionMap {
+  [index: string]: string | boolean;
 }
 
-export type ParsedCommandArgs = {
+export interface IParsedCommandArgs {
   args: string[];
-  options: CommandOptionMap;
+  options: ICommandOptionMap;
 }
 
-export type Command = (args: CommandPayload) => void;
+export type Command = (args: ICommandPayload) => void;
 
 export interface ICommandMap {
   [index: string]: Command;

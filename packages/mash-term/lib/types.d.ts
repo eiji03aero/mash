@@ -1,4 +1,4 @@
-import { text } from 'mash-common';
+import { text } from "mash-common";
 export declare type KeyboardEventHandler = (e: KeyboardEvent) => void;
 export interface IConfig {
     prompt: text.Row;

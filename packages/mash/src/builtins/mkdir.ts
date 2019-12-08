@@ -1,12 +1,12 @@
-import { CommandPayload } from '../types';
+import { ICommandPayload } from "../types";
 
 export default ({
   args,
   environment,
-  fileSystem
-}: CommandPayload) => {
+  fileSystem,
+}: ICommandPayload) => {
   if (args.length < 2) {
-    environment.error(1, 'needs 1 argument. usage required here');
+    environment.error(1, "needs 1 argument. usage required here");
     return;
   }
 

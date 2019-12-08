@@ -5,7 +5,7 @@ exports.default = (function (_a) {
     var currentDirectory = fileSystem.currentDirectory;
     var path = fileSystem.resolveAbsolutePath(currentDirectory);
     environment.writeln([
-        { text: path }
+        { text: path },
     ]);
 });
 //# sourceMappingURL=pwd.js.map

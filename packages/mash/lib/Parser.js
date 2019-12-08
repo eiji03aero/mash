@@ -7,12 +7,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Token_1 = require("./Token");
 var A = __importStar(require("./Ast"));
+var Token_1 = require("./Token");
 // TODO: have to deal with the tokens for program and commandline
 var placeholderToken = {
-    type: 'placeholder',
-    literal: ''
+    type: "placeholder",
+    literal: "",
 };
 var Parser = /** @class */ (function () {
     function Parser(lexer) {
@@ -25,7 +25,7 @@ var Parser = /** @class */ (function () {
     }
     Parser.prototype.parseProgram = function () {
         var program = new A.AstProgram(placeholderToken);
-        while (!this.curTokenIs(Token_1.Tokens.EOF)) {
+        while (!this.curTokenIs(Token_1.tokens.EOF)) {
             var node = this.parseNode();
             if (node !== null) {
                 program.append(node);
@@ -36,7 +36,7 @@ var Parser = /** @class */ (function () {
     };
     Parser.prototype.parseNode = function () {
         switch (this.curToken.type) {
-            case Token_1.Tokens.NEWLINE:
+            case Token_1.tokens.NEWLINE:
                 return null;
             default:
                 return this.parseCommandLine();
@@ -44,7 +44,7 @@ var Parser = /** @class */ (function () {
     };
     Parser.prototype.parseCommandLine = function () {
         var args = [];
-        while (!this.curTokenIs(Token_1.Tokens.EOF) && !this.curTokenIs(Token_1.Tokens.NEWLINE)) {
+        while (!this.curTokenIs(Token_1.tokens.EOF) && !this.curTokenIs(Token_1.tokens.NEWLINE)) {
             args.push(new A.AstString(this.curToken));
             this.nextToken();
         }

@@ -4,7 +4,7 @@ exports.newToken = function () { return ({
     type: "",
     literal: "",
 }); };
-exports.Tokens = {
+exports.tokens = {
     ILLEGAL: "ILLEGAL",
     NEWLINE: "NEWLINE",
     EOF: "EOF",
@@ -39,12 +39,12 @@ exports.Tokens = {
     // LBRACKET: "[",
     // RBRACKET: "]",
     // keywords
-    FUNCTION: "FUNCTION"
+    FUNCTION: "FUNCTION",
 };
-var Keywords = {
-    function: exports.Tokens.FUNCTION,
+var keywords = {
+    function: exports.tokens.FUNCTION,
 };
 exports.lookUpIdent = function (ident) {
-    return Keywords[ident] || exports.Tokens.IDENT;
+    return keywords[ident] || exports.tokens.IDENT;
 };
 //# sourceMappingURL=Token.js.map

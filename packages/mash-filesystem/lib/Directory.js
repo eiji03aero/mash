@@ -19,7 +19,7 @@ var Directory = /** @class */ (function (_super) {
     function Directory(params) {
         var _this = _super.call(this, params) || this;
         _this.children = [];
-        _this.__root__ = params.__root__ || false;
+        _this._root = params.root || false;
         if (params.children) {
             for (var _i = 0, _a = params.children; _i < _a.length; _i++) {
                 var child = _a[_i];
@@ -29,7 +29,7 @@ var Directory = /** @class */ (function (_super) {
         return _this;
     }
     Directory.isBasis = function (obj) {
-        return 'children' in obj;
+        return "children" in obj;
     };
     Directory.prototype.update = function (args) {
         _super.prototype.update.call(this, args);
@@ -50,7 +50,7 @@ var Directory = /** @class */ (function (_super) {
         return this.children.find(function (node) { return node.name === name; });
     };
     Directory.prototype.isRoot = function () {
-        return this.__root__;
+        return this._root;
     };
     return Directory;
 }(FileSystemNode_1.FileSystemNode));

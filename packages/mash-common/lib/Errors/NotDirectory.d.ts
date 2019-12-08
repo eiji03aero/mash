@@ -1,10 +1,10 @@
-import { Base, BaseBasis } from "./Base";
-interface NotDirectoryBasis extends BaseBasis {
+import { Base, IBaseBasis } from "./Base";
+interface INotDirectoryBasis extends IBaseBasis {
     name: string;
 }
 export declare class NotDirectory extends Base {
     name: string;
-    constructor(params: NotDirectoryBasis);
+    constructor(params: INotDirectoryBasis);
     message(): string;
 }
 export {};

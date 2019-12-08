@@ -1,5 +1,5 @@
-import { IFileSystem } from 'mash-filesystem';
-import { IAstNode, IEvaluator, IEnvironment } from './types';
+import { IFileSystem } from "mash-filesystem";
+import { IAstNode, IEnvironment, IEvaluator } from "./types";
 export declare class Evaluator implements IEvaluator {
     private _fileSystem;
     private _environment;

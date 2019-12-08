@@ -8,14 +8,14 @@ var BaseRenderLayer = /** @class */ (function () {
             _this.canvas.height = _this.terminal.container.offsetHeight;
         };
         this.terminal = terminal;
-        this.canvas = document.createElement('canvas');
-        this.canvas.setAttribute('style', "position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: " + zIndex + ";");
+        this.canvas = document.createElement("canvas");
+        this.canvas.setAttribute("style", "position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: " + zIndex + ";");
         this.terminal.container.appendChild(this.canvas);
         this.resizeCanvas();
     }
     Object.defineProperty(BaseRenderLayer.prototype, "ctx", {
         get: function () {
-            return this.canvas.getContext('2d');
+            return this.canvas.getContext("2d");
         },
         enumerable: true,
         configurable: true
@@ -33,14 +33,14 @@ var BaseRenderLayer = /** @class */ (function () {
     };
     BaseRenderLayer.prototype.setTextBaseStyle = function () {
         this.ctx.font = this.terminal.config.fontSize + "px " + this.terminal.config.fontFamily;
-        this.ctx.textBaseline = 'alphabetic';
+        this.ctx.textBaseline = "alphabetic";
     };
     BaseRenderLayer.prototype.setTextColorFromObject = function (t) {
         var config = this.terminal.config;
-        if (typeof t.color !== 'undefined') {
+        if (typeof t.color !== "undefined") {
             this.ctx.fillStyle =
-                t.color === 'blue' ? config.textBlue :
-                    t.color === 'yellow' ? config.textBlue :
+                t.color === "blue" ? config.textBlue :
+                    t.color === "yellow" ? config.textBlue :
                         config.textBlue;
         }
         else {

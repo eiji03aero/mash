@@ -8,7 +8,7 @@ var Renderer = /** @class */ (function () {
         this.renderLayers = [
             new BackdropRenderLayer_1.BackdropRenderLayer(terminal, 1),
             new TextRenderLayer_1.TextRenderLayer(terminal, 2),
-            new CursorRenderLayer_1.CursorRenderLayer(terminal, 3)
+            new CursorRenderLayer_1.CursorRenderLayer(terminal, 3),
         ];
     }
     Renderer.prototype.render = function (params) {
