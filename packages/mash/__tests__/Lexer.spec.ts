@@ -1,12 +1,11 @@
 import {
   IToken,
-} from '../src/types';
+} from "../src/types";
 import { Lexer } from "../src/Lexer";
 import { tokens } from "../src/Token";
 
-
-describe('Lexer', () => {
-  it ('should lex one line', () => {
+describe("Lexer", () => {
+  it ("should lex one line", () => {
     const input = "echo domo";
     const tests = [
       { type: tokens.STRING, literal: "echo" },
@@ -15,14 +14,14 @@ describe('Lexer', () => {
     ];
 
     const l = new Lexer(input);
-    for (let t of tests) {
+    for (const t of tests) {
       const tok: IToken = l.nextToken();
       expect(tok.type).toBe(t.type);
       expect(tok.literal).toBe(t.literal);
     }
   });
 
-  it('should lex basics', () => {
+  it("should lex basics", () => {
     const input = `
     echo domo
 
@@ -74,7 +73,7 @@ describe('Lexer', () => {
     ];
     const l = new Lexer(input);
 
-    for (let t of tests) {
+    for (const t of tests) {
       const tok: IToken = l.nextToken();
       expect(tok.type).toBe(t.type);
       expect(tok.literal).toBe(t.literal);

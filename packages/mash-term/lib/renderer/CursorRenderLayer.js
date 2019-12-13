@@ -13,6 +13,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+var mash_common_1 = require("mash-common");
 var BaseRenderLayer_1 = require("./BaseRenderLayer");
 var CursorRenderLayer = /** @class */ (function (_super) {
     __extends(CursorRenderLayer, _super);
@@ -76,10 +77,8 @@ var CursorRenderLayer = /** @class */ (function (_super) {
     });
     Object.defineProperty(CursorRenderLayer.prototype, "_cursorX", {
         get: function () {
-            var _this = this;
-            var promptWidth = this.terminal.config.prompt
-                .map(function (t) { return _this.ctx.measureText(t.text).width; })
-                .reduce(function (accum, cur) { return accum + cur; }, 0);
+            var promptStr = mash_common_1.text.stripHideCharacters(this.terminal.config.prompt);
+            var promptWidth = this.ctx.measureText(promptStr).width;
             var inputLength = this.terminal.textarea.value === ""
                 ? 0
                 : this.ctx.measureText(this.terminal.textarea.value.slice(0, this.terminal.textarea.selectionStart)).width;

@@ -17,9 +17,9 @@
 - whole
   - [WIP] should create package provide environment including filesystem?
     - not to do this for now. keep them inside mash
-  - add linter
   - how text treated
     - should be just string with dedicated escape sequence
+  - replace tslint with eslint typescript-eslint
 - mash
   - [WIP] refactor token for commandline and program
     - kind of don't know what to do

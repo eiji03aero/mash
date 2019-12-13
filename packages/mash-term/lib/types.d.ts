@@ -1,7 +1,7 @@
-import { text } from "mash-common";
+import { Rows } from "mash-common";
 export declare type KeyboardEventHandler = (e: KeyboardEvent) => void;
 export interface IConfig {
-    prompt: text.Row;
+    prompt: string;
     cursorInitialPauseMs: number;
     cursorIntervalMs: number;
     terminalBg: string;
@@ -23,8 +23,8 @@ export interface IRectCoords {
     height: number;
 }
 export interface IRenderPayload {
-    rows: text.Rows;
-    displayedRows: text.Rows;
+    rows: Rows;
+    displayedRows: Rows;
     rowPosition: number;
     rowHeight: number;
     numberOfDisplayedRows: number;
@@ -52,7 +52,7 @@ export interface ITerminal {
     renderer: IRenderer;
     textarea: HTMLTextAreaElement;
     config: IConfig;
-    rows: text.Rows;
+    rows: string[];
     rowPosition: number;
     relativePromptRowPosition: number;
     rowHeight: number;
@@ -61,8 +61,8 @@ export interface ITerminal {
     focus(): void;
     blur(): void;
     prompt(): void;
-    writeln(texts: text.Row): void;
-    appendRow(texts: text.Row): void;
+    writeln(str: string): void;
+    appendRow(str: string): void;
     scroll(numberToScroll: number): void;
     scrollToBottom(): void;
 }

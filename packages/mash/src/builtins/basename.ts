@@ -10,7 +10,6 @@ export default ({
     return;
   }
 
-  environment.writeln([
-    { text: paths.basename(args[1]) },
-  ]);
+  const basename = paths.basename(args[1]);
+  environment.writeln(basename);
 };

@@ -1,4 +1,3 @@
-import { text } from "mash-common";
 import { FileSystem } from "mash-filesystem";
 import readline from "readline";
 
@@ -7,10 +6,7 @@ import { Environment } from "./Environment";
 /* tslint:disable */
 const fileSystem = FileSystem.bootstrap();
 const environment = Environment.bootstrap(fileSystem);
-environment.onWrite((row: text.Row) => {
-  const str = row
-    .map((t: text.ITextObject) => t.text)
-    .join("");
+environment.onWrite((str: string) => {
   console.log(str);
 });
 

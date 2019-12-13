@@ -37,15 +37,10 @@ var BaseRenderLayer = /** @class */ (function () {
     };
     BaseRenderLayer.prototype.setTextColorFromObject = function (t) {
         var config = this.terminal.config;
-        if (typeof t.color !== "undefined") {
-            this.ctx.fillStyle =
-                t.color === "blue" ? config.textBlue :
-                    t.color === "yellow" ? config.textBlue :
-                        config.textBlue;
-        }
-        else {
-            this.ctx.fillStyle = config.textWhite;
-        }
+        this.ctx.fillStyle =
+            t.color === "blue" ? config.textBlue :
+                t.color === "yellow" ? config.textBlue :
+                    config.textWhite;
     };
     return BaseRenderLayer;
 }());

@@ -10,18 +10,12 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var lodash_1 = __importDefault(require("lodash"));
+var mash_common_1 = require("mash-common");
 var Config_1 = require("./common/Config");
 var renderer_1 = require("./renderer");
 var services_1 = require("./services");
@@ -57,9 +51,8 @@ var Terminal = /** @class */ (function () {
             if (!_this._isOnBottom) {
                 _this.scrollToBottom();
             }
-            var lastRow = _this.rows[_this.rows.length - 1];
-            var lastTextObject = lastRow[lastRow.length - 1];
-            lastTextObject.text = e.target.value;
+            var str = e.target.value;
+            _this.rows = _this.rows.slice(0, _this.rows.length - 1).concat(_this.config.prompt + str);
             _this._updateCachedRows();
             _this._render();
         };
@@ -147,20 +140,18 @@ var Terminal = /** @class */ (function () {
             this.rowPosition += 1;
         }
         this.textarea.value = "";
-        this.appendRow(__spreadArrays(this.config.prompt, [
-            { text: "" },
-        ]));
+        this.appendRow(this.config.prompt);
         this._render();
     };
-    Terminal.prototype.writeln = function (texts) {
+    Terminal.prototype.writeln = function (str) {
         if (this._isOnBottom) {
             this.rowPosition += 1;
         }
-        this.appendRow(texts);
+        this.appendRow(str);
         this._render();
     };
-    Terminal.prototype.appendRow = function (texts) {
-        this.rows.push(texts);
+    Terminal.prototype.appendRow = function (str) {
+        this.rows.push(str);
         this._updateCachedRows();
     };
     Terminal.prototype.scroll = function (numberToScroll) {
@@ -189,7 +180,8 @@ var Terminal = /** @class */ (function () {
             return accum.concat(splitRows);
         }, []);
     };
-    Terminal.prototype._splitRowWithLimit = function (row) {
+    Terminal.prototype._splitRowWithLimit = function (str) {
+        var row = mash_common_1.text.parseColorString(str);
         var _a = this.config, rowLeftMargin = _a.rowLeftMargin, rowRightMargin = _a.rowRightMargin;
         var availableWidth = this.container.offsetWidth - rowLeftMargin - rowRightMargin;
         var rs = [];

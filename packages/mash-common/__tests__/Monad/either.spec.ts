@@ -1,33 +1,33 @@
-import { Monad, Errors } from '../../src';
-import { Either } from '../../src/types';
+import { Monad, Errors } from "../../src";
+import { Either } from "../../src/types";
 
-describe('Monad.either', () => {
-  describe('.left', () => {
-    it('should return EitherLeft', () => {
-      const result = Monad.either.left(Errors.Factory.standard('error'));
+describe("Monad.either", () => {
+  describe(".left", () => {
+    it("should return EitherLeft", () => {
+      const result = Monad.either.left(Errors.Factory.standard("error"));
       expect(result.isError).toBeTruthy();
       expect(result.error).toBeInstanceOf(Errors.Base);
     });
   });
 
-  describe('.right', () => {
-    it('should return EitherRight', () => {
-      const value = 'hoge'
+  describe(".right", () => {
+    it("should return EitherRight", () => {
+      const value = "hoge";
       const result = Monad.either.right<string>(value);
       expect(result.isError).toBeFalsy();
       expect(result.value).toEqual(value);
     });
   });
 
-  describe('implementation', () => {
+  describe("implementation", () => {
     const subject = (num: number): Either => {
       if (num < 5) {
-        return Monad.either.left(Errors.Factory.standard('too small'));
+        return Monad.either.left(Errors.Factory.standard("too small"));
       }
       return Monad.either.right<number>(num);
     };
 
-    it('should return EitherLeft', () => {
+    it("should return EitherLeft", () => {
       const result = subject(3);
       expect(result.isError).toBeTruthy();
       if (result.isError) {
@@ -35,7 +35,7 @@ describe('Monad.either', () => {
       }
     });
 
-    it('should return EitherLeft', () => {
+    it("should return EitherLeft", () => {
       const result = subject(10);
       expect(result.isError).toBeFalsy();
       // if (Monad.either.isRight(result)) {

@@ -1,4 +1,7 @@
 "use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -19,4 +22,5 @@ var paths = __importStar(require("./paths"));
 exports.paths = paths;
 var text = __importStar(require("./text"));
 exports.text = text;
+__export(require("./types"));
 //# sourceMappingURL=index.js.map

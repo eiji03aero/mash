@@ -24,8 +24,6 @@ export default ({
     environment.error(1, `${node.name}: is a directory`);
     return;
   } else if (utils.isFile(node)) {
-    environment.writeln([
-      { text: node.content },
-    ]);
+    environment.writeln(node.content);
   }
 };

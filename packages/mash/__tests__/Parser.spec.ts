@@ -1,18 +1,17 @@
 import {
-  IAstNode
-} from '../src/types';
+  IAstNode,
+} from "../src/types";
 import { Lexer } from "../src/Lexer";
-// import { Token } from "./Token";
 import { Parser } from "../src/Parser";
-import * as A from '../src/Ast';
+import * as A from "../src/Ast";
 
-describe('Parser', () => {
-  it('should parse CommandLine', () => {
+describe("Parser", () => {
+  it("should parse CommandLine", () => {
     const tests = [
       {
         input: "echo domo",
         cls: [
-          ["echo", "domo"]
+          ["echo", "domo"],
         ],
       },
       {
@@ -27,7 +26,7 @@ describe('Parser', () => {
       },
     ];
 
-    for (let t of tests) {
+    for (const t of tests) {
       const lexer = new Lexer(t.input);
       const parser = new Parser(lexer);
       const program = parser.parseProgram();
@@ -42,7 +41,7 @@ describe('Parser', () => {
 
 function testCommandLine (
   args: string[],
-  node: IAstNode
+  node: IAstNode,
 ) {
   if (node instanceof A.AstCommandLine) {
     for (let i = 0; i < args.length; i++) {

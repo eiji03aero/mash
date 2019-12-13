@@ -19,10 +19,8 @@ export default ({
     const text = result.value.children
       .map((c: IFileSystemNode) => c.name)
       .join(" ");
-    environment.writeln([{ text }]);
+    environment.writeln(text);
   } else {
-    environment.writeln([
-      { text: result.value.name },
-    ]);
+    environment.writeln(result.value.name);
   }
 };

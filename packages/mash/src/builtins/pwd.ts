@@ -6,7 +6,5 @@ export default ({
 }: ICommandPayload) => {
   const currentDirectory = fileSystem.currentDirectory;
   const path = fileSystem.resolveAbsolutePath(currentDirectory);
-  environment.writeln([
-    { text: path },
-  ]);
+  environment.writeln(path);
 };

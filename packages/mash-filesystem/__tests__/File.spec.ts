@@ -1,10 +1,10 @@
-import { File } from '../src/File';
+import { File } from "../src/File";
 
-describe('File', () => {
-  it('should have basic properties', () => {
+describe("File", () => {
+  it("should have basic properties", () => {
     const fileParams = {
-      name: 'file',
-      content: 'content'
+      name: "file",
+      content: "content"
     };
     const file = new File(fileParams);
 

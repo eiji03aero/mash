@@ -1,7 +1,37 @@
-export interface ITextObject {
-    text: string;
-    color?: string;
-}
-export declare type Row = ITextObject[];
-export declare type Rows = Row[];
+import { Row } from "./types";
+export declare const hideToken = "\\[";
+export declare const colorSequenceToken = "\\e[";
+export declare const colorSequenceCodeRegExp: RegExp;
+export declare const stripHideCharacterRegExp: RegExp;
+export declare const hideCharacters: (str: string) => string;
+export declare const stripHideCharacters: (str: string) => string;
+export declare const colorSequence: {
+    reset: string;
+    black: string;
+    red: string;
+    green: string;
+    yellow: string;
+    blue: string;
+    magenta: string;
+    cyan: string;
+    lightGray: string;
+    darkGray: string;
+    lightRed: string;
+    lightGreen: string;
+    lightYellow: string;
+    lightBlue: string;
+    lightMagenta: string;
+    lightCyan: string;
+    white: string;
+    bgBlack: string;
+    bgRed: string;
+    bgGreen: string;
+    bgYellow: string;
+    bgBlue: string;
+    bgMagenta: string;
+    bgCyan: string;
+    bgWhite: string;
+};
+export declare const getColorFromCode: (code: string) => "reset" | "black" | "red" | "green" | "yellow" | "blue" | "magenta" | "cyan" | "lightGray" | "darkGray" | "lightRed" | "lightGreen" | "lightYellow" | "lightBlue" | "lightMagenta" | "lightCyan" | "white" | "bgBlack" | "bgRed" | "bgGreen" | "bgYellow" | "bgBlue" | "bgMagenta" | "bgCyan" | "bgWhite";
+export declare const parseColorString: (str: string) => Row;
 //# sourceMappingURL=text.d.ts.map

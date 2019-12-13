@@ -1,21 +1,11 @@
 "use strict";
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+var mash_common_1 = require("mash-common");
 var index_1 = require("./index");
 document.addEventListener("DOMContentLoaded", function (_) {
-    var promptObj = [
-        { text: "Eiji's MBP " },
-        { text: "/home ", color: "blue" },
-        { text: "$ " },
-    ];
+    var promptStr = "Eiji's MBP " + mash_common_1.text.colorSequence.blue + "/home " + mash_common_1.text.colorSequence.reset + "$ ";
     var terminal = new index_1.Terminal(document.querySelector("#app"), {
-        prompt: promptObj,
+        prompt: promptStr,
     });
     var dummy = [
         "this is not going to end well",
@@ -28,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function (_) {
         count += 1;
         var c = count;
         setTimeout(function () {
-            terminal.writeln(__spreadArrays(promptObj, [{ text: t }]));
+            terminal.writeln(promptStr + t);
         }, c * 100);
     };
     for (var _i = 0, dummy_1 = dummy; _i < dummy_1.length; _i++) {

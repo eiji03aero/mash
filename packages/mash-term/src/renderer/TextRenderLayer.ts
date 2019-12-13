@@ -1,4 +1,4 @@
-import { text } from "mash-common";
+import { Row } from "mash-common";
 import { IConfig, IRenderPayload, ITerminal } from "../types";
 import { BaseRenderLayer } from "./BaseRenderLayer";
 
@@ -19,7 +19,7 @@ export class TextRenderLayer extends BaseRenderLayer {
     this.ctx.restore();
   }
 
-  public renderRow(row: text.Row, index: number, config: IConfig) {
+  public renderRow(row: Row, index: number, config: IConfig) {
     let xPosition: number = config.rowLeftMargin;
     const yPosition = (index + 1) * this.terminal.rowHeight - this.terminal.config.rowBottomMargin;
     this.ctx.save();

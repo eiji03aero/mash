@@ -39,12 +39,12 @@ var Environment = /** @class */ (function () {
     Environment.prototype.error = function (code, message) {
         if (message) {
             var msg = "mash " + message;
-            this._environmentWriteHandler([{ text: msg }]);
+            this._environmentWriteHandler(msg);
         }
         this._exitStatus = code;
     };
-    Environment.prototype.writeln = function (row) {
-        this._environmentWriteHandler(row);
+    Environment.prototype.writeln = function (str) {
+        this._environmentWriteHandler(str);
     };
     Environment.prototype.onWrite = function (func) {
         this._environmentWriteHandler = func;

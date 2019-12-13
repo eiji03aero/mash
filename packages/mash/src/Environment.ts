@@ -1,7 +1,4 @@
 import {
-  text,
-} from "mash-common";
-import {
   IFileSystem,
 } from "mash-filesystem";
 import { Evaluator } from "./Evaluator";
@@ -51,14 +48,14 @@ export class Environment implements IEnvironment {
   public error(code: ExitStatus, message?: string) {
     if (message) {
       const msg = `mash ${message}`;
-      this._environmentWriteHandler([{text: msg}]);
+      this._environmentWriteHandler(msg);
     }
 
     this._exitStatus = code;
   }
 
-  public writeln(row: text.Row) {
-    this._environmentWriteHandler(row);
+  public writeln(str: string) {
+    this._environmentWriteHandler(str);
   }
 
   public onWrite(func: EnvironmentWriteHandler) {

@@ -7,8 +7,7 @@ exports.default = (function (_a) {
         environment.error(1, "needs 1 argument. usage required here");
         return;
     }
-    environment.writeln([
-        { text: mash_common_1.paths.basename(args[1]) },
-    ]);
+    var basename = mash_common_1.paths.basename(args[1]);
+    environment.writeln(basename);
 });
 //# sourceMappingURL=basename.js.map

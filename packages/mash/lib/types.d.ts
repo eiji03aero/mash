@@ -1,4 +1,3 @@
-import { text } from "mash-common";
 import { IFileSystem } from "mash-filesystem";
 export declare type TokenType = string;
 export interface IToken {
@@ -54,11 +53,11 @@ export declare type Command = (args: ICommandPayload) => void;
 export interface ICommandMap {
     [index: string]: Command;
 }
-export declare type EnvironmentWriteHandler = (row: text.Row) => void;
+export declare type EnvironmentWriteHandler = (str: string) => void;
 export interface IEnvironment {
     exitStatus: ExitStatus;
     error(code: ExitStatus, message?: string): void;
-    writeln(row: text.Row): void;
+    writeln(str: string): void;
     eval(str: string): void;
     onWrite(func: EnvironmentWriteHandler): void;
 }

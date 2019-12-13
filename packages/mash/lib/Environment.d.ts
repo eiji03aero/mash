@@ -1,4 +1,3 @@
-import { text } from "mash-common";
 import { IFileSystem } from "mash-filesystem";
 import { EnvironmentWriteHandler, ExitStatus, IEnvironment } from "./types";
 export declare class Environment implements IEnvironment {
@@ -12,7 +11,7 @@ export declare class Environment implements IEnvironment {
     private constructor();
     eval(str: string): void;
     error(code: ExitStatus, message?: string): void;
-    writeln(row: text.Row): void;
+    writeln(str: string): void;
     onWrite(func: EnvironmentWriteHandler): void;
     private _resetEnvironment;
 }

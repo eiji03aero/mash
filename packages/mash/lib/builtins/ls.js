@@ -13,12 +13,10 @@ exports.default = (function (_a) {
         var text = result.value.children
             .map(function (c) { return c.name; })
             .join(" ");
-        environment.writeln([{ text: text }]);
+        environment.writeln(text);
     }
     else {
-        environment.writeln([
-            { text: result.value.name },
-        ]);
+        environment.writeln(result.value.name);
     }
 });
 //# sourceMappingURL=ls.js.map

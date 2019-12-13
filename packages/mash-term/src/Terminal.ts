@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { text } from "mash-common";
+import { text, Rows, Row } from "mash-common";
 import { getConfig } from "./common/Config";
 import { Renderer } from "./renderer";
 import { CalculateService } from "./services";
@@ -50,12 +50,12 @@ export class Terminal implements ITerminal {
   public container: HTMLElement;
   public textarea: HTMLTextAreaElement;
   public config: IConfig;
-  public rows: text.Rows;
+  public rows: string[];
   public rowPosition: number;
   public isCursorShown: boolean;
   public renderer: IRenderer;
   public calculateService: ICalculateService;
-  private _cachedRows: text.Rows;
+  private _cachedRows: Rows;
   private _onKeyPressHandler: (e: KeyboardEvent) => void;
 
   private _onContainerWheel = _.throttle((e: WheelEvent) => {
@@ -80,10 +80,10 @@ export class Terminal implements ITerminal {
     this.textarea.setAttribute("style", "width: 0; height: 0; position: absolute;");
     this.container.appendChild(this.textarea);
     this.config = getConfig(config);
-    this.rows = [] as text.Rows;
+    this.rows = [] as string[];
     this.rowPosition = 0;
     this.isCursorShown = true;
-    this._cachedRows = [] as text.Rows;
+    this._cachedRows = [] as Rows;
     this.renderer = new Renderer(this);
     this.calculateService = new CalculateService(this);
 
@@ -112,24 +112,21 @@ export class Terminal implements ITerminal {
     }
 
     this.textarea.value = "";
-    this.appendRow([
-      ...this.config.prompt,
-      { text: "" },
-    ]);
+    this.appendRow(this.config.prompt);
     this._render();
   }
 
-  public writeln(texts: text.Row) {
+  public writeln(str: string) {
     if (this._isOnBottom) {
       this.rowPosition += 1;
     }
 
-    this.appendRow(texts);
+    this.appendRow(str);
     this._render();
   }
 
-  public appendRow(texts: text.Row) {
-    this.rows.push(texts);
+  public appendRow(str: string) {
+    this.rows.push(str);
     this._updateCachedRows();
   }
 
@@ -160,19 +157,20 @@ export class Terminal implements ITerminal {
   }
 
   private _updateCachedRows() {
-    this._cachedRows = this.rows.reduce((accum: text.Rows, cur: text.Row) => {
+    this._cachedRows = this.rows.reduce((accum: Rows, cur: string) => {
       const splitRows = this._splitRowWithLimit(cur);
       return accum.concat(splitRows);
-    }, [] as text.Rows);
+    }, [] as Rows);
   }
 
-  private _splitRowWithLimit(row: text.Row) {
+  private _splitRowWithLimit(str: string) {
+    const row = text.parseColorString(str);
     const { rowLeftMargin, rowRightMargin } = this.config;
     const availableWidth = this.container.offsetWidth - rowLeftMargin - rowRightMargin;
-    const rs = [] as text.Rows;
+    const rs = [] as Rows;
     let tmpWidth = 0;
 
-    rs.push([] as text.Row);
+    rs.push([] as Row);
 
     for (let ti = 0; ti < row.length; ti++) {
       const t = row[ti];
@@ -188,7 +186,7 @@ export class Terminal implements ITerminal {
           const lastTextObject = lastRow[lastRow.length - 1];
           lastTextObject.text += c;
         } else {
-          const newRow = [] as text.Row;
+          const newRow = [] as Row;
           const newTextObject = { ...t, text: c };
           newRow.push(newTextObject);
           rs.push(newRow);
@@ -222,9 +220,8 @@ export class Terminal implements ITerminal {
     if (!this._isOnBottom) {
       this.scrollToBottom();
     }
-    const lastRow = this.rows[this.rows.length - 1];
-    const lastTextObject = lastRow[lastRow.length - 1];
-    lastTextObject.text = (e.target as HTMLInputElement).value;
+    const str = (e.target as HTMLInputElement).value;
+    this.rows = this.rows.slice(0, this.rows.length - 1).concat(this.config.prompt + str);
     this._updateCachedRows();
     this._render();
   }

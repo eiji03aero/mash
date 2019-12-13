@@ -1,4 +1,3 @@
-import { text } from "mash-common";
 import { ICalculateService, IConfig, IRenderer, ITerminal, KeyboardEventHandler } from "./types";
 export declare class Terminal implements ITerminal {
     get relativePromptRowPosition(): number;
@@ -10,7 +9,7 @@ export declare class Terminal implements ITerminal {
     container: HTMLElement;
     textarea: HTMLTextAreaElement;
     config: IConfig;
-    rows: text.Rows;
+    rows: string[];
     rowPosition: number;
     isCursorShown: boolean;
     renderer: IRenderer;
@@ -22,8 +21,8 @@ export declare class Terminal implements ITerminal {
     focus(): void;
     blur(): void;
     prompt(): void;
-    writeln(texts: text.Row): void;
-    appendRow(texts: text.Row): void;
+    writeln(str: string): void;
+    appendRow(str: string): void;
     scroll(numberToScroll: number): void;
     scrollToBottom(): void;
     onKeyPress(fn: KeyboardEventHandler): void;

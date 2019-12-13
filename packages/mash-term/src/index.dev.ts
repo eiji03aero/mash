@@ -1,15 +1,12 @@
+import { text } from "mash-common";
 import { Terminal } from "./index";
 
 document.addEventListener("DOMContentLoaded", (_: Event) => {
-  const promptObj = [
-    { text: "Eiji's MBP " },
-    { text: "/home ", color: "blue" },
-    { text: "$ " },
-  ];
+  const promptStr = `Eiji's MBP ${text.colorSequence.blue}/home ${text.colorSequence.reset}$ `;
   const terminal = new Terminal(
     document.querySelector("#app") as HTMLElement,
     {
-      prompt: promptObj,
+      prompt: promptStr,
     },
   );
 
@@ -25,7 +22,7 @@ document.addEventListener("DOMContentLoaded", (_: Event) => {
     count += 1;
     const c = count;
     setTimeout(() => {
-      terminal.writeln([...promptObj, {text: t}]);
+      terminal.writeln(promptStr + t);
     }, c * 100);
   }
 

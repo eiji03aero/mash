@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.defaultConfig = {
-    prompt: [],
+    prompt: "",
     cursorInitialPauseMs: 1000,
     cursorIntervalMs: 500,
     terminalBg: "#182F40",

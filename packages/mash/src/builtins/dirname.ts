@@ -10,7 +10,6 @@ export default ({
     return;
   }
 
-  environment.writeln([
-    { text: paths.dirname(args[1]) },
-  ]);
+  const dirname = paths.dirname(args[1]);
+  environment.writeln(dirname);
 };

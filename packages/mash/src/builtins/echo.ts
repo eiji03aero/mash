@@ -4,7 +4,6 @@ export default ({
   args,
   environment,
 }: ICommandPayload) => {
-  environment.writeln([
-    { text: args.slice(1).join(" ") },
-  ]);
+  const str = args.slice(1).join(" ");
+  environment.writeln(str);
 };

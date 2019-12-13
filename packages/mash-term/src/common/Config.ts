@@ -1,8 +1,7 @@
-import { text } from "mash-common";
 import { IConfig } from "../types";
 
 export const defaultConfig: IConfig = {
-  prompt: [] as text.Row,
+  prompt: "",
   cursorInitialPauseMs: 1000,
   cursorIntervalMs: 500,
   terminalBg: "#182F40",

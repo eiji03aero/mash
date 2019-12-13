@@ -1,4 +1,4 @@
-import { text } from "mash-common";
+import { ITextObject } from "mash-common";
 import { IRectCoords, IRenderPayload, ITerminal } from "../types";
 
 export class BaseRenderLayer {
@@ -41,16 +41,12 @@ export class BaseRenderLayer {
     this.ctx.textBaseline = "alphabetic";
   }
 
-  protected setTextColorFromObject(t: text.ITextObject) {
+  protected setTextColorFromObject(t: ITextObject) {
     const { config } = this.terminal;
-    if (typeof t.color !== "undefined") {
-      this.ctx.fillStyle =
-        t.color === "blue" ? config.textBlue :
-        t.color === "yellow" ? config.textBlue :
-        config.textBlue;
-    } else {
-      this.ctx.fillStyle = config.textWhite;
-    }
+    this.ctx.fillStyle =
+      t.color === "blue" ? config.textBlue :
+      t.color === "yellow" ? config.textBlue :
+      config.textWhite;
   }
 
   private resizeCanvas = () => {

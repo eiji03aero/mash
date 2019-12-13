@@ -1,19 +1,19 @@
 import { Directory } from "../src/Directory";
 import { File } from "../src/File";
 
-describe('Directory', () => {
-  it('should have basic properties', () => {
-    const directory = new Directory({ name: 'directory' });
+describe("Directory", () => {
+  it("should have basic properties", () => {
+    const directory = new Directory({ name: "directory" });
 
-    expect(directory.name).toEqual('directory');
+    expect(directory.name).toEqual("directory");
     expect(directory.children).toBeDefined();
     expect(directory.cid).toBeDefined();
     expect(directory.createdAt).toBeDefined();
   });
 
-  it('should add node to children', () => {
-    const directory = new Directory({ name: 'directory' });
-    const node = new File({ name: 'file' });
+  it("should add node to children", () => {
+    const directory = new Directory({ name: "directory" });
+    const node = new File({ name: "file" });
 
     directory.addChild(node);
 
@@ -21,9 +21,9 @@ describe('Directory', () => {
     expect(directory.children[0]).toBe(node);
   });
 
-  it('should remove node from children', () => {
-    const directory = new Directory({ name: 'directory' });
-    const node = new File({ name: 'file' });
+  it("should remove node from children", () => {
+    const directory = new Directory({ name: "directory" });
+    const node = new File({ name: "file" });
 
     directory.addChild(node);
 

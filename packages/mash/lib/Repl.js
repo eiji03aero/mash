@@ -9,10 +9,7 @@ var Environment_1 = require("./Environment");
 /* tslint:disable */
 var fileSystem = mash_filesystem_1.FileSystem.bootstrap();
 var environment = Environment_1.Environment.bootstrap(fileSystem);
-environment.onWrite(function (row) {
-    var str = row
-        .map(function (t) { return t.text; })
-        .join("");
+environment.onWrite(function (str) {
     console.log(str);
 });
 var getPrompt = function () { return "mash " + fileSystem.currentDirectory.name + " > "; };

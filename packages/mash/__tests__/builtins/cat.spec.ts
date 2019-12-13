@@ -1,21 +1,21 @@
-import { sharedContext, sharedTest } from '../shared';
+import { sharedContext, sharedTest } from "../shared";
 
-describe('builtins.cat', () => {
-  it('should print the content of file', () => {
+describe("builtins.cat", () => {
+  it("should print the content of file", () => {
     const { env, onWriteMock } = sharedContext.hasMockEnvironment();
-    env.eval('cat README.txt');
-    expect(onWriteMock).toBeCalledWith([{ text: 'read me here man' }]);
+    env.eval("cat README.txt");
+    expect(onWriteMock).toBeCalledWith( "read me here man");
   });
 
-  it('should exit when target is directory', () => {
+  it("should exit when target is directory", () => {
     const { env } = sharedContext.hasMockEnvironment();
-    env.eval('cat Applications');
+    env.eval("cat Applications");
     sharedTest.expectExitFail(env);
   });
 
-  it('should exit when argument is not enough', () => {
+  it("should exit when argument is not enough", () => {
     const { env } = sharedContext.hasMockEnvironment();
-    env.eval('cat');
+    env.eval("cat");
     sharedTest.expectExitFail(env);
   });
 });

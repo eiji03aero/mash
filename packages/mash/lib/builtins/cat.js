@@ -19,9 +19,7 @@ exports.default = (function (_a) {
         return;
     }
     else if (mash_filesystem_1.utils.isFile(node)) {
-        environment.writeln([
-            { text: node.content },
-        ]);
+        environment.writeln(node.content);
     }
 });
 //# sourceMappingURL=cat.js.map

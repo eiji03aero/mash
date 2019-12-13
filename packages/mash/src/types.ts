@@ -1,7 +1,4 @@
 import {
-  text,
-} from "mash-common";
-import {
   IFileSystem,
 } from "mash-filesystem";
 
@@ -72,12 +69,12 @@ export interface ICommandMap {
   [index: string]: Command;
 }
 
-export type EnvironmentWriteHandler = (row: text.Row) => void;
+export type EnvironmentWriteHandler = (str: string) => void;
 
 export interface IEnvironment {
   exitStatus: ExitStatus;
   error(code: ExitStatus, message?: string): void;
-  writeln(row: text.Row): void;
+  writeln(str: string): void;
   eval(str: string): void;
   onWrite(func: EnvironmentWriteHandler): void;
 }
