@@ -10,22 +10,21 @@
     ],
     "nohoist": [
       "**/typescript",
-      "**/typescript/**",
-      "**/tslint"
+      "**/typescript/**"
     ]
   },
   "scripts": {
     "bootstrap": "lerna clean --yes && lerna bootstrap && lerna link",
-    "production": "yarn lint && yarn test && yarn build",
+    "prepublish": "lerna run prepublish --stream",
     "build": "lerna run build --stream",
     "build:watch": "lerna run --parallel build:watch -- --preserveWatchOutput",
     "build:fs": "(cd packages/mash-filesystem && yarn build)",
-    "test": "lerna run test --stream",
     "dev:t": "(cd packages/mash-term && yarn run dev)",
+    "test": "lerna run test --parallel",
     "test:watch:m": "(cd packages/mash && yarn run test:watch)",
     "test:watch:fs": "(cd packages/mash-filesystem && yarn run test:watch)",
     "test:watch:c": "(cd packages/mash-common && yarn run test:watch)",
-    "lint": "lerna run lint --stream"
+    "lint": "lerna run lint --parallel"
   },
   "devDependencies": {
     "@types/jest": "^24.0.11",

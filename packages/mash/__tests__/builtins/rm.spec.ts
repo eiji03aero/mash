@@ -19,7 +19,7 @@ describe("builtins.rm", () => {
 
   it("should exit when argument is not enough", () => {
     const { env } = sharedContext.hasMockEnvironment();
-    env.eval(`rm`);
+    env.eval("rm");
     sharedTest.expectExitFail(env);
   });
 

@@ -4,7 +4,6 @@ import { Script } from "./Script";
 import { Standard } from "./Standard";
 
 export class Factory {
-
   public static standard(msg: string) {
     return new Standard({ msg });
   }
@@ -20,5 +19,6 @@ export class Factory {
   public static script(fileName: string, errorMessage: string) {
     return new Script({ fileName, errorMessage });
   }
+
   private constructor() {}
 }

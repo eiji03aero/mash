@@ -38,6 +38,8 @@
     - argument variables
     - let user defined script run
 - mash-filesystem
+  - refactor FileSystemNode.parentNode
+    - try to remove optional from this property
   - serialize nodes for saving
 - mash-common
 - mash-environment

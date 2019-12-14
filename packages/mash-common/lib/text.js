@@ -26,7 +26,7 @@ exports.colorSequence = lodash_1.default.mapValues(types_1.colorNameMap, functio
 });
 exports.getColorFromCode = function (code) {
     var name = types_1.colorCodeMap[code];
-    return !!name
+    return name
         ? name
         : "reset";
 };

@@ -18,17 +18,21 @@
     "url": "git+https://github.com/eiji03aero/mash.git"
   },
   "scripts": {
+    "prepublish": "yarn lint && yarn test && yarn build",
     "build": "rm -rf ./lib && tsc",
     "dev": "webpack-dev-server",
-    "lint": "tslint -p . --fix"
+    "test": "echo no test yet",
+    "lint": "eslint --ext .ts ."
   },
   "bugs": {
     "url": "https://github.com/eiji03aero/mash/issues"
   },
   "homepage": "https://github.com/eiji03aero/mash#readme",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.11.0",
+    "@typescript-eslint/parser": "^2.11.0",
+    "eslint": "^6.7.2",
     "ts-loader": "^6.2.1",
-    "tslint": "^5.20.1",
     "typescript": "^3.7.2",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.9",

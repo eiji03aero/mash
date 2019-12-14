@@ -21,8 +21,8 @@
     // "alwaysStrict": true
   },
   "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
+    "node_modules"
+    // "**/*.spec.ts"
   ],
   "removeComments": true
 }

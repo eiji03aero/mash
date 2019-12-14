@@ -29,7 +29,7 @@ describe("builtins.ls", () => {
 
   it("should exit when path is invlid", () => {
     const { env } = sharedContext.hasMockEnvironment();
-    env.eval(`ls ./hoge_not_exist`);
+    env.eval("ls ./hoge_not_exist");
     sharedTest.expectExitFail(env);
   });
 });

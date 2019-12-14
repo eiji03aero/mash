@@ -33,7 +33,7 @@ export const colorSequence = _.mapValues(colorNameMap, (c: string) => {
 
 export const getColorFromCode = (code: ColorCode): ColorName => {
   const name = colorCodeMap[code];
-  return !!name
+  return name
     ? name as ColorName
     : "reset";
 };
