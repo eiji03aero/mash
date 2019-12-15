@@ -58,7 +58,7 @@ export class FileSystem implements IFileSystem {
 
   public resolveNodeFromPath(path: string): Either<IFileSystemNode> {
     const isAbsolutePath = path[0] === "/";
-    let resolvedNode: FileSystemNode;
+    let resolvedNode: IFileSystemNode;
     let fragments: string[];
 
     if (isAbsolutePath) {
@@ -73,20 +73,22 @@ export class FileSystem implements IFileSystem {
       const fragment = fragments[i];
 
       if (fragment === "..") {
-        if (resolvedNode.parentNode instanceof FileSystemNode) {
-          resolvedNode = resolvedNode.parentNode;
-          continue;
-        } else {
+        if (this._isRootDirectory(resolvedNode)) {
           return Monad.either.left(Errors.Factory.noSuchFileOrDirectory(path));
         }
-      } else if (fragment === ".") {
+        resolvedNode = resolvedNode.parentNode;
         continue;
-      } else if (fragment === "") {
+      }
+      else if (fragment === ".") {
+        continue;
+      }
+      else if (fragment === "") {
         if (i === fragments.length - 1) {
           break;
         }
         return Monad.either.left(Errors.Factory.noSuchFileOrDirectory(path));
-      } else {
+      }
+      else {
         if (!(utils.isDirectory(resolvedNode))) {
           return Monad.either.left(Errors.Factory.notDirectory(fragment));
         }
@@ -177,7 +179,7 @@ export class FileSystem implements IFileSystem {
     return Monad.either.right(null);
   }
 
-  private _isRootDirectory(node: FileSystemNode): boolean {
+  private _isRootDirectory(node: IFileSystemNode): boolean {
     return node === this.root;
   }
 

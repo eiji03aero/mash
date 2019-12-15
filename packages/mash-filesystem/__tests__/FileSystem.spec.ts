@@ -33,6 +33,11 @@ describe("FileSystem", () => {
     }
   });
 
+  it("should error when try to resolve path higher than root", () => {
+    const result = fs.resolveNodeFromPath("../../");
+    expect(result.isError).toBeTruthy();
+  });
+
   it("should resolve absolute path for node", () => {
     const result = fs.resolveAbsolutePath(fs.currentDirectory);
     expect(result).toEqual("/home");

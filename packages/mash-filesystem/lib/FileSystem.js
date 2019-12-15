@@ -10,7 +10,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var mash_common_1 = require("mash-common");
 var Directory_1 = require("./Directory");
 var File_1 = require("./File");
-var FileSystemNode_1 = require("./FileSystemNode");
 var utils = __importStar(require("./utils"));
 var initialFileNodes_1 = require("./assets/initialFileNodes");
 var FileSystem = /** @class */ (function () {
@@ -64,13 +63,11 @@ var FileSystem = /** @class */ (function () {
         for (var i = 0; i < fragments.length; i++) {
             var fragment = fragments[i];
             if (fragment === "..") {
-                if (resolvedNode.parentNode instanceof FileSystemNode_1.FileSystemNode) {
-                    resolvedNode = resolvedNode.parentNode;
-                    continue;
-                }
-                else {
+                if (this._isRootDirectory(resolvedNode)) {
                     return mash_common_1.Monad.either.left(mash_common_1.Errors.Factory.noSuchFileOrDirectory(path));
                 }
+                resolvedNode = resolvedNode.parentNode;
+                continue;
             }
             else if (fragment === ".") {
                 continue;

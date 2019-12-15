@@ -1,12 +1,13 @@
-import { IFileSystemNode, IFileSystemNodeBasis } from "./types";
+import { IFileSystemNode, IFileSystemNodeBasis, IDirectory } from "./types";
 export declare class FileSystemNode implements IFileSystemNode {
     cid: string;
     name: string;
-    parentNode?: IFileSystemNode;
     createdAt: string;
     updatedAt: string;
+    private _parentNode;
     constructor(params: IFileSystemNodeBasis);
+    get parentNode(): IDirectory;
+    set parentNode(dir: IDirectory);
     update(args: IFileSystemNodeBasis): void;
-    setParentNode(node: IFileSystemNode): void;
 }
 //# sourceMappingURL=FileSystemNode.d.ts.map

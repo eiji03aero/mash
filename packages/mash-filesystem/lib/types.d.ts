@@ -1,16 +1,14 @@
 import { Either, Errors } from "mash-common";
 export interface IFileSystemNodeBasis {
     name?: string;
-    parentNode?: IFileSystemNode;
 }
 export interface IFileSystemNode {
     cid: string;
     name: string;
-    parentNode?: IFileSystemNode;
     createdAt: string;
     updatedAt: string;
     update(args: IFileSystemNodeBasis): void;
-    setParentNode(node: IFileSystemNode): void;
+    parentNode: IDirectory;
 }
 export declare type Nodes = IFileSystemNode[];
 export interface IDirectoryBasis extends IFileSystemNodeBasis {

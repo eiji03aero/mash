@@ -35,7 +35,7 @@ var Directory = /** @class */ (function (_super) {
         _super.prototype.update.call(this, args);
     };
     Directory.prototype.addChild = function (node) {
-        node.setParentNode(this);
+        node.parentNode = this;
         this.children.push(node);
     };
     Directory.prototype.removeChild = function (node) {

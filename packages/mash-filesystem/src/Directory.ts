@@ -31,7 +31,7 @@ export class Directory extends FileSystemNode implements IDirectory {
   }
 
   public addChild(node: IFileSystemNode) {
-    node.setParentNode(this);
+    node.parentNode = this;
     this.children.push(node);
   }
 

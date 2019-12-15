@@ -40,15 +40,18 @@
 - mash-filesystem
   - refactor FileSystemNode.parentNode
     - try to remove optional from this property
+    - have private and create getter/setter. if it doesn't exist, thorw
   - serialize nodes for saving
 - mash-common
-- mash-environment
-  - properties
-    - term
-    - fileSystem
-    - mash
-  - apis
-    - acquire terminal width (character length?)
+- mash-term
+  - clear window
+    - just update the rowPosition and render empty
+  - update by row index
+  - prompt feature
+    - something like making use of Promise. probably delegating key handler completely?
+  - window related features
+    - number of column
+    - number of row
 - web
   - create basis
     - react

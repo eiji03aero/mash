@@ -5,19 +5,27 @@ var FileSystemNode = /** @class */ (function () {
     function FileSystemNode(params) {
         this.cid = mash_common_1.cid.generate();
         this.name = params.name || "";
-        this.parentNode = params.parentNode;
         this.createdAt = mash_common_1.date.getCurrentTime();
         this.updatedAt = mash_common_1.date.getCurrentTime();
+        this._parentNode = null;
     }
+    Object.defineProperty(FileSystemNode.prototype, "parentNode", {
+        get: function () {
+            if (!this._parentNode) {
+                throw mash_common_1.Errors.Factory.standard("parentNode does not exist for " + this.name);
+            }
+            return this._parentNode;
+        },
+        set: function (dir) {
+            this._parentNode = dir;
+        },
+        enumerable: true,
+        configurable: true
+    });
     FileSystemNode.prototype.update = function (args) {
         if (args.name)
             this.name = args.name;
-        if (args.parentNode)
-            this.parentNode = args.parentNode;
         this.updatedAt = mash_common_1.date.getCurrentTime();
-    };
-    FileSystemNode.prototype.setParentNode = function (node) {
-        this.parentNode = node;
     };
     return FileSystemNode;
 }());
