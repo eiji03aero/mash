@@ -17,9 +17,6 @@
 - whole
   - [WIP] should create package provide environment including filesystem?
     - not to do this for now. keep them inside mash
-  - how text treated
-    - should be just string with dedicated escape sequence
-  - replace tslint with eslint typescript-eslint
 - mash
   - [WIP] refactor token for commandline and program
     - kind of don't know what to do
@@ -38,20 +35,22 @@
     - argument variables
     - let user defined script run
 - mash-filesystem
-  - refactor FileSystemNode.parentNode
-    - try to remove optional from this property
-    - have private and create getter/setter. if it doesn't exist, thorw
   - serialize nodes for saving
 - mash-common
 - mash-term
-  - clear window
-    - just update the rowPosition and render empty
-  - update by row index
-  - prompt feature
-    - something like making use of Promise. probably delegating key handler completely?
-  - window related features
-    - number of column
-    - number of row
+  - add test
+  - tbd
+    - window related values
+      - number of column
+      - number of row
+    - clear window feature
+      - move the rowposition to bottom-most and render
+    - update row by index
+    - prompt
+      - something like making use of Promise. probably delegating key handler completely?
+    - let cat work
+    - optimize updating row
+      - input
 - web
   - create basis
     - react

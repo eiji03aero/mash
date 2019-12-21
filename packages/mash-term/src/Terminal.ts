@@ -14,39 +14,6 @@ import {
 
 export class Terminal implements ITerminal {
 
-  public get relativePromptRowPosition() {
-    return this._cachedRows.length - 1 - this.rowPosition;
-  }
-
-  public get rowHeight() {
-    return this.config.fontSize + this.config.rowTopMargin + this.config.rowBottomMargin;
-  }
-
-  private get _renderPayload(): IRenderPayload {
-    return {
-      rows: this._cachedRows,
-      displayedRows: this._cachedRows.slice(this.rowPosition, this.rowPosition + this._numberOfDisplayedRows),
-      rowPosition: this.rowPosition,
-      rowHeight: this.rowHeight,
-      numberOfDisplayedRows: this._numberOfDisplayedRows,
-      config: this.config,
-      textarea: this.textarea,
-    };
-  }
-
-  private get _bottomPosition() {
-    const bottomPosition = this.rows.length - this._numberOfDisplayedRows;
-    return Math.max(bottomPosition, 0);
-  }
-
-  private get _numberOfDisplayedRows() {
-    return Math.floor(this.container.offsetHeight / this.rowHeight);
-  }
-
-  private get _isOnBottom() {
-    if (this.rows.length < this._numberOfDisplayedRows) { return false; }
-    return this.rowPosition === this.rows.length - this._numberOfDisplayedRows;
-  }
   public container: HTMLElement;
   public textarea: HTMLTextAreaElement;
   public config: IConfig;
@@ -72,8 +39,10 @@ export class Terminal implements ITerminal {
 
   constructor(
     container: HTMLElement,
-    config: any,
+    cfg?: IConfig,
   ) {
+    const config = cfg || {} as IConfig;
+
     this.container = container;
 
     this.textarea = document.createElement("textarea");
@@ -96,6 +65,14 @@ export class Terminal implements ITerminal {
     this.textarea.addEventListener("keypress", this._onKeyPress);
 
     this.focus();
+  }
+
+  public get relativePromptRowPosition() {
+    return this._cachedRows.length - 1 - this.rowPosition;
+  }
+
+  public get rowHeight() {
+    return this.config.fontSize + this.config.rowTopMargin + this.config.rowBottomMargin;
   }
 
   public focus() {
@@ -150,6 +127,32 @@ export class Terminal implements ITerminal {
 
   public onKeyPress(fn: KeyboardEventHandler) {
     this._onKeyPressHandler = fn;
+  }
+
+  private get _renderPayload(): IRenderPayload {
+    return {
+      rows: this._cachedRows,
+      displayedRows: this._cachedRows.slice(this.rowPosition, this.rowPosition + this._numberOfDisplayedRows),
+      rowPosition: this.rowPosition,
+      rowHeight: this.rowHeight,
+      numberOfDisplayedRows: this._numberOfDisplayedRows,
+      config: this.config,
+      textarea: this.textarea,
+    };
+  }
+
+  private get _bottomPosition() {
+    const bottomPosition = this.rows.length - this._numberOfDisplayedRows;
+    return Math.max(bottomPosition, 0);
+  }
+
+  private get _numberOfDisplayedRows() {
+    return Math.floor(this.container.offsetHeight / this.rowHeight);
+  }
+
+  private get _isOnBottom() {
+    if (this.rows.length < this._numberOfDisplayedRows) { return false; }
+    return this.rowPosition === this.rows.length - this._numberOfDisplayedRows;
   }
 
   private _render() {

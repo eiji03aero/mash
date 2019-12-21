@@ -20,7 +20,7 @@ var Config_1 = require("./common/Config");
 var renderer_1 = require("./renderer");
 var services_1 = require("./services");
 var Terminal = /** @class */ (function () {
-    function Terminal(container, config) {
+    function Terminal(container, cfg) {
         var _this = this;
         this._onContainerWheel = lodash_1.default.throttle(function (e) {
             var stride = Math.abs(e.deltaY);
@@ -56,6 +56,7 @@ var Terminal = /** @class */ (function () {
             _this._updateCachedRows();
             _this._render();
         };
+        var config = cfg || {};
         this.container = container;
         this.textarea = document.createElement("textarea");
         this.textarea.setAttribute("style", "width: 0; height: 0; position: absolute;");
@@ -85,46 +86,6 @@ var Terminal = /** @class */ (function () {
     Object.defineProperty(Terminal.prototype, "rowHeight", {
         get: function () {
             return this.config.fontSize + this.config.rowTopMargin + this.config.rowBottomMargin;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Terminal.prototype, "_renderPayload", {
-        get: function () {
-            return {
-                rows: this._cachedRows,
-                displayedRows: this._cachedRows.slice(this.rowPosition, this.rowPosition + this._numberOfDisplayedRows),
-                rowPosition: this.rowPosition,
-                rowHeight: this.rowHeight,
-                numberOfDisplayedRows: this._numberOfDisplayedRows,
-                config: this.config,
-                textarea: this.textarea,
-            };
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Terminal.prototype, "_bottomPosition", {
-        get: function () {
-            var bottomPosition = this.rows.length - this._numberOfDisplayedRows;
-            return Math.max(bottomPosition, 0);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Terminal.prototype, "_numberOfDisplayedRows", {
-        get: function () {
-            return Math.floor(this.container.offsetHeight / this.rowHeight);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Terminal.prototype, "_isOnBottom", {
-        get: function () {
-            if (this.rows.length < this._numberOfDisplayedRows) {
-                return false;
-            }
-            return this.rowPosition === this.rows.length - this._numberOfDisplayedRows;
         },
         enumerable: true,
         configurable: true
@@ -170,6 +131,46 @@ var Terminal = /** @class */ (function () {
     Terminal.prototype.onKeyPress = function (fn) {
         this._onKeyPressHandler = fn;
     };
+    Object.defineProperty(Terminal.prototype, "_renderPayload", {
+        get: function () {
+            return {
+                rows: this._cachedRows,
+                displayedRows: this._cachedRows.slice(this.rowPosition, this.rowPosition + this._numberOfDisplayedRows),
+                rowPosition: this.rowPosition,
+                rowHeight: this.rowHeight,
+                numberOfDisplayedRows: this._numberOfDisplayedRows,
+                config: this.config,
+                textarea: this.textarea,
+            };
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Terminal.prototype, "_bottomPosition", {
+        get: function () {
+            var bottomPosition = this.rows.length - this._numberOfDisplayedRows;
+            return Math.max(bottomPosition, 0);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Terminal.prototype, "_numberOfDisplayedRows", {
+        get: function () {
+            return Math.floor(this.container.offsetHeight / this.rowHeight);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Terminal.prototype, "_isOnBottom", {
+        get: function () {
+            if (this.rows.length < this._numberOfDisplayedRows) {
+                return false;
+            }
+            return this.rowPosition === this.rows.length - this._numberOfDisplayedRows;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Terminal.prototype._render = function () {
         this.renderer.render(this._renderPayload);
     };

@@ -15,7 +15,6 @@
   },
   "scripts": {
     "bootstrap": "lerna clean --yes && lerna bootstrap && lerna link",
-    "prepublish": "lerna run prepublish --stream",
     "build": "lerna run build --stream",
     "build:watch": "lerna run --parallel build:watch -- --preserveWatchOutput",
     "build:fs": "(cd packages/mash-filesystem && yarn build)",
@@ -23,6 +22,7 @@
     "test": "lerna run test --parallel",
     "test:watch:m": "(cd packages/mash && yarn run test:watch)",
     "test:watch:fs": "(cd packages/mash-filesystem && yarn run test:watch)",
+    "test:watch:t": "(cd packages/mash-term && yarn run test:watch)",
     "test:watch:c": "(cd packages/mash-common && yarn run test:watch)",
     "lint": "lerna run lint --parallel"
   },

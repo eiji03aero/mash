@@ -14,7 +14,6 @@
     "lib"
   ],
   "scripts": {
-    "prepublish": "yarn lint && yarn test && yarn build",
     "build": "rm -rf ./lib && tsc",
     "repl": "ts-node ./src/Repl.ts",
     "test": "jest",
