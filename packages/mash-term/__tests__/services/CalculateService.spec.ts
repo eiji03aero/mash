@@ -6,7 +6,6 @@ describe("CalculateService", () => {
 
   beforeEach(() => {
     const { terminal } = sharedContext.hasTerminal();
-    console.log(terminal.config.fontSize);
     subject = new CalculateService(terminal);
   });
 

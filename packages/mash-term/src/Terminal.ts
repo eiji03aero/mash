@@ -39,7 +39,7 @@ export class Terminal implements ITerminal {
 
   constructor(
     container: HTMLElement,
-    cfg?: IConfig,
+    cfg?: any,
   ) {
     const config = cfg || {} as IConfig;
 
