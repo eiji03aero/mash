@@ -7,12 +7,12 @@ interface INotDirectoryBasis extends IBaseBasis {
 export class NotDirectory extends Base {
   public name: string;
 
-  constructor(params: INotDirectoryBasis) {
+  constructor (params: INotDirectoryBasis) {
     super();
     this.name = params.name;
   }
 
-  public message(): string {
+  public message (): string {
     return `${this.name}: not a directory`;
   }
 }

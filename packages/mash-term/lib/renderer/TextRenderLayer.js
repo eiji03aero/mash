@@ -27,14 +27,14 @@ var TextRenderLayer = /** @class */ (function (_super) {
         }
         this.ctx.restore();
     };
-    TextRenderLayer.prototype.renderRow = function (row, index, config) {
+    TextRenderLayer.prototype.renderRow = function (parsedRow, index, config) {
         var xPosition = config.rowLeftMargin;
         var yPosition = (index + 1) * this.terminal.rowHeight - this.terminal.config.rowBottomMargin;
         this.ctx.save();
         this.setTextBaseStyle();
         this.ctx.fillStyle = config.textWhite;
-        for (var _i = 0, row_1 = row; _i < row_1.length; _i++) {
-            var t = row_1[_i];
+        for (var _i = 0, _a = parsedRow.row; _i < _a.length; _i++) {
+            var t = _a[_i];
             this.setTextColorFromObject(t);
             this.ctx.fillText(t.text, xPosition, yPosition);
             xPosition = xPosition + this.ctx.measureText(t.text).width;

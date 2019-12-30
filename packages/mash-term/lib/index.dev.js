@@ -28,10 +28,13 @@ document.addEventListener("DOMContentLoaded", function (_) {
     setTimeout(function () {
         terminal.prompt();
     }, dummy.length * 100);
+    window.t = terminal;
     terminal.onKeyPress(function (e) {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            terminal.prompt();
+        switch (e.key) {
+            case "Enter":
+                e.preventDefault();
+                terminal.prompt();
+                break;
         }
     });
 });

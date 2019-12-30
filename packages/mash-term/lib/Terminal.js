@@ -10,6 +10,13 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -51,9 +58,11 @@ var Terminal = /** @class */ (function () {
             if (!_this._isOnBottom) {
                 _this.scrollToBottom();
             }
+            var start = performance.now();
             var str = e.target.value;
-            _this.rows = _this.rows.slice(0, _this.rows.length - 1).concat(_this.config.prompt + str);
-            _this._updateCachedRows();
+            var rowStr = _this.config.prompt + str;
+            _this.updateRowByIndex(_this.rows.length - 1, rowStr);
+            console.log(_this._cachedRows.length, performance.now() - start);
             _this._render();
         };
         var config = cfg || {};
@@ -90,6 +99,19 @@ var Terminal = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    Terminal.prototype.getWindowStat = function () {
+        var width = this.container.offsetWidth;
+        var height = this.container.offsetHeight;
+        return {
+            width: width,
+            height: height,
+            availableWidth: width - this.config.rowLeftMargin - this.config.rowRightMargin,
+            availableHeight: height - this.config.rowTopMargin - this.config.rowBottomMargin,
+        };
+    };
+    Terminal.prototype.measureText = function (str) {
+        return this.calculateService.measureText(str);
+    };
     Terminal.prototype.focus = function () {
         this.textarea.focus();
     };
@@ -104,6 +126,10 @@ var Terminal = /** @class */ (function () {
         this.appendRow(this.config.prompt);
         this._render();
     };
+    Terminal.prototype.clear = function () {
+        this.rowPosition = this._cachedRows.length;
+        this._render();
+    };
     Terminal.prototype.writeln = function (str) {
         if (this._isOnBottom) {
             this.rowPosition += 1;
@@ -115,12 +141,29 @@ var Terminal = /** @class */ (function () {
         this.rows.push(str);
         this._updateCachedRows();
     };
+    Terminal.prototype.updateRowByIndex = function (idx, str) {
+        this.rows = this.rows.map(function (s, i) {
+            return i === idx
+                ? str
+                : s;
+        });
+        var cfIdx = lodash_1.default.findIndex(this._cachedRows, function (r) {
+            return r.rowIndex === idx;
+        });
+        var clIdx = lodash_1.default.findLastIndex(this._cachedRows, function (r) {
+            return r.rowIndex === idx;
+        });
+        var former = this._cachedRows.slice(0, cfIdx);
+        var latter = this._cachedRows.slice(clIdx + 1, this._cachedRows.length);
+        var splitted = this._splitRowWithLimit(str, idx);
+        this._cachedRows = __spreadArrays(former, splitted, latter);
+    };
     Terminal.prototype.scroll = function (numberToScroll) {
         var nextPosition = this.rowPosition + numberToScroll;
         var shouldBeOnTop = nextPosition < 0;
-        var shouldBeOnBottom = nextPosition >= this._bottomPosition;
+        var shouldBeOnBottom = nextPosition >= this._cachedRows.length;
         this.rowPosition = (shouldBeOnTop ? 0 :
-            shouldBeOnBottom ? this._bottomPosition :
+            shouldBeOnBottom ? this._cachedRows.length - 1 :
                 nextPosition);
         this._render();
     };
@@ -177,32 +220,33 @@ var Terminal = /** @class */ (function () {
     Terminal.prototype._updateCachedRows = function () {
         var _this = this;
         this._cachedRows = this.rows.reduce(function (accum, cur) {
-            var splitRows = _this._splitRowWithLimit(cur);
+            var splitRows = _this._splitRowWithLimit(cur, accum.length);
             return accum.concat(splitRows);
         }, []);
     };
-    Terminal.prototype._splitRowWithLimit = function (str) {
+    Terminal.prototype._splitRowWithLimit = function (str, idx) {
         var row = mash_common_1.text.parseColorString(str);
         var _a = this.config, rowLeftMargin = _a.rowLeftMargin, rowRightMargin = _a.rowRightMargin;
         var availableWidth = this.container.offsetWidth - rowLeftMargin - rowRightMargin;
         var rs = [];
         var tmpWidth = 0;
-        rs.push([]);
+        var getNewRow = function () { return ({ rowIndex: idx, row: [] }); };
+        rs.push(getNewRow());
         for (var ti = 0; ti < row.length; ti++) {
             var t = row[ti];
-            rs[rs.length - 1].push(__assign(__assign({}, t), { text: "" }));
+            rs[rs.length - 1].row.push(__assign(__assign({}, t), { text: "" }));
             for (var ci = 0; ci < t.text.length; ci++) {
                 var c = t.text[ci];
-                tmpWidth += this.calculateService.measureText(c).width;
+                tmpWidth += this.measureText(c).width;
                 if (tmpWidth <= availableWidth) {
                     var lastRow = rs[rs.length - 1];
-                    var lastTextObject = lastRow[lastRow.length - 1];
+                    var lastTextObject = lastRow.row[lastRow.row.length - 1];
                     lastTextObject.text += c;
                 }
                 else {
-                    var newRow = [];
+                    var newRow = getNewRow();
                     var newTextObject = __assign(__assign({}, t), { text: c });
-                    newRow.push(newTextObject);
+                    newRow.row.push(newTextObject);
                     rs.push(newRow);
                     tmpWidth = 0;
                 }

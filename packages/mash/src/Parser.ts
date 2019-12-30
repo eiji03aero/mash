@@ -20,7 +20,7 @@ export class Parser implements IParser {
   public curToken: IToken;
   public peekToken: IToken;
 
-  constructor(lexer: ILexer) {
+  constructor (lexer: ILexer) {
     this.lexer = lexer;
 
     // Need to set both curToken and peekToken before get started
@@ -30,7 +30,7 @@ export class Parser implements IParser {
     this.peekToken = this.lexer.nextToken();
   }
 
-  public parseProgram() {
+  public parseProgram () {
     const program = new A.AstProgram(placeholderToken);
 
     while (!this.curTokenIs(tokens.EOF)) {
@@ -44,7 +44,7 @@ export class Parser implements IParser {
     return program;
   }
 
-  private parseNode() {
+  private parseNode () {
     switch (this.curToken.type) {
       case tokens.NEWLINE:
         return null;
@@ -53,7 +53,7 @@ export class Parser implements IParser {
     }
   }
 
-  private parseCommandLine() {
+  private parseCommandLine () {
     const args: IAstNode[] = [];
     while (!this.curTokenIs(tokens.EOF) && !this.curTokenIs(tokens.NEWLINE)) {
       args.push(new A.AstString(this.curToken));
@@ -62,12 +62,12 @@ export class Parser implements IParser {
     return new A.AstCommandLine(placeholderToken, args);
   }
 
-  private nextToken() {
+  private nextToken () {
     this.curToken = this.peekToken;
     this.peekToken = this.lexer.nextToken();
   }
 
-  private curTokenIs(t: string) {
+  private curTokenIs (t: string) {
     return t === this.curToken.type;
   }
 }

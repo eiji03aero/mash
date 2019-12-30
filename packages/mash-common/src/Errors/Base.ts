@@ -7,11 +7,11 @@ export interface IBaseBasis {
 export class Base {
   public createdAt: string;
 
-  constructor() {
+  constructor () {
     this.createdAt = date.getCurrentTime();
   }
 
-  public message(): string {
+  public message (): string {
     return this.createdAt;
   }
 }

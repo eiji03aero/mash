@@ -30,10 +30,14 @@ document.addEventListener("DOMContentLoaded", (_: Event) => {
     terminal.prompt();
   }, dummy.length * 100);
 
+  (window as any).t = terminal;
+
   terminal.onKeyPress((e: KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      terminal.prompt();
+    switch (e.key) {
+      case "Enter":
+        e.preventDefault();
+        terminal.prompt();
+        break;
     }
   });
 });

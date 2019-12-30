@@ -1,4 +1,4 @@
-import { Rows } from "mash-common";
+import { Row } from "mash-common";
 
 export type KeyboardEventHandler = (e: KeyboardEvent) => void;
 
@@ -27,8 +27,8 @@ export interface IRectCoords {
 }
 
 export interface IRenderPayload {
-  rows: Rows;
-  displayedRows: Rows;
+  rows: CachedRows;
+  displayedRows: CachedRows;
   rowPosition: number;
   rowHeight: number;
   numberOfDisplayedRows: number;
@@ -58,6 +58,20 @@ export interface IRenderer {
 }
 
 /* -------------------- main -------------------- */
+export interface IWindowStat {
+  width: number;
+  height: number;
+  availableWidth: number;
+  availableHeight: number;
+}
+
+export interface IParsedRow {
+  rowIndex: number;
+  row: Row;
+}
+
+export type CachedRows = IParsedRow[];
+
 export interface ITerminal {
   container: HTMLElement;
   renderer: IRenderer;
@@ -69,11 +83,15 @@ export interface ITerminal {
   rowHeight: number;
   isCursorShown: boolean;
   calculateService: ICalculateService;
+  getWindowStat(): IWindowStat;
+  measureText(str: string): TextMetrics;
   focus(): void;
   blur(): void;
   prompt(): void;
+  clear(): void;
   writeln(str: string): void;
   appendRow(str: string): void;
+  updateRowByIndex(index: number, str: string): void;
   scroll(numberToScroll: number): void;
   scrollToBottom(): void;
 }

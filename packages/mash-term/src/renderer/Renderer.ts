@@ -6,7 +6,7 @@ import { TextRenderLayer } from "./TextRenderLayer";
 export class Renderer implements IRenderer {
   public renderLayers: IBaseRenderLayer[];
 
-  constructor(
+  constructor (
     terminal: ITerminal,
   ) {
     this.renderLayers = [
@@ -16,13 +16,13 @@ export class Renderer implements IRenderer {
     ];
   }
 
-  public render(params: IRenderPayload) {
+  public render (params: IRenderPayload) {
     for (const l of this.renderLayers) {
       l.render(params);
     }
   }
 
-  public resize(params: IRenderPayload) {
+  public resize (params: IRenderPayload) {
     for (const l of this.renderLayers) {
       l.resize(params);
     }

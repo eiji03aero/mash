@@ -40,17 +40,7 @@
 - mash-term
   - add test
   - tbd
-    - window related values
-      - number of column
-      - number of row
-    - clear window feature
-      - move the rowposition to bottom-most and render
-    - update row by index
-    - prompt
-      - something like making use of Promise. probably delegating key handler completely?
-    - let cat work
-    - optimize updating row
-      - input
+    - delete row by index
 - web
   - create basis
     - react

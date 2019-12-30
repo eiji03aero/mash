@@ -7,12 +7,12 @@ interface INoSuchFileOrDirectoryBasis extends IBaseBasis {
 export class NoSuchFileOrDirectory extends Base {
   public path: string;
 
-  constructor(params: INoSuchFileOrDirectoryBasis) {
+  constructor (params: INoSuchFileOrDirectoryBasis) {
     super();
     this.path = params.path;
   }
 
-  public message(): string {
+  public message (): string {
     return `${this.path}: no such file or directory`;
   }
 }

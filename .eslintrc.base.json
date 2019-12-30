@@ -36,7 +36,7 @@
     "@typescript-eslint/no-use-before-define": "off",
     "quotes": ["error", "double"],
     "semi-style": ["error", "last"],
-    "space-before-function-paren": "off",
+    "space-before-function-paren": ["error", "always"],
     "no-empty-pattern": "off"
   }
 }

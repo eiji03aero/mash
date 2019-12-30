@@ -12,7 +12,7 @@ export class FileSystemNode implements IFileSystemNode {
   public updatedAt: string;
   private _parentNode: IDirectory | null;
 
-  constructor(params: IFileSystemNodeBasis) {
+  constructor (params: IFileSystemNodeBasis) {
     this.cid = cid.generate();
     this.name = params.name || "";
     this.createdAt = date.getCurrentTime();
@@ -31,7 +31,7 @@ export class FileSystemNode implements IFileSystemNode {
     this._parentNode = dir;
   }
 
-  public update(args: IFileSystemNodeBasis) {
+  public update (args: IFileSystemNodeBasis) {
     if (args.name) this.name = args.name;
 
     this.updatedAt = date.getCurrentTime();

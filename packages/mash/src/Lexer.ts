@@ -10,7 +10,7 @@ export class Lexer implements ILexer {
   public readPosition: number;
   public ch: string;
 
-  constructor(input: string) {
+  constructor (input: string) {
     this.input = input;
     this.position = 0;
     this.readPosition = 0;
@@ -19,7 +19,7 @@ export class Lexer implements ILexer {
     this.readChar();
   }
 
-  public nextToken() {
+  public nextToken () {
     const tok: IToken = newToken();
 
     this.skipSpace();
@@ -88,26 +88,26 @@ export class Lexer implements ILexer {
     return tok;
   }
 
-  private get nextCharacter() {
+  private get nextCharacter () {
     return this.input[this.readPosition];
   }
 
-  private isSpace(character: string) {
+  private isSpace (character: string) {
     return (
       character === " " ||
       character === "\t"
     );
   }
 
-  private isNewLine(character: string) {
+  private isNewLine (character: string) {
     return character === "\n";
   }
 
-  private isEOF(character: string) {
+  private isEOF (character: string) {
     return character === "EOF";
   }
 
-  private skipSpace() {
+  private skipSpace () {
     while (this.isSpace(this.ch)) {
       this.readChar();
       if (this.isEOF(this.ch)) {
@@ -116,11 +116,11 @@ export class Lexer implements ILexer {
     }
   }
 
-  private expectPeek(character: string) {
+  private expectPeek (character: string) {
     return this.nextCharacter === character;
   }
 
-  private readChar() {
+  private readChar () {
     if (this.readPosition >= this.input.length) {
       this.ch = "EOF";
     } else {
@@ -130,7 +130,7 @@ export class Lexer implements ILexer {
     this.readPosition += 1;
   }
 
-  private readString() {
+  private readString () {
     const position = this.position;
     while (
       !this.isSpace(this.nextCharacter) &&

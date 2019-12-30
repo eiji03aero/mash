@@ -2,7 +2,7 @@ import { IRenderPayload, ITerminal } from "../types";
 import { BaseRenderLayer } from "./BaseRenderLayer";
 
 export class BackdropRenderLayer extends BaseRenderLayer {
-  constructor(
+  constructor (
     terminal: ITerminal,
     zIndex: number,
   ) {

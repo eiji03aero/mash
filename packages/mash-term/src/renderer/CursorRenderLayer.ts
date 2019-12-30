@@ -9,7 +9,7 @@ export class CursorRenderLayer extends BaseRenderLayer {
   private _blinkIntervalIds: ids;
   private _isCursorShown: boolean;
 
-  constructor(
+  constructor (
     terminal: ITerminal,
     zIndex: number,
   ) {
@@ -25,14 +25,14 @@ export class CursorRenderLayer extends BaseRenderLayer {
     this._beginBlinkCursor();
   }
 
-  private _clearIntervals() {
+  private _clearIntervals () {
     this._blinkTimeoutIds.forEach(window.clearTimeout);
     this._blinkTimeoutIds = [] as ids;
     this._blinkIntervalIds.forEach(window.clearInterval);
     this._blinkIntervalIds = [] as ids;
   }
 
-  private _beginBlinkCursor() {
+  private _beginBlinkCursor () {
     this._isCursorShown = true;
     this._showBlockCursor();
 
@@ -51,7 +51,7 @@ export class CursorRenderLayer extends BaseRenderLayer {
     this._blinkTimeoutIds.push(timeoutId);
   }
 
-  private _showBlockCursor() {
+  private _showBlockCursor () {
     this.ctx.save();
 
     this.setTextBaseStyle();
@@ -73,7 +73,7 @@ export class CursorRenderLayer extends BaseRenderLayer {
     this.ctx.restore();
   }
 
-  private get _cursorChar() {
+  private get _cursorChar () {
     const selectionStart = this.terminal.textarea.selectionStart;
     const value = this.terminal.textarea.value;
     const isEmpty = value === "";
@@ -83,7 +83,7 @@ export class CursorRenderLayer extends BaseRenderLayer {
       : this.terminal.textarea.value.slice(selectionStart, selectionStart + 1);
   }
 
-  private get _cursorX() {
+  private get _cursorX () {
     const promptStr = text.stripHideCharacters(this.terminal.config.prompt);
     const promptWidth = this.ctx.measureText(promptStr).width;
     const inputLength = this.terminal.textarea.value === ""
@@ -92,17 +92,17 @@ export class CursorRenderLayer extends BaseRenderLayer {
     return this.terminal.config.rowLeftMargin + promptWidth + inputLength;
   }
 
-  private get _cursorY() {
+  private get _cursorY () {
     const index = this.terminal.relativePromptRowPosition;
     const height = this.terminal.rowHeight;
     return index * height;
   }
 
-  private get _cursorCharWidth() {
+  private get _cursorCharWidth () {
     return this.ctx.measureText(this._cursorChar).width;
   }
 
-  private get _cursorCharHeight() {
+  private get _cursorCharHeight () {
     return this.terminal.config.fontSize;
   }
 }

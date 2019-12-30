@@ -1,16 +1,15 @@
-import { Row } from "mash-common";
-import { IConfig, IRenderPayload, ITerminal } from "../types";
+import { IConfig, IRenderPayload, ITerminal, IParsedRow } from "../types";
 import { BaseRenderLayer } from "./BaseRenderLayer";
 
 export class TextRenderLayer extends BaseRenderLayer {
-  constructor(
+  constructor (
     terminal: ITerminal,
     zIndex: number,
   ) {
     super(terminal, zIndex);
   }
 
-  public render(params: IRenderPayload) {
+  public render (params: IRenderPayload) {
     this.ctx.save();
     this.clear();
     for (let i = 0; i < params.displayedRows.length; i++) {
@@ -19,13 +18,13 @@ export class TextRenderLayer extends BaseRenderLayer {
     this.ctx.restore();
   }
 
-  public renderRow(row: Row, index: number, config: IConfig) {
+  public renderRow (parsedRow: IParsedRow, index: number, config: IConfig) {
     let xPosition: number = config.rowLeftMargin;
     const yPosition = (index + 1) * this.terminal.rowHeight - this.terminal.config.rowBottomMargin;
     this.ctx.save();
     this.setTextBaseStyle();
     this.ctx.fillStyle = config.textWhite;
-    for (const t of row) {
+    for (const t of parsedRow.row) {
       this.setTextColorFromObject(t);
       this.ctx.fillText(t.text, xPosition, yPosition);
       xPosition = xPosition + this.ctx.measureText(t.text).width;

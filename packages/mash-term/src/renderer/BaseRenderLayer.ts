@@ -5,7 +5,7 @@ export class BaseRenderLayer {
   public terminal: ITerminal;
   public canvas: HTMLCanvasElement;
 
-  constructor(
+  constructor (
     terminal: ITerminal,
     zIndex: number,
   ) {
@@ -17,31 +17,31 @@ export class BaseRenderLayer {
     this.resizeCanvas();
   }
 
-  public get ctx() {
+  public get ctx () {
     return this.canvas.getContext("2d") as CanvasRenderingContext2D;
   }
 
-  public render(_: IRenderPayload) {
+  public render (_: IRenderPayload) {
     return;
   }
 
-  public resize(params: IRenderPayload) {
+  public resize (params: IRenderPayload) {
     this.resizeCanvas();
     this.render(params);
   }
 
-  public clear(params?: IRectCoords) {
+  public clear (params?: IRectCoords) {
     const p = params || { x: 0, y: 0, width: this.canvas.offsetWidth, height: this.canvas.offsetHeight };
 
     this.ctx.clearRect(p.x, p.y, p.width, p.height);
   }
 
-  protected setTextBaseStyle() {
+  protected setTextBaseStyle () {
     this.ctx.font = `${this.terminal.config.fontSize}px ${this.terminal.config.fontFamily}`;
     this.ctx.textBaseline = "alphabetic";
   }
 
-  protected setTextColorFromObject(t: ITextObject) {
+  protected setTextColorFromObject (t: ITextObject) {
     const { config } = this.terminal;
     this.ctx.fillStyle =
       t.color === "blue" ? config.textBlue :

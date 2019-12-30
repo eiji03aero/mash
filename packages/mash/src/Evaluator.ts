@@ -18,7 +18,7 @@ export class Evaluator implements IEvaluator {
   private _fileSystem: IFileSystem;
   private _environment: IEnvironment;
 
-  constructor(
+  constructor (
     fs: IFileSystem,
     env: IEnvironment,
   ) {
@@ -26,7 +26,7 @@ export class Evaluator implements IEvaluator {
     this._fileSystem = fs;
   }
 
-  public eval(node: IAstNode) {
+  public eval (node: IAstNode) {
     // Have to make use of constructor instead of interface,
     // since switch-case based on implement-interface is currently not supported
     switch (node.constructor) {
@@ -37,7 +37,7 @@ export class Evaluator implements IEvaluator {
     }
   }
 
-  private _evalProgram(program: AstProgram) {
+  private _evalProgram (program: AstProgram) {
     for (const node of program.nodes) {
       this.eval(node);
       if (this._environment.exitStatus !== ExitStatus.Success) {
@@ -46,7 +46,7 @@ export class Evaluator implements IEvaluator {
     }
   }
 
-  private _evalCommandLine(commandLine: AstCommandLine) {
+  private _evalCommandLine (commandLine: AstCommandLine) {
     const command = commandLine.args[0].tokenLiteral();
     const func = builtins[command];
 

@@ -8,13 +8,13 @@ import {
 
 export class Directory extends FileSystemNode implements IDirectory {
 
-  public static isBasis(obj: any): obj is IDirectoryBasis {
+  public static isBasis (obj: any): obj is IDirectoryBasis {
     return "children" in obj;
   }
   public children: Nodes;
   private _root: boolean;
 
-  constructor(params: IDirectoryBasis) {
+  constructor (params: IDirectoryBasis) {
     super(params);
     this.children = [] as Nodes;
     this._root = params.root || false;
@@ -26,34 +26,34 @@ export class Directory extends FileSystemNode implements IDirectory {
     }
   }
 
-  public update(args: IDirectoryBasis) {
+  public update (args: IDirectoryBasis) {
     super.update(args);
   }
 
-  public addChild(node: IFileSystemNode) {
+  public addChild (node: IFileSystemNode) {
     node.parentNode = this;
     this.children.push(node);
   }
 
-  public removeChild(node: IFileSystemNode) {
+  public removeChild (node: IFileSystemNode) {
     this.children = this.children.filter(
       (c: IFileSystemNode) => c.cid !== node.cid,
     );
   }
 
-  public containsByName(name: string) {
+  public containsByName (name: string) {
     return this.children
       .map((node: IFileSystemNode) => node.name)
       .includes(name);
   }
 
-  public findByName(name: string) {
+  public findByName (name: string) {
     return this.children.find(
       (node: IFileSystemNode) => node.name === name,
     );
   }
 
-  public isRoot() {
+  public isRoot () {
     return this._root;
   }
 }

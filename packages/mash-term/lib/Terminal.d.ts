@@ -14,11 +14,20 @@ export declare class Terminal implements ITerminal {
     constructor(container: HTMLElement, cfg?: any);
     get relativePromptRowPosition(): number;
     get rowHeight(): number;
+    getWindowStat(): {
+        width: number;
+        height: number;
+        availableWidth: number;
+        availableHeight: number;
+    };
+    measureText(str: string): TextMetrics;
     focus(): void;
     blur(): void;
     prompt(): void;
+    clear(): void;
     writeln(str: string): void;
     appendRow(str: string): void;
+    updateRowByIndex(idx: number, str: string): void;
     scroll(numberToScroll: number): void;
     scrollToBottom(): void;
     onKeyPress(fn: KeyboardEventHandler): void;
