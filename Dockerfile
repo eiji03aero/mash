@@ -1,4 +1,4 @@
-FROM node:12.13.1-buster
+FROM node:10.18.0-buster
 
 WORKDIR /projects
 

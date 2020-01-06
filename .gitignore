@@ -4,3 +4,5 @@ coverage/
 
 lerna-debug.log
 yarn-error.log*
+
+.env

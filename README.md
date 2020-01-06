@@ -46,6 +46,17 @@
     - react
     - graphql
 - web-server
+  - features
+    - add base skelton based on express generator
+    - user account feature
+    - fetch filesystem
+      - if logged in, get the ones for them in home directory
+      - if not, get only the default ones
+    - thread feature
+      - user posts something
+      - user can create thread
+      - can subscribe to thread
+
   - Node
   - graphql
   - mongodb?
