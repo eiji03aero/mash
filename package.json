@@ -20,12 +20,14 @@
     "build:watch": "lerna run --parallel build:watch -- --preserveWatchOutput",
     "build:fs": "(cd packages/mash-filesystem && yarn build)",
     "dev:t": "(cd packages/mash-term && yarn run dev)",
+    "dev:ws": "(cd packages/web-server && yarn run dev)",
     "test": "lerna run test --parallel",
     "test:watch:m": "(cd packages/mash && yarn run test:watch)",
     "test:watch:fs": "(cd packages/mash-filesystem && yarn run test:watch)",
     "test:watch:t": "(cd packages/mash-term && yarn run test:watch)",
     "test:watch:c": "(cd packages/mash-common && yarn run test:watch)",
-    "lint": "lerna run lint --parallel -- --fix"
+    "lint": "lerna run lint --parallel",
+    "lint:fix": "lerna run lint --parallel -- --fix"
   },
   "devDependencies": {
     "@types/jest": "^24.0.11",

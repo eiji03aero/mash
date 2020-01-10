@@ -4,30 +4,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var app_1 = __importDefault(require("../app"));
+var mongoose_1 = __importDefault(require("mongoose"));
+var mongo_1 = require("../mongo");
 var debug_1 = __importDefault(require("debug"));
 var http_1 = __importDefault(require("http"));
 var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 var debug = debug_1.default("express-test:server");
-var port = normalizePort(process.env.SERVER_PORT || "8090");
+var port = process.env.SERVER_PORT || "8090";
 app_1.default.set("port", port);
 var server = http_1.default.createServer(app_1.default);
 server.listen(port);
-server.on("error", onError);
-server.on("listening", onListening);
-function normalizePort(val) {
-    var port = parseInt(val, 10);
-    if (isNaN(port)) {
-        // named pipe
-        return val;
-    }
-    if (port >= 0) {
-        // port number
-        return port;
-    }
-    return false;
-}
-function onError(error) {
+server.on("error", function (error) {
     if (error.syscall !== "listen") {
         throw error;
     }
@@ -47,12 +35,23 @@ function onError(error) {
         default:
             throw error;
     }
-}
-function onListening() {
+});
+server.on("listening", function () {
     var addr = server.address() || "";
     var bind = typeof addr === "string"
         ? "pipe " + addr
         : "port " + addr.port;
     debug("Listening on " + bind);
-}
+    var DB_NAME = process.env.DB_NAME;
+    var dbUrl = mongo_1.getDbUrlFromEnv() + "/" + DB_NAME;
+    mongoose_1.default.connect(dbUrl, mongo_1.connectOption, function (err) {
+        if (err) {
+            debug("mongodb connection failed");
+            process.exit(1);
+        }
+        else {
+            debug("connected to mongodb");
+        }
+    });
+});
 //# sourceMappingURL=www.js.map

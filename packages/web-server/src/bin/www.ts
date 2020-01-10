@@ -1,4 +1,6 @@
 import app from "../app";
+import mongoose from "mongoose";
+import { getDbUrlFromEnv, connectOption } from "../mongo";
 import debugModule from "debug";
 import http from "http";
 import dotenv from "dotenv";
@@ -6,31 +8,13 @@ import dotenv from "dotenv";
 dotenv.config();
 const debug = debugModule("express-test:server");
 
-const port = normalizePort(process.env.SERVER_PORT || "8090");
+const port = process.env.SERVER_PORT || "8090";
 app.set("port", port);
 
 const server = http.createServer(app);
 server.listen(port);
-server.on("error", onError);
-server.on("listening", onListening);
 
-function normalizePort (val: string) {
-  const port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
-  return false;
-}
-
-function onError (error: any) {
+server.on("error", (error: any) => {
   if (error.syscall !== "listen") {
     throw error;
   }
@@ -52,12 +36,24 @@ function onError (error: any) {
     default:
       throw error;
   }
-}
+});
 
-function onListening () {
+server.on("listening", () => {
   const addr = server.address() || "";
   const bind = typeof addr === "string"
     ? "pipe " + addr
     : "port " + addr.port;
   debug("Listening on " + bind);
-}
+
+  const { DB_NAME } = process.env;
+  const dbUrl = getDbUrlFromEnv() + "/" + DB_NAME;
+  mongoose.connect(dbUrl, connectOption, (err: Error) => {
+    if (err) {
+      debug("mongodb connection failed");
+      process.exit(1);
+    }
+    else {
+      debug("connected to mongodb");
+    }
+  });
+});

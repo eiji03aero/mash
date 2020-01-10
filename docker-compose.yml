@@ -11,3 +11,14 @@ services:
     volumes:
       - .:/projects
     tty: true
+  web-server-mongo:
+    container_name: web-server-mongo
+    image: mongo:4.2.2
+    ports:
+      - "27017:27017"
+    volumes:
+      - v-web-server-mongo:/data/db
+    tty: true
+
+volumes:
+  v-web-server-mongo:
