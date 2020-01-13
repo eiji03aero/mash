@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
 
+mongoose.set("useCreateIndex", true);
+
 export const connectOption = { useNewUrlParser: true, useUnifiedTopology: true };
 
 export const getDbUrlFromEnv = () =>
-  `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}`;
+  `mongodb://${process.env.WEB_SERVER_DB_HOST}:${process.env.WEB_SERVER_DB_PORT}`;
 
 export const removeAllCollections = async () => {
   const collections = Object.keys(mongoose.connection.collections);

@@ -11,7 +11,7 @@ var http_1 = __importDefault(require("http"));
 var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 var debug = debug_1.default("express-test:server");
-var port = process.env.SERVER_PORT || "8090";
+var port = process.env.WEB_SERVER_PORT || "8090";
 app_1.default.set("port", port);
 var server = http_1.default.createServer(app_1.default);
 server.listen(port);
@@ -42,8 +42,8 @@ server.on("listening", function () {
         ? "pipe " + addr
         : "port " + addr.port;
     debug("Listening on " + bind);
-    var DB_NAME = process.env.DB_NAME;
-    var dbUrl = mongo_1.getDbUrlFromEnv() + "/" + DB_NAME;
+    var WEB_SERVER_DB_NAME = process.env.WEB_SERVER_DB_NAME;
+    var dbUrl = mongo_1.getDbUrlFromEnv() + "/" + WEB_SERVER_DB_NAME;
     mongoose_1.default.connect(dbUrl, mongo_1.connectOption, function (err) {
         if (err) {
             debug("mongodb connection failed");

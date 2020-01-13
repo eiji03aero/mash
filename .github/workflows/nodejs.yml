@@ -13,18 +13,31 @@ jobs:
     strategy:
       matrix:
         node-version: [8.x, 10.x, 12.x]
+        mongodb-version: [4.2]
+
+    env:
+      WEB_SERVER_DB_HOST: localhost
+      WEB_SERVER_DB_PORT: 27017
 
     steps:
     - uses: actions/checkout@v1
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+
     - name: install yarn
       run: |
         curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
         echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
         sudo apt-get update && sudo apt-get install yarn
+
+    - name: Start MongoDB
+      uses: superchargejs/mongodb-github-action@v1
+      with:
+        mongodb-version: ${{ matrix.mongodb-version }}
+
     - name: check packages
       run: |
         npx lerna bootstrap

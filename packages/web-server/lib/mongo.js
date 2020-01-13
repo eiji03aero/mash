@@ -40,9 +40,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var mongoose_1 = __importDefault(require("mongoose"));
+mongoose_1.default.set("useCreateIndex", true);
 exports.connectOption = { useNewUrlParser: true, useUnifiedTopology: true };
 exports.getDbUrlFromEnv = function () {
-    return "mongodb://" + process.env.DB_HOST + ":" + process.env.DB_PORT;
+    return "mongodb://" + process.env.WEB_SERVER_DB_HOST + ":" + process.env.WEB_SERVER_DB_PORT;
 };
 exports.removeAllCollections = function () { return __awaiter(void 0, void 0, void 0, function () {
     var collections, _i, collections_1, collectionName, collection;

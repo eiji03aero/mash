@@ -1,2 +1,2 @@
-export { File } from "../models/File";
+export {};
 //# sourceMappingURL=setupRepl.d.ts.map

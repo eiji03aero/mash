@@ -10,6 +10,10 @@
   - terminal-ish canvas module
 - mash-common
   - shared stuff
+- web
+  - web app for mash
+- web-server
+  - the server for mash
 
 ## Todos
 
@@ -47,8 +51,13 @@
     - graphql
 - web-server
   - features
-    - add base skelton based on express generator
     - user account feature
+      - signup
+        - create user
+      - login
+        - set cookie with signed password
+      - logout
+        - remove cookie
     - fetch filesystem
       - if logged in, get the ones for them in home directory
       - if not, get only the default ones
@@ -56,20 +65,7 @@
       - user posts something
       - user can create thread
       - can subscribe to thread
-
   - Node
   - graphql
   - mongodb?
-```
-
-## Structure
-
-```
-
-- Environment
-  - exitStatus
-  - stdin
-  - stdout
-  - stderr
-  - screenWidth
 ```

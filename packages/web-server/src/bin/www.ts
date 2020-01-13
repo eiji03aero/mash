@@ -8,7 +8,7 @@ import dotenv from "dotenv";
 dotenv.config();
 const debug = debugModule("express-test:server");
 
-const port = process.env.SERVER_PORT || "8090";
+const port = process.env.WEB_SERVER_PORT || "8090";
 app.set("port", port);
 
 const server = http.createServer(app);
@@ -45,8 +45,8 @@ server.on("listening", () => {
     : "port " + addr.port;
   debug("Listening on " + bind);
 
-  const { DB_NAME } = process.env;
-  const dbUrl = getDbUrlFromEnv() + "/" + DB_NAME;
+  const { WEB_SERVER_DB_NAME } = process.env;
+  const dbUrl = getDbUrlFromEnv() + "/" + WEB_SERVER_DB_NAME;
   mongoose.connect(dbUrl, connectOption, (err: Error) => {
     if (err) {
       debug("mongodb connection failed");
