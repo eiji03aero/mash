@@ -33,10 +33,10 @@ jobs:
         echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
         sudo apt-get update && sudo apt-get install yarn
 
-    - name: Start MongoDB
-      uses: superchargejs/mongodb-github-action@v1
+    - name: Launch MongoDB
+      uses: wbari/start-mongoDB@v0.2
       with:
-        mongodb-version: ${{ matrix.mongodb-version }}
+        mongoDBVersion: ${{ matrix.mongodb-version }}
 
     - name: check packages
       run: |
