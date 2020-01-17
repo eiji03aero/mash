@@ -5,7 +5,7 @@
 //
 // dotenv.config();
 //
-// mongoose.connect(`${getDbUrlFromEnv()}/${process.env.WEB_SERVER_DB_NAME}`, connectOption, async (err: Error) => {
+// mongoose.connect(`${getDbUrlFromEnv()}/${process.env.SERVER_WEB_DB_NAME}`, connectOption, async (err: Error) => {
 //   if (err) {
 //     console.log(err);
 //     process.exit(1);

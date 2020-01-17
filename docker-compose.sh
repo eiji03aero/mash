@@ -45,6 +45,8 @@ if [ $COMMAND = 'up' ] && [ $# -le 1 ]; then
 
 elif [ $COMMAND = 'bash' ]; then
   execute-docker-compose exec mash bash
+elif [ $COMMAND = 'bash-rm' ]; then
+  execute-docker-compose exec rabbitmq bash
 
 elif [ $COMMAND = 'init' ]; then
   bootstrap

@@ -1,11 +1,11 @@
-# `web-server`
+# `server-auth`
 
 > TODO: description
 
 ## Usage
 
 ```
-const webServer = require('web-server');
+const serverAuth = require('server-auth');
 
 // TODO: DEMONSTRATE API
 ```

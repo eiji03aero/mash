@@ -1,6 +1,7 @@
 #!/bin/bash
 
 package_name="$1"
+
 package_path="packages/$package_name"
 src_package_path="packages/mash"
 

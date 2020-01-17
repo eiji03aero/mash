@@ -11,14 +11,18 @@ services:
     volumes:
       - .:/projects
     tty: true
-  web-server-mongo:
-    container_name: web-server-mongo
+  server-web-mongo:
+    container_name: server-web-mongo
     image: mongo:4.2.2
     ports:
       - "27017:27017"
     volumes:
-      - v-web-server-mongo:/data/db
+      - v-server-web-mongo:/data/db
+    tty: true
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.7-alpine
     tty: true
 
 volumes:
-  v-web-server-mongo:
+  v-server-web-mongo:

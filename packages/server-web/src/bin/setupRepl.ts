@@ -8,7 +8,7 @@ console.log("starting setup repl ...")
 dotenv.config();
 
 (async () => {
-  await mongoose.connect(`${getDbUrlFromEnv()}/${process.env.WEB_SERVER_DB_NAME}`, connectOption);
+  await mongoose.connect(`${getDbUrlFromEnv()}/${process.env.SERVER_WEB_DB_NAME}`, connectOption);
   Object.defineProperty(global, "File", {
     value: File
   });

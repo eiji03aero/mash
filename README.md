@@ -12,8 +12,10 @@
   - shared stuff
 - web
   - web app for mash
-- web-server
+- server-web
   - the server for mash
+- server-auth
+  - auth kind of server
 
 ## Todos
 
@@ -49,7 +51,7 @@
   - create basis
     - react
     - graphql
-- web-server
+- server-web
   - features
     - user account feature
       - signup
@@ -68,4 +70,6 @@
   - Node
   - graphql
   - mongodb?
+- server-auth
+- server-filesystem
 ```
