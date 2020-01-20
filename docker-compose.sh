@@ -51,6 +51,8 @@ elif [ $COMMAND = 'bash-s-f' ]; then
   execute-docker-compose exec frontend-service bash
 elif [ $COMMAND = 'bash-s-a' ]; then
   execute-docker-compose exec auth-service bash
+elif [ $COMMAND = 'bash-s-fs' ]; then
+  execute-docker-compose exec filesystem-service bash
 
 elif [ $COMMAND = 'init' ]; then
   bootstrap

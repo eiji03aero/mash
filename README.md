@@ -23,10 +23,6 @@
 
 ```
 - whole
-  - separate services packages from lerna packages directory
-  - create filesystem-service with init service script
-    - rename existing ones as well
-  - remove mash-filesystem dependency from frontend-service
 - mash
   - [WIP] refactor token for commandline and program
     - kind of don't know what to do
@@ -73,5 +69,10 @@
       - can subscribe to thread
 - auth-service
 - filesystem-service
+  - create SystemProfile and refactor related codes in File and Directory
   - deal with types on CIFile and CIDirectory
+  - models
+    - File
+    - Directory
+    - SystemProfile
 ```

@@ -31,8 +31,6 @@ services:
   frontend-service-mongo:
     container_name: frontend-service-mongo
     image: mongo:4.2.2
-    ports:
-      - "27017:27017"
     volumes:
       - v-frontend-service-mongo:/data/db
     tty: true
@@ -45,6 +43,29 @@ services:
       - ./services/auth-service:/projects
     tty: true
 
+  filesystem-service:
+    container_name: filesystem-service
+    build:
+      context: ./services/filesystem-service
+    environment:
+      DB_HOST: filesystem-service-mongo
+      DB_PORT: 27017
+      DB_NAME: filesystem-service
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+    volumes:
+      - ./services/filesystem-service:/projects
+    tty: true
+    depends_on:
+      - rabbitmq
+      - filesystem-service-mongo
+  filesystem-service-mongo:
+    container_name: filesystem-service-mongo
+    image: mongo:4.2.2
+    volumes:
+      - v-filesystem-service-mongo:/data/db
+    tty: true
+
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3.7-alpine
@@ -52,3 +73,4 @@ services:
 
 volumes:
   v-frontend-service-mongo:
+  v-filesystem-service-mongo:
