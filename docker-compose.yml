@@ -11,18 +11,44 @@ services:
     volumes:
       - .:/projects
     tty: true
-  server-web-mongo:
-    container_name: server-web-mongo
+
+  frontend-service:
+    container_name: frontend-service
+    build:
+      context: ./services/frontend-service
+    environment:
+      DB_HOST: frontend-service-mongo
+      DB_PORT: 27017
+      DB_NAME: frontend-service
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+    volumes:
+      - ./services/frontend-service:/projects
+    tty: true
+    depends_on:
+      - rabbitmq
+      - frontend-service-mongo
+  frontend-service-mongo:
+    container_name: frontend-service-mongo
     image: mongo:4.2.2
     ports:
       - "27017:27017"
     volumes:
-      - v-server-web-mongo:/data/db
+      - v-frontend-service-mongo:/data/db
     tty: true
+
+  auth-service:
+    container_name: auth-service
+    build:
+      context: ./services/auth-service
+    volumes:
+      - ./services/auth-service:/projects
+    tty: true
+
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3.7-alpine
     tty: true
 
 volumes:
-  v-server-web-mongo:
+  v-frontend-service-mongo:

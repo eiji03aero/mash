@@ -26,7 +26,6 @@
     "test:watch:fs": "(cd packages/mash-filesystem && yarn run test:watch)",
     "test:watch:t": "(cd packages/mash-term && yarn run test:watch)",
     "test:watch:c": "(cd packages/mash-common && yarn run test:watch)",
-    "test:watch:sw": "(cd packages/server-web && yarn run test:watch)",
     "lint": "lerna run lint --parallel",
     "lint:fix": "lerna run lint --parallel -- --fix"
   },

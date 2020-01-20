@@ -1,11 +1,11 @@
-# `server-auth`
+# `auth-service`
 
 > TODO: description
 
 ## Usage
 
 ```
-const serverAuth = require('server-auth');
+const authService = require('auth-service');
 
 // TODO: DEMONSTRATE API
 ```

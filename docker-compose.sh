@@ -47,6 +47,10 @@ elif [ $COMMAND = 'bash' ]; then
   execute-docker-compose exec mash bash
 elif [ $COMMAND = 'bash-rm' ]; then
   execute-docker-compose exec rabbitmq bash
+elif [ $COMMAND = 'bash-s-f' ]; then
+  execute-docker-compose exec frontend-service bash
+elif [ $COMMAND = 'bash-s-a' ]; then
+  execute-docker-compose exec auth-service bash
 
 elif [ $COMMAND = 'init' ]; then
   bootstrap

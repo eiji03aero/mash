@@ -1,9 +1,15 @@
 import mongoose from "mongoose";
 import { Response } from "express";
-import {
-  IFile as CIFile,
-  IDirectory as CIDirectory,
-} from "mash-filesystem";
+
+interface CIFile {
+  name: string;
+  content: string;
+}
+
+interface CIDirectory {
+  name: string;
+  children: any[];
+}
 
 export interface IUser extends mongoose.Document {
   name: string;

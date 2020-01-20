@@ -1,5 +1,5 @@
 {
-  "name": "server-web",
+  "name": "frontend-service",
   "version": "0.0.0",
   "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
   "keywords": [],
@@ -58,7 +58,6 @@
     "express": "^4.17.1",
     "express-graphql": "^0.9.0",
     "graphql": "^14.5.8",
-    "mash-filesystem": "^0.0.0",
     "mongoose": "^5.8.5",
     "morgan": "^1.9.1",
     "uuid": "^3.3.3"

@@ -12,17 +12,19 @@
   - shared stuff
 - web
   - web app for mash
-- server-web
+- frontend-service
   - the server for mash
-- server-auth
+- auth-service
   - auth kind of server
 
 ## Todos
 
 ```
 - whole
-  - [WIP] should create package provide environment including filesystem?
-    - not to do this for now. keep them inside mash
+  - separate services packages from lerna packages directory
+  - create filesystem-service with init service script
+    - rename existing ones as well
+  - remove mash-filesystem dependency from frontend-service
 - mash
   - [WIP] refactor token for commandline and program
     - kind of don't know what to do
@@ -51,7 +53,7 @@
   - create basis
     - react
     - graphql
-- server-web
+- frontend-service
   - features
     - user account feature
       - signup
@@ -70,6 +72,7 @@
   - Node
   - graphql
   - mongodb?
-- server-auth
-- server-filesystem
+- auth-service
+- filesystem-service
+  - deal with types on CIFile and CIDirectory
 ```

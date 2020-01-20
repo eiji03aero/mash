@@ -5,7 +5,7 @@ mongoose.set("useCreateIndex", true);
 export const connectOption = { useNewUrlParser: true, useUnifiedTopology: true };
 
 export const getDbUrlFromEnv = () =>
-  `mongodb://${process.env.SERVER_WEB_DB_HOST}:${process.env.SERVER_WEB_DB_PORT}`;
+  `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}`;
 
 export const removeAllCollections = async () => {
   const collections = Object.keys(mongoose.connection.collections);
