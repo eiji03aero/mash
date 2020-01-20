@@ -37,5 +37,7 @@
     "ts-jest": "^24.0.1",
     "ts-node": "^8.0.3",
     "typescript": "^3.4.1"
-  }
+  },
+  "repository": "https://github.com/eiji03aero/mash.git",
+  "author": "eiji03aero <eiji03aero@gmail.com>"
 }

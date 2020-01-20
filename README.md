@@ -12,6 +12,8 @@
   - shared stuff
 - web
   - web app for mash
+
+## Services
 - frontend-service
   - the server for mash
 - auth-service
@@ -69,9 +71,6 @@
       - user posts something
       - user can create thread
       - can subscribe to thread
-  - Node
-  - graphql
-  - mongodb?
 - auth-service
 - filesystem-service
   - deal with types on CIFile and CIDirectory
