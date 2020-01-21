@@ -54,10 +54,6 @@ elif [ $COMMAND = 'bash-s-a' ]; then
 elif [ $COMMAND = 'bash-s-fs' ]; then
   execute-docker-compose exec filesystem-service bash
 
-elif [ $COMMAND = 'init' ]; then
-  bootstrap
-  clean
-
 elif [ $COMMAND = 'bootstrap' ]; then
   bootstrap
 

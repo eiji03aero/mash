@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { SystemProfile } from "../../src/models";
 import { sharedContext } from "../shared";
 
-sharedContext.hasDbConnection();
+sharedContext.hasDbConnection("test-models-SystemProfile");
 
 describe("SystemProfile", () => {
   it("can create", async () => {

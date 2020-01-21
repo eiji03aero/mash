@@ -2,7 +2,7 @@ import { ISystemProfile } from "../../src/types";
 import { File } from "../../src/models";
 import { sharedContext } from "../shared";
 
-sharedContext.hasDbConnection();
+sharedContext.hasDbConnection("test-models-File");
 
 describe("File", () => {
   let systemProfile: ISystemProfile;

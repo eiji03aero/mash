@@ -5,19 +5,26 @@ services:
     volumes:
       - c-mash-sync:/projects
       - v-mash-yarn:/usr/local/share/.cache/yarn
+
   frontend-service:
     volumes:
+      - v-frontend-service-node_modules:/projects/node_modules
       - v-mash-yarn:/usr/local/share/.cache/yarn
 
   auth-service:
     volumes:
+      - v-auth-service-node_modules:/projects/node_modules
       - v-mash-yarn:/usr/local/share/.cache/yarn
 
   filesystem-service:
     volumes:
+      - v-filesystem-service-node_modules:/projects/node_modules
       - v-mash-yarn:/usr/local/share/.cache/yarn
 
 volumes:
   v-mash-yarn:
+  v-frontend-service-node_modules:
+  v-auth-service-node_modules:
+  v-filesystem-service-node_modules:
   c-mash-sync:
     external: true

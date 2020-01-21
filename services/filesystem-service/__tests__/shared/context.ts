@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import {
   connectOption,
   getDbUrlFromEnv,
-  // removeAllCollections,
+  removeAllCollections,
   dropAllCollections
 } from "../../src/mongo";
 import { SystemProfile } from "../../src/models"
@@ -15,7 +15,7 @@ export const hasDbConnection = async (dbName?: string) => {
   });
 
   afterEach(async () => {
-    // await removeAllCollections();
+    await removeAllCollections();
   });
 
   afterAll(async () => {
