@@ -27,7 +27,7 @@ directorySchema.methods.serialize = function () {
   const fileIds = this.files.map((f: IFile) => f.id);
   const directoryIds = this.files.map((d: IDirectory) => d.id);
   return {
-    cid: this.id,
+    id: this.id,
     name: this.name,
     children: [].concat(fileIds, directoryIds),
   };

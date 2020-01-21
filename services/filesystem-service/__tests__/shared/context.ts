@@ -1,14 +1,21 @@
 import mongoose from "mongoose";
-import { connectOption, getDbUrlFromEnv, removeAllCollections, dropAllCollections } from "../../src/mongo";
+import {
+  connectOption,
+  getDbUrlFromEnv,
+  // removeAllCollections,
+  dropAllCollections
+} from "../../src/mongo";
+import { SystemProfile } from "../../src/models"
 
-export const hasDbConnection = async (dbName: string) => {
+export const hasDbConnection = async (dbName?: string) => {
   beforeAll(async () => {
-    const url = getDbUrlFromEnv() + "/" + dbName;
+    const name = dbName || "test";
+    const url = getDbUrlFromEnv() + "/" + name;
     await mongoose.connect(url, connectOption);
   });
 
   afterEach(async () => {
-    await removeAllCollections();
+    // await removeAllCollections();
   });
 
   afterAll(async () => {
@@ -18,5 +25,8 @@ export const hasDbConnection = async (dbName: string) => {
 };
 
 export const hasSystemProfile = async () => {
-
-}
+  const systemProfile = await SystemProfile.create({
+    ownerId: mongoose.Types.ObjectId(),
+  });
+  return systemProfile;
+};

@@ -29,6 +29,7 @@ dev_lib_names=$(cat <<- EOF
 @types/node
 @types/express
 @types/amqplib
+@types/dotenv
 @typescript-eslint/eslint-plugin
 @typescript-eslint/parser
 eslint
@@ -42,6 +43,7 @@ EOF
 lib_names=$(cat <<- EOF
 express
 amqplib
+dotenv
 EOF
 )
 

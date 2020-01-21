@@ -20,7 +20,7 @@ export const fileSchema = new mongoose.Schema({
 
 fileSchema.methods.serialize = function () {
   return {
-    cid: this._id,
+    id: this._id,
     name: this.name,
     content: this.content,
   };

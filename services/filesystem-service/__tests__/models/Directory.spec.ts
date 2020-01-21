@@ -1,31 +1,31 @@
-import { IUser } from "../../src/types";
+import { ISystemProfile } from "../../src/types";
 import { Directory, File } from "../../src/models";
 import { sharedContext } from "../shared";
 
-sharedContext.hasDbConnection("test-models-Directory");
+sharedContext.hasDbConnection();
 
 describe("Directory", () => {
-  let user: IUser;
+  let systemProfile: ISystemProfile;
 
   beforeEach(async () => {
-    user = await sharedContext.hasUser();
+    systemProfile = await sharedContext.hasSystemProfile();
   });
 
   it("can create", async () => {
-    await Directory.create({ name: "hoge", ownerId: user.id });
+    await Directory.create({ name: "hoge", ownerId: systemProfile.id });
   });
 
   it("can update", async () => {
-    const dir = await Directory.create({ name: "hoge", ownerId: user.id });
+    const dir = await Directory.create({ name: "hoge", ownerId: systemProfile.id });
     dir.name = "hoge2";
     await dir.save();
   });
 
   it("has children", async () => {
-    const dir = await Directory.create({ name: "hoge", ownerId: user.id });
+    const dir = await Directory.create({ name: "hoge", ownerId: systemProfile.id });
 
-    const f = await File.create({ name: "domo", ownerId: user.id });
-    const d = await Directory.create({ name: "domo", ownerId: user.id });
+    const f = await File.create({ name: "domo", ownerId: systemProfile.id });
+    const d = await Directory.create({ name: "domo", ownerId: systemProfile.id });
     dir.files.push(f);
     dir.directories.push(d);
     await dir.save();
@@ -39,9 +39,9 @@ describe("Directory", () => {
   describe("#serialize", () => {
     it("works", async () => {
       const params = { name: "hoge" };
-      const dir = await Directory.create({ name: "hoge", ownerId: user.id });
-      const f = await File.create({ name: "domo", ownerId: user.id });
-      const d = await Directory.create({ name: "domo", ownerId: user.id });
+      const dir = await Directory.create({ name: "hoge", ownerId: systemProfile.id });
+      const f = await File.create({ name: "domo", ownerId: systemProfile.id });
+      const d = await Directory.create({ name: "domo", ownerId: systemProfile.id });
       dir.files.push(f);
       dir.directories.push(d);
       await dir.save();
@@ -49,7 +49,7 @@ describe("Directory", () => {
       const rdir = await Directory.findById(dir.id);
       if (rdir === null) return;
       const serialized = rdir.serialize();
-      expect(serialized.cid).toEqual(dir.id);
+      expect(serialized.id).toEqual(dir.id);
       expect(serialized.name).toEqual(params.name);
       expect(serialized.children.length).toEqual(2);
     })

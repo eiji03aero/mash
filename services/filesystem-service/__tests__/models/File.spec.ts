@@ -1,32 +1,32 @@
-import { IUser } from "../../src/types";
+import { ISystemProfile } from "../../src/types";
 import { File } from "../../src/models";
 import { sharedContext } from "../shared";
 
-sharedContext.hasDbConnection("test-models-File");
+sharedContext.hasDbConnection();
 
 describe("File", () => {
-  let user: IUser;
+  let systemProfile: ISystemProfile;
 
   beforeEach(async () => {
-    user = await sharedContext.hasUser();
+    systemProfile = await sharedContext.hasSystemProfile();
   });
 
   it("can create", async () => {
-    await File.create({ name: "hoge", content: "test", ownerId: user.id });
+    await File.create({ name: "hoge", content: "test", ownerId: systemProfile.id });
   });
 
   it("can update", async () => {
-    const file = await File.create({ name: "hoge", content: "test", ownerId: user.id });
+    const file = await File.create({ name: "hoge", content: "test", ownerId: systemProfile.id });
     file.name = "hoge2";
     await file.save();
   });
 
   describe("#serialize", () => {
     it("works", async () => {
-      const params = { name: "hoge", content: "content", ownerId: user.id };
+      const params = { name: "hoge", content: "content", ownerId: systemProfile.id };
       const file = await File.create(params);
       const serialized = file.serialize();
-      expect(serialized.cid).toBeDefined();
+      expect(serialized.id).toBeDefined();
       expect(serialized.name).toEqual(params.name);
       expect(serialized.content).toEqual(params.content);
     });

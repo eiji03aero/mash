@@ -23,6 +23,7 @@
 
 ```
 - whole
+  - setup test for services
 - mash
   - [WIP] refactor token for commandline and program
     - kind of don't know what to do
@@ -41,6 +42,7 @@
     - argument variables
     - let user defined script run
 - mash-filesystem
+  - consider internal representation of nodes, like having map of id/node
   - serialize nodes for saving
 - mash-common
 - mash-term

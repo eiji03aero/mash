@@ -4,7 +4,18 @@ services:
   mash:
     volumes:
       - c-mash-sync:/projects
-      - v-mash-yarn:/usr/local/share/.cache/yarn/v4
+      - v-mash-yarn:/usr/local/share/.cache/yarn
+  frontend-service:
+    volumes:
+      - v-mash-yarn:/usr/local/share/.cache/yarn
+
+  auth-service:
+    volumes:
+      - v-mash-yarn:/usr/local/share/.cache/yarn
+
+  filesystem-service:
+    volumes:
+      - v-mash-yarn:/usr/local/share/.cache/yarn
 
 volumes:
   v-mash-yarn:

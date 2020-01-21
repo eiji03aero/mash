@@ -3,9 +3,14 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
   "devDependencies": {
     "@types/amqplib": "^0.5.13",
+    "@types/dotenv": "^8.2.0",
     "@types/jest": "^24.9.0",
+    "@types/mongoose": "^5.5.41",
     "@types/node": "^13.1.8",
     "@typescript-eslint/eslint-plugin": "^2.16.0",
     "@typescript-eslint/parser": "^2.16.0",
@@ -16,6 +21,8 @@
     "typescript": "^3.7.5"
   },
   "dependencies": {
-    "amqplib": "^0.5.5"
+    "amqplib": "^0.5.5",
+    "dotenv": "^8.2.0",
+    "mongoose": "^5.8.9"
   }
 }
