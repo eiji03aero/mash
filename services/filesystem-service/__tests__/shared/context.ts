@@ -10,8 +10,7 @@ import { SystemProfile } from "../../src/models"
 export const hasDbConnection = async (dbName?: string) => {
   beforeAll(async () => {
     const name = dbName || "test";
-    const url = getDbUrlFromEnv() + "/" + name;
-    await mongoose.connect(url, connectOption);
+    await mongoose.connect(getDbUrlFromEnv(name), connectOption);
   });
 
   afterEach(async () => {
