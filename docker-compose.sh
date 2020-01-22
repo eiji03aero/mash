@@ -60,6 +60,11 @@ elif [ $COMMAND = 'bootstrap' ]; then
 elif [ $COMMAND = 'clean' ]; then
   clean
 
+elif [ $COMMAND = 'sync-reset' ]; then
+  docker-sync stop
+  docker-sync clean
+  docker-sync start
+
 else
   execute-docker-compose $@
 fi

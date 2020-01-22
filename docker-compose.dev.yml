@@ -3,7 +3,7 @@ version: '3'
 services:
   mash:
     volumes:
-      - c-mash-sync:/projects
+      - v-sync-mash-node_modules:/projects/node_modules
       - v-mash-yarn:/usr/local/share/.cache/yarn
 
   frontend-service:
@@ -26,5 +26,5 @@ volumes:
   v-frontend-service-node_modules:
   v-auth-service-node_modules:
   v-filesystem-service-node_modules:
-  c-mash-sync:
+  v-sync-mash-node_modules:
     external: true
