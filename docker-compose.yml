@@ -48,6 +48,9 @@ services:
     volumes:
       - ./services/auth-service:/projects
     tty: true
+    depends_on:
+      - rabbitmq
+      - auth-service-mongo
   auth-service-mongo:
     container_name: auth-service-mongo
     image: mongo:4.2.2

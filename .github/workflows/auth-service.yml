@@ -1,0 +1,19 @@
+name: auth-service
+
+on:
+  push:
+    paths:
+    - "services/auth-service/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: test
+      run: |
+        docker-compose build auth-service
+        docker-compose up -d auth-service
+        docker-compose exec -T auth-service bash -c 'yarn install && yarn test'

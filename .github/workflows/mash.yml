@@ -1,23 +1,19 @@
-name: Node CI
+name: mash
 
 on:
   push:
-    branches:
-      - master
+    paths:
+    - "packages/**"
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         node-version: [8.x, 10.x, 12.x]
-        mongodb-version: [4.2]
 
     env:
-      WEB_SERVER_DB_HOST: localhost
-      WEB_SERVER_DB_PORT: 27017
 
     steps:
     - uses: actions/checkout@v1
@@ -32,11 +28,6 @@ jobs:
         curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
         echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
         sudo apt-get update && sudo apt-get install yarn
-
-    - name: Launch MongoDB
-      uses: wbari/start-mongoDB@v0.2
-      with:
-        mongoDBVersion: ${{ matrix.mongodb-version }}
 
     - name: check packages
       run: |

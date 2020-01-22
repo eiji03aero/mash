@@ -18,13 +18,13 @@
   - the server for mash
 - auth-service
   - auth kind of server
+- filesystem-service
+  - filesystem server
 
 ## Todos
 
 ```
 - whole
-  - setup tests for services
-    - try to see if separate build pipeline is possible with github action
   - try to remove lib/ directory from git
 - mash
   - [WIP] refactor token for commandline and program
