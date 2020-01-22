@@ -1,8 +1,8 @@
+lib/
 node_modules/
 coverage/
 .docker-sync/
+.env
 
 lerna-debug.log
 yarn-error.log*
-
-.env

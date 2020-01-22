@@ -1,1 +1,0 @@
-{"version":3,"file":"echo.js","sourceRoot":"","sources":["../../src/builtins/echo.ts"],"names":[],"mappings":";;AAEA,mBAAe,UAAC,EAGE;QAFhB,cAAI,EACJ,4BAAW;IAEX,IAAM,GAAG,GAAG,IAAI,CAAC,KAAK,CAAC,CAAC,CAAC,CAAC,IAAI,CAAC,GAAG,CAAC,CAAC;IACpC,WAAW,CAAC,OAAO,CAAC,GAAG,CAAC,CAAC;AAC3B,CAAC,EAAC"}
