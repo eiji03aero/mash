@@ -28,7 +28,7 @@
     - return
       - { args: string[], optionArgs: {[index:string]: string} }
 
-## buildin functions
+## builtin functions
 
 - echo
 - cd
