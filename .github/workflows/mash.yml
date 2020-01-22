@@ -18,18 +18,8 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-
-    - name: install yarn
+    - name: test
       run: |
-        curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-        echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-        sudo apt-get update && sudo apt-get install yarn
-
-    - name: check packages
-      run: |
-        npx lerna bootstrap
-        yarn lint && yarn build && yarn test
+        docker-compose build mash
+        docker-compose up -d mash
+        docker-compose exec -T mash bash -c 'npx lerna bootstrap && yarn fulltest'
