@@ -1,4 +1,5 @@
 import { IFileSystemNode, utils } from "mash-filesystem";
+import { Monad } from "mash-common";
 import { ICommandPayload } from "../types";
 
 export default ({
@@ -7,20 +8,24 @@ export default ({
   fileSystem,
 }: ICommandPayload) => {
   const path = args[1] || ".";
-
-  const result = fileSystem.resolveNodeFromPath(path);
-
-  if (result.isError) {
-    environment.error(1, result.error.message());
+  const r = fileSystem.resolveNodeFromPath(path);
+  if (Monad.either.isLeft(r)) {
+    environment.error(1, r.error.message());
     return;
   }
+  const node = r.value;
 
-  if (utils.isDirectory(result.value)) {
-    const text = result.value.children
+  if (utils.isDirectory(node)) {
+    const r = fileSystem.getNodes(node.children);
+    if (Monad.either.isLeft(r)) {
+      environment.error(1, r.error.message());
+      return;
+    }
+    const text = r.value
       .map((c: IFileSystemNode) => c.name)
       .join(" ");
     environment.writeln(text);
   } else {
-    environment.writeln(result.value.name);
+    environment.writeln(node.name);
   }
 };

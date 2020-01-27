@@ -1,206 +1,137 @@
-import { Either, Errors, Monad, paths } from "mash-common";
+import { Either, Errors, Monad, date } from "mash-common";
 
 import { Directory } from "./Directory";
 import { File } from "./File";
-import { FileSystemNode } from "./FileSystemNode";
+// import { FileSystemNode } from "./FileSystemNode";
+import { NodeStore } from "./NodeStore";
 import {
   IDirectory,
+  IDirectoryBasis,
   IFile,
+  IFileBasis,
   IFileSystem,
   IFileSystemNode,
-  ITargetNodePathStat,
+  Nodes,
+  INodeStore,
 } from "./types";
 import * as utils from "./utils";
 
-import { homeDirectory, initialFileNodes } from "./assets/initialFileNodes";
-
 export class FileSystem implements IFileSystem {
+  private static _instance: FileSystem;
 
   static get instance () {
     return this._instance;
   }
 
-  public static bootstrap () {
+  static bootstrap () {
     this._instance = new FileSystem();
     return this._instance;
   }
 
-  public static reboot () {
+  static reboot () {
     delete this._instance;
-    this.bootstrap();
-    return this._instance;
+    return this.bootstrap();
   }
-  private static _instance: FileSystem;
-  public currentDirectory: IDirectory;
-  public root: IDirectory;
+
+  private _nodeStore: INodeStore;
+  private _currentDirectoryId: string;
 
   private constructor () {
-    this.root = new Directory({
-      name: "root",
-      children: initialFileNodes,
-      root: true,
+    const rootDirectory = new Directory({
+      id: "root",
+      name: "",
+      parentNodeId: "root",
+      createdAt: date.getCurrentTime(),
+      updatedAt: date.getCurrentTime(),
     });
-    this.currentDirectory = homeDirectory;
+
+    this._nodeStore = new NodeStore();
+    this._nodeStore.setRootDirectory(rootDirectory);
+    this._currentDirectoryId = rootDirectory.id;
   }
 
-  public changeCurrentDirectory (path: string): Either {
-    const result = this.resolveNodeFromPath(path);
-
-    if (result.isError) { return result; }
-
-    if (!(utils.isDirectory(result.value))) {
-      return Monad.either.left(Errors.Factory.notDirectory(result.value.name));
-    }
-
-    this.currentDirectory = result.value;
-    return Monad.either.right(null);
+  get size () {
+    return this._nodeStore.size;
   }
 
-  public resolveNodeFromPath (path: string): Either<IFileSystemNode> {
-    const isAbsolutePath = path[0] === "/";
-    let resolvedNode: IFileSystemNode;
-    let fragments: string[];
-
-    if (isAbsolutePath) {
-      resolvedNode = this.root;
-      fragments = path.substring(1).split("/");
-    } else {
-      resolvedNode = this.currentDirectory;
-      fragments = path.split("/");
-    }
-
-    for (let i = 0; i < fragments.length; i++) {
-      const fragment = fragments[i];
-
-      if (fragment === "..") {
-        if (this._isRootDirectory(resolvedNode)) {
-          return Monad.either.left(Errors.Factory.noSuchFileOrDirectory(path));
-        }
-        resolvedNode = resolvedNode.parentNode;
-        continue;
-      }
-      else if (fragment === ".") {
-        continue;
-      }
-      else if (fragment === "") {
-        if (i === fragments.length - 1) {
-          break;
-        }
-        return Monad.either.left(Errors.Factory.noSuchFileOrDirectory(path));
-      }
-      else {
-        if (!(utils.isDirectory(resolvedNode))) {
-          return Monad.either.left(Errors.Factory.notDirectory(fragment));
-        }
-        if (!(resolvedNode as IDirectory).containsByName(fragment)) {
-          return Monad.either.left(Errors.Factory.noSuchFileOrDirectory(path));
-        }
-
-        resolvedNode = (resolvedNode as IDirectory).findByName(fragment) as FileSystemNode;
-        continue;
-      }
-    }
-
-    return Monad.either.right<IFileSystemNode>(resolvedNode);
+  get currentDirectory () {
+    const r = this._expectDirectory(this._currentDirectoryId);
+    if (r.isError) throw Errors.Factory.standard("current directory is not properly set");
+    return r.value;
   }
 
-  public resolveAbsolutePath (node: IFileSystemNode) {
-    let currentNode = node;
-    const nodeNames = [node.name];
-
-    while (!this._isRootDirectory(currentNode.parentNode as IFileSystemNode)) {
-      currentNode = currentNode.parentNode as IFileSystemNode;
-      nodeNames.unshift(currentNode.name);
-    }
-
-    return `/${nodeNames.join("/")}`;
-  }
-
-  public createFile (path: string): Either<IFile> {
-    const result = this._expectValidTargetNodePath(path);
-
-    if (result.isError) { return result; }
-
-    const { basename, parentDirectory } = result.value;
-
-    const node = new File({ name: basename });
-    parentDirectory.addChild(node);
-    return Monad.either.right<IFile>(node);
-  }
-
-  public deleteFile (path: string): Either {
-    const result = this._expectValidTargetNodePath(path);
-
-    if (result.isError) { return result; }
-    if (!result.value.isBaseExists) {
-      return Monad.either.left(Errors.Factory.noSuchFileOrDirectory(path));
-    }
-
-    const { parentDirectory, basename } = result.value;
-
-    const node = parentDirectory.findByName(basename) as IFile;
-    parentDirectory.removeChild(node);
-    return Monad.either.right(null);
-  }
-
-  public createDirectory (path: string): Either<IDirectory> {
-    const result = this._expectValidTargetNodePath(path);
-
-    if (result.isError) { return result; }
-
-    const { basename, parentDirectory } = result.value;
-
-    const node = new Directory({ name: basename });
-    parentDirectory.addChild(node);
-    return Monad.either.right<IDirectory>(node);
-  }
-
-  public deleteDirectory (path: string): Either {
-    const result = this._expectValidTargetNodePath(path);
-
-    if (result.isError) { return result; }
-    if (!result.value.isBaseExists) {
-      return Monad.either.left(Errors.Factory.noSuchFileOrDirectory(path));
-    }
-
-    const { basename, parentDirectory } = result.value;
-
-    const node = parentDirectory.findByName(basename) as IDirectory;
-    parentDirectory.removeChild(node);
-    return Monad.either.right(null);
-  }
-
-  public updateNodeName (path: string, name: string): Either {
-    const result = this.resolveNodeFromPath(path);
-
-    if (result.isError) { return result; }
-
-    result.value.name = name;
-    return Monad.either.right(null);
-  }
-
-  private _isRootDirectory (node: IFileSystemNode): boolean {
-    return node === this.root;
-  }
-
-  private _expectValidTargetNodePath (path: string): Either<ITargetNodePathStat> {
-    const { dirname, basename } = paths.inspect(path);
-    const result = this.resolveNodeFromPath(dirname);
-
-    if (
-      result.isError
-      || (!result.value || !(utils.isDirectory(result.value)))
-    ) {
-      return Monad.either.left(Errors.Factory.noSuchFileOrDirectory(path));
-    }
-
-    const parentDirectory = result.value;
-
-    return Monad.either.right({
-      dirname,
-      basename,
-      parentDirectory,
-      isBaseExists: parentDirectory.containsByName(basename),
+  createFile ({
+    parentNodeId,
+    params,
+  }: {
+    parentNodeId: string;
+    params: IFileBasis;
+  }): Either<IFile> {
+    const file = new File(params);
+    const r = this._nodeStore.addNode({
+      parentNodeId: parentNodeId,
+      node: file,
     });
+    if (r.isError) return r;
+
+    return Monad.either.right(file);
+  }
+
+  deleteFile (id: string): Either {
+    return this._nodeStore.deleteNode(id);
+  }
+
+  createDirectory ({
+    parentNodeId,
+    params,
+  }: {
+    parentNodeId: string;
+    params: IDirectoryBasis;
+  }): Either<IDirectory> {
+    const directory = new Directory(params);
+    const r = this._nodeStore.addNode({
+      parentNodeId,
+      node: directory,
+    });
+    if (Monad.either.isLeft(r)) return r;
+
+    return Monad.either.right(directory);
+  }
+
+  deleteDirectory (id: string): Either {
+    return this._nodeStore.deleteNode(id);
+  }
+
+  changeCurrentDirectory (id: string): Either {
+    const r = this._expectDirectory(id);
+    if (Monad.either.isLeft(r)) return r;
+
+    this._currentDirectoryId = id
+    return Monad.either.right(null);
+  }
+
+  resolveNodeFromPath (path: string): Either<IFileSystemNode> {
+    return this._nodeStore.resolveNodeFromPath({
+      path: path,
+      currentDirectoryId: this._currentDirectoryId,
+    });
+  }
+
+  resolveAbsolutePath (id: string): Either<string> {
+    return this._nodeStore.resolveAbsolutePath(id);
+  }
+
+  getNodes (ids: string[]): Either<Nodes> {
+    return this._nodeStore.getNodes(ids);
+  }
+
+  private _expectDirectory (id: string): Either<IDirectory> {
+    const r = this._nodeStore.getNode(id);
+    if (Monad.either.isLeft(r)) return r;
+    if (!utils.isDirectory(r.value)) {
+      const error = Errors.Factory.notDirectory(r.value.name);
+      return Monad.either.left(error);
+    }
+    return Monad.either.right(r.value);
   }
 }

@@ -1,22 +1,16 @@
-import { IFileSystemNode, IDirectory } from "mash-filesystem";
+import { IFileSystemNode } from "mash-filesystem";
+import { Monad } from "mash-common";
 import { sharedContext, sharedTest } from "../shared";
 
 describe("builtins.ls", () => {
   it("should print the children of current directory", () => {
     const { env, fs, onWriteMock } = sharedContext.hasMockEnvironment();
-    const childrenText = fs.currentDirectory.children
+    const r = fs.getNodes(fs.currentDirectory.children);
+    if (Monad.either.isLeft(r)) throw r.error;
+    const childrenText = r.value
       .map((c: IFileSystemNode) => c.name)
       .join(" ");
     env.eval("ls");
-    expect(onWriteMock).toHaveBeenCalledWith(childrenText);
-  });
-
-  it("should print the chidren of the directory via path", () => {
-    const { env, fs, onWriteMock } = sharedContext.hasMockEnvironment();
-    const childrenText = (fs.currentDirectory.parentNode! as IDirectory).children
-      .map((c: IFileSystemNode) => c.name)
-      .join(" ");
-    env.eval("ls ../");
     expect(onWriteMock).toHaveBeenCalledWith(childrenText);
   });
 

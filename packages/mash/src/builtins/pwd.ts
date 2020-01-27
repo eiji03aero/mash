@@ -1,3 +1,4 @@
+import { Monad } from "mash-common";
 import { ICommandPayload } from "../types";
 
 export default ({
@@ -5,6 +6,10 @@ export default ({
   environment,
 }: ICommandPayload) => {
   const currentDirectory = fileSystem.currentDirectory;
-  const path = fileSystem.resolveAbsolutePath(currentDirectory);
-  environment.writeln(path);
+  const r = fileSystem.resolveAbsolutePath(currentDirectory.id);
+  if (Monad.either.isLeft(r)) {
+    environment.error(1, r.error.message());
+    return;
+  }
+  environment.writeln(r.value);
 };

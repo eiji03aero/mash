@@ -1,33 +1,31 @@
-import { Either, Errors } from "mash-common";
+import { Either } from "mash-common";
 
 export interface IFileSystemNodeBasis {
-  name?: string;
+  id?: string;
+  name: string;
+  parentNodeId?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface IFileSystemNode {
-  cid: string;
+  id: string;
   name: string;
+  parentNodeId: string;
   createdAt: string;
   updatedAt: string;
-  update(args: IFileSystemNodeBasis): void;
-  parentNode: IDirectory;
 }
 
 export type Nodes = IFileSystemNode[];
 
 export interface IDirectoryBasis extends IFileSystemNodeBasis {
-  children?: Nodes;
-  root?: boolean;
+  _?: any;
 }
 
 export interface IDirectory extends IFileSystemNode {
-  children: Nodes;
-  update(args: IDirectoryBasis): void;
-  addChild(node: IFileSystemNode): void;
-  removeChild(node: IFileSystemNode): void;
-  containsByName(name: string): boolean;
-  findByName(name: string): (IFileSystemNode | undefined);
-  isRoot(): boolean;
+  children: string[];
+  addChild(id: string): void;
+  removeChild(id: string): void;
 }
 
 export interface IFileBasis extends IFileSystemNodeBasis {
@@ -38,26 +36,42 @@ export interface IFile extends IFileSystemNode {
   content: string;
 }
 
+export type NodeMap = Map<string, IFileSystemNode>;
+
+export interface INodeStore {
+  size: number;
+  setRootDirectory(dir: IDirectory): void;
+  addNode(params: {
+    parentNodeId: string;
+    node: IFileSystemNode;
+  }): Either;
+  deleteNode(id: string): Either;
+  getNode(id: string): Either<IFileSystemNode>;
+  getNodes(ids: string[]): Either<Nodes>;
+  resolveAbsolutePath(id: string): Either<string>;
+  resolveNodeFromPath(params: {
+    path: string;
+    currentDirectoryId: string;
+  }): Either<IFileSystemNode>;
+}
+
 export interface IFileSystem {
   currentDirectory: IDirectory;
-  changeCurrentDirectory(path: string): Either;
+  size: number;
+  changeCurrentDirectory(id: string): Either;
+  createFile(params: {
+    parentNodeId: string;
+    params: IFileBasis;
+  }): Either<IFile>;
+  deleteFile(id: string): Either;
   resolveNodeFromPath(path: string): Either<IFileSystemNode>;
-  resolveAbsolutePath(node: IFileSystemNode): string;
-  createFile(path: string): Either<IFile>;
-  deleteFile(path: string): Either;
-  createDirectory(path: string): Either<IDirectory>;
-  deleteDirectory(path: string): Either;
-  updateNodeName(path: string, name: string): Either;
-}
-
-export interface IFileSystemCommandResult {
-  error?: Errors.Base;
-}
-
-export interface IFileSystemCommandResultNode<
-  T extends IFileSystemNode
-> extends IFileSystemCommandResult {
-  node?: T;
+  resolveAbsolutePath(id: string): Either<string>;
+  getNodes(ids: string[]): Either<Nodes>;
+  createDirectory(params: {
+    parentNodeId: string;
+    params: IDirectoryBasis;
+  }): Either<IDirectory>;
+  deleteDirectory(id: string): Either;
 }
 
 export interface ITargetNodePathStat {

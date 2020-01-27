@@ -1,3 +1,4 @@
+import { Monad, paths } from "mash-common";
 import { ICommandPayload } from "../types";
 
 export default ({
@@ -11,10 +12,22 @@ export default ({
   }
 
   const path = args[1];
+  const { dirname, basename } = paths.inspect(path);
 
-  const result = fileSystem.createDirectory(path);
+  const r = fileSystem.resolveNodeFromPath(dirname);
+  if (Monad.either.isLeft(r)) {
+    environment.error(1, r.error.message());
+    return;
+  }
+  const parentNode = r.value;
 
-  if (result.isError) {
-    environment.error(1, result.error.message());
+  const r2 = fileSystem.createDirectory({
+    parentNodeId: parentNode.id,
+    params: {
+      name: basename,
+    },
+  });
+  if (Monad.either.isLeft(r2)) {
+    environment.error(1, r2.error.message());
   }
 };

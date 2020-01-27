@@ -1,4 +1,5 @@
 import { utils } from "mash-filesystem";
+import { Monad } from "mash-common";
 import { ICommandPayload } from "../types";
 
 export default ({
@@ -12,14 +13,13 @@ export default ({
   }
 
   const path = args[1];
-  const result = fileSystem.resolveNodeFromPath(path);
-
-  if (result.isError) {
-    environment.error(1, result.error.message());
+  const r = fileSystem.resolveNodeFromPath(path);
+  if (Monad.either.isLeft(r)) {
+    environment.error(1, r.error.message());
     return;
   }
+  const node = r.value;
 
-  const node = result.value;
   if (utils.isDirectory(node)) {
     environment.error(1, `${node.name}: is a directory`);
     return;

@@ -2,58 +2,25 @@ import { FileSystemNode } from "./FileSystemNode";
 import {
   IDirectory,
   IDirectoryBasis,
-  IFileSystemNode,
-  Nodes,
 } from "./types";
 
 export class Directory extends FileSystemNode implements IDirectory {
-
-  public static isBasis (obj: any): obj is IDirectoryBasis {
-    return "children" in obj;
-  }
-  public children: Nodes;
-  private _root: boolean;
+  private _children: Set<string>;
 
   constructor (params: IDirectoryBasis) {
     super(params);
-    this.children = [] as Nodes;
-    this._root = params.root || false;
-
-    if (params.children) {
-      for (const child of params.children) {
-        this.addChild(child);
-      }
-    }
+    this._children = new Set<string>();
   }
 
-  public update (args: IDirectoryBasis) {
-    super.update(args);
+  get children () {
+    return Array.from(this._children);
   }
 
-  public addChild (node: IFileSystemNode) {
-    node.parentNode = this;
-    this.children.push(node);
+  addChild (id: string) {
+    this._children.add(id);
   }
 
-  public removeChild (node: IFileSystemNode) {
-    this.children = this.children.filter(
-      (c: IFileSystemNode) => c.cid !== node.cid,
-    );
-  }
-
-  public containsByName (name: string) {
-    return this.children
-      .map((node: IFileSystemNode) => node.name)
-      .includes(name);
-  }
-
-  public findByName (name: string) {
-    return this.children.find(
-      (node: IFileSystemNode) => node.name === name,
-    );
-  }
-
-  public isRoot () {
-    return this._root;
+  removeChild (id: string) {
+    this._children.delete(id);
   }
 }

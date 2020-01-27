@@ -25,6 +25,7 @@ bootstrap () {
   echo "wait for containers to be ready"
   sleep 5s
 
+  execute-docker-compose exec mash lerna clean --yes
   execute-docker-compose exec mash lerna bootstrap
   execute-docker-compose exec mash lerna link
   stop-docker-compose
@@ -37,7 +38,7 @@ clean () {
   docker volume rm c-mash-sync
 }
 
-if [ $COMMAND = 'up' ] && [ $# -le 1 ]; then
+if [ $COMMAND = 'up' ]; then
   docker-sync start
   execute-docker-compose up -d
   execute-docker-compose exec mash bash
@@ -45,14 +46,20 @@ if [ $COMMAND = 'up' ] && [ $# -le 1 ]; then
 
 elif [ $COMMAND = 'bash' ]; then
   execute-docker-compose exec mash bash
-elif [ $COMMAND = 'bash-rm' ]; then
-  execute-docker-compose exec rabbitmq bash
+elif [ $COMMAND = 'bash-m-m' ]; then
+  execute-docker-compose exec -w /projects/packages/mash mash bash
+elif [ $COMMAND = 'bash-m-fs' ]; then
+  execute-docker-compose exec -w /projects/packages/mash-filesystem mash bash
+elif [ $COMMAND = 'bash-m-c' ]; then
+  execute-docker-compose exec -w /projects/packages/mash-common mash bash
 elif [ $COMMAND = 'bash-s-f' ]; then
   execute-docker-compose exec frontend-service bash
 elif [ $COMMAND = 'bash-s-a' ]; then
   execute-docker-compose exec auth-service bash
 elif [ $COMMAND = 'bash-s-fs' ]; then
   execute-docker-compose exec filesystem-service bash
+elif [ $COMMAND = 'bash-rm' ]; then
+  execute-docker-compose exec rabbitmq bash
 
 elif [ $COMMAND = 'bootstrap' ]; then
   bootstrap

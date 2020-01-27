@@ -2,15 +2,20 @@ import { File } from "../src/File";
 
 describe("File", () => {
   it("should have basic properties", () => {
-    const fileParams = {
-      name: "file",
-      content: "content"
+    const params = {
+      id: "hoge",
+      name: "domo",
+      parentNodeId: "hoge",
+      content: "content desu",
+      createdAt: "0",
+      updatedAt: "1",
     };
-    const file = new File(fileParams);
+    const file = new File(params);
 
-    expect(file.name).toEqual(fileParams.name);
-    expect(file.content).toEqual(fileParams.content);
-    expect(file.cid).toBeDefined();
-    expect(file.createdAt).toBeDefined();
+    expect(file.id).toEqual(params.id);
+    expect(file.name).toEqual(params.name);
+    expect(file.content).toEqual(params.content);
+    expect(file.createdAt).toEqual(params.createdAt);
+    expect(file.updatedAt).toEqual(params.updatedAt);
   });
 });

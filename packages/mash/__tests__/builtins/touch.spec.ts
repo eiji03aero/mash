@@ -1,19 +1,13 @@
-import { IDirectory } from "mash-filesystem";
 import { sharedContext, sharedTest } from "../shared";
 
 describe("builtins.touch", () => {
   it("should create file in same directory", () => {
     const { env, fs } = sharedContext.hasMockEnvironment();
     const fileName = "hoge";
-    env.eval(`touch ${fileName}`);
-    expect(fs.currentDirectory.containsByName(fileName)).toBeTruthy();
-  });
+    const size = fs.currentDirectory.children.length;
 
-  it("should create file in different directory based on path", () => {
-    const { env, fs } = sharedContext.hasMockEnvironment();
-    const fileName = "hoge";
-    env.eval(`touch ../${fileName}`);
-    expect((fs.currentDirectory.parentNode as IDirectory).containsByName(fileName)).toBeTruthy();
+    env.eval(`touch ${fileName}`);
+    expect(fs.currentDirectory.children.length).toEqual(size + 1);
   });
 
   it("should exit error when passed invalid path", () => {

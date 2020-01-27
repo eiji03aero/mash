@@ -25,8 +25,11 @@
 
 ```
 - whole
-  - try to remove lib/ directory from git
+  - none
+
 - mash
+  - move the commands to web when ready
+  - have context object on run so that we can pass external apis to commands
   - [WIP] refactor token for commandline and program
     - kind of don't know what to do
   - [WIP] add usage for all the commands
@@ -43,18 +46,24 @@
     - redirect
     - argument variables
     - let user defined script run
+
 - mash-filesystem
-  - consider internal representation of nodes, like having map of id/node
+  - re-consider internal representation of nodes, like having map of id/node
+    - add NodeStore class to handle stuff
   - serialize nodes for saving
+
 - mash-common
+
 - mash-term
   - add test
   - tbd
     - delete row by index
+
 - web
   - create basis
     - react
     - graphql
+
 - frontend-service
   - features
     - user account feature
@@ -71,12 +80,9 @@
       - user posts something
       - user can create thread
       - can subscribe to thread
+
 - auth-service
+
 - filesystem-service
-  - create SystemProfile and refactor related codes in File and Directory
   - deal with types on CIFile and CIDirectory
-  - models
-    - File
-    - Directory
-    - SystemProfile
 ```

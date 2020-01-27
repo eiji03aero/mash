@@ -1,19 +1,12 @@
-import { IDirectory } from "mash-filesystem";
 import { sharedContext, sharedTest } from "../shared";
 
 describe("builtins.mkdir", () => {
   it("should create directory in same directory", () => {
     const { env, fs } = sharedContext.hasMockEnvironment();
+    const size = fs.currentDirectory.children.length;
     const dirName = "hoge";
     env.eval(`mkdir ${dirName}`);
-    expect(fs.currentDirectory.containsByName(dirName)).toBeTruthy();
-  });
-
-  it("should create directory in different directory based on path", () => {
-    const { env, fs } = sharedContext.hasMockEnvironment();
-    const dirName = "hoge";
-    env.eval(`mkdir ../${dirName}`);
-    expect((fs.currentDirectory.parentNode as IDirectory).containsByName(dirName)).toBeTruthy();
+    expect(fs.currentDirectory.children.length).toEqual(size + 1);
   });
 
   it("should exit error when passed invalid path", () => {

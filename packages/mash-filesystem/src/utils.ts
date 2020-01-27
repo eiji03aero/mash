@@ -13,3 +13,14 @@ export const isDirectory = (node: IFileSystemNode): node is IDirectory => {
 export const isFile = (node: IFileSystemNode): node is IFile => {
   return node instanceof File;
 };
+
+export const parsePath = (path: string) => {
+  const isAbsolutePath = path[0] === "/";
+  const fragments = isAbsolutePath
+    ? path.substring(1).split("/")
+    : path.split("/");
+  return {
+    isAbsolutePath,
+    fragments,
+  };
+};

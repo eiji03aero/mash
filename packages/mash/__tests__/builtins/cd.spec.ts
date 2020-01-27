@@ -3,8 +3,8 @@ import { sharedContext, sharedTest } from "../shared";
 describe("builtins.cd", () => {
   it("should change directory", () => {
     const { env, fs } = sharedContext.hasMockEnvironment();
-    env.eval("cd ../");
-    expect(fs.currentDirectory.name).toEqual("root");
+    env.eval("cd ./Applications");
+    expect(fs.currentDirectory.name).toEqual("Applications");
   });
 
   it("should return/exitStatus error when path to not existing directory passed", () => {

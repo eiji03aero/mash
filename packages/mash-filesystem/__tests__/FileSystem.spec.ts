@@ -1,80 +1,122 @@
 import { Monad } from "mash-common";
+import { sharedContext, installFixtureNodes } from "./shared";
+import { IFileSystem, IFile, IDirectory } from "../src/types";
 import { FileSystem } from "../src/FileSystem";
-import { Directory } from "../src/Directory";
 
 describe("FileSystem", () => {
-  let fs = FileSystem.bootstrap();
+  let fs: IFileSystem;
+  let rootDirectory: IDirectory;
+  let appDirectory: IDirectory;
+  let domoFile: IFile;
 
   beforeEach(() => {
     fs = FileSystem.reboot();
+    installFixtureNodes(fs);
+
+    const r = fs.resolveNodeFromPath("/");
+    if (Monad.either.isLeft(r)) throw r.error;
+    rootDirectory = r.value as IDirectory;
+
+    const r2 = fs.createDirectory({
+      parentNodeId: fs.currentDirectory.id,
+      params: sharedContext.hasDirectoryBasis({
+        name: "app",
+      }),
+    });
+    if (Monad.either.isLeft(r2)) throw r2.error;
+    appDirectory = r2.value;
+
+    const r3 = fs.createFile({
+      parentNodeId: appDirectory.id,
+      params: sharedContext.hasFileBasis({
+        name: "domo",
+        content: "hm hm",
+      }),
+    });
+    if (Monad.either.isLeft(r3)) throw r3.error;
+    domoFile = r3.value;
   });
 
-  it("should have basic properties", () => {
-    expect(fs).toBeInstanceOf(FileSystem);
-    expect(fs.currentDirectory).toBeInstanceOf(Directory);
-    expect(fs.root).toBeInstanceOf(Directory);
+  describe("#createFile", () => {
+    it("works", () => {
+      const fileParams = sharedContext.hasFileBasis();
+      const r = fs.createFile({
+        parentNodeId: fs.currentDirectory.id,
+        params: fileParams,
+      });
+      expect(r.isError).toBeFalsy();
+    });
   });
 
-  it("should change current directory", () => {
-    const result = fs.changeCurrentDirectory("./Applications");
-    expect(result).not.toHaveProperty("error");
-    expect(fs.currentDirectory.name).toEqual("Applications");
-
-    const result2 = fs.changeCurrentDirectory("../");
-    expect(result2).not.toHaveProperty("error");
-    expect(fs.currentDirectory.name).toEqual("home");
+  describe("#deleteFile", () => {
+    it("works", () => {
+      const size = fs.size;
+      const r = fs.deleteFile(domoFile.id);
+      if (r.isError) throw r.error;
+      expect(fs.size).toEqual(size - 1);
+    });
   });
 
-  it("should resolve node from path", () => {
-    const result = fs.resolveNodeFromPath("/home");
-    expect(result.isError).toBeFalsy();
-    if (Monad.either.isRight(result)) {
-      expect(result.value.name).toEqual("home");
-    }
+  describe("#createDirectory", () => {
+    it("works", () => {
+      const directoryParams = sharedContext.hasDirectoryBasis();
+      const r = fs.createDirectory({
+        parentNodeId: fs.currentDirectory.id,
+        params: directoryParams,
+      });
+      expect(r.isError).toBeFalsy();
+    });
   });
 
-  it("should error when try to resolve path higher than root", () => {
-    const result = fs.resolveNodeFromPath("../../");
-    expect(result.isError).toBeTruthy();
+  describe("#deleteDirectory", () => {
+    it("works", () => {
+      const size = fs.size;
+      const r = fs.deleteDirectory(appDirectory.id);
+      if (r.isError) throw r.error;
+      expect(fs.size).toEqual(size - 2);
+    });
   });
 
-  it("should resolve absolute path for node", () => {
-    const result = fs.resolveAbsolutePath(fs.currentDirectory);
-    expect(result).toEqual("/home");
+  describe("#changeCurrentDirectory", () => {
+    it("works", () => {
+      const r = fs.changeCurrentDirectory(appDirectory.id);
+      if (Monad.either.isLeft(r)) throw r.error;
+      expect(fs.currentDirectory.name).toEqual("app");
+    });
+
+    it("returns error when path not existed passed", () => {
+      const r = fs.changeCurrentDirectory("unknown id");
+      expect(r.isError).toBeTruthy();
+    });
   });
 
-  it("should create file", () => {
-    const name = "application_child";
-    const result = fs.createFile(name);
-    expect(result.isError).toBeFalsy();
-    expect(fs.currentDirectory.containsByName(name)).toBe(true);
+  describe("#resolveNodeFromPath", () => {
+    it("works", () => {
+      const r = fs.resolveNodeFromPath("./app");
+      if (Monad.either.isLeft(r)) throw r.error;
+      expect(r.value.id).toEqual(appDirectory.id);
+
+      const r2 = fs.resolveNodeFromPath("/");
+      if (Monad.either.isLeft(r2)) throw r2.error;
+      expect(r2.value.id).toEqual(rootDirectory.id);
+    });
   });
 
-  it("should create directory", () => {
-    const name = "application_child_directory";
-    const result = fs.createDirectory(name);
-    expect(result.isError).toBeFalsy();
-    expect(fs.currentDirectory.containsByName(name)).toBe(true);
+  describe("#resolveAbsolutePath", () => {
+    it("works", () => {
+      const r = fs.resolveAbsolutePath(appDirectory.id);
+      if (Monad.either.isLeft(r)) throw r.error;
+
+      expect(r.value).toEqual("/home/app")
+    });
   });
 
-  it("should delete file", () => {
-    const name = "file";
-    fs.createFile(name);
-
-    const result = fs.deleteFile(name);
-    expect(result.isError).toBeFalsy();
-    expect(fs.currentDirectory.containsByName(name)).toBe(false);
+  describe("#getNodes", () => {
+    it("works", () => {
+      const size = appDirectory.children.length;
+      const r = fs.getNodes(appDirectory.children);
+      if (Monad.either.isLeft(r)) throw r.error;
+      expect(r.value.length).toEqual(size);
+    });
   });
-
-  it("should delete directory", () => {
-    const name = "dir";
-    fs.createDirectory(name);
-
-    const result = fs.deleteDirectory(name);
-    expect(result.isError).toBeFalsy();
-    expect(fs.currentDirectory.containsByName(name)).toBeFalsy();
-  });
-
-  it.todo("should change file name");
-  it.todo("should change directory name");
 });
