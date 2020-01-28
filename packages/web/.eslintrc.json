@@ -1,3 +1,17 @@
 {
-  "extends": "../../.eslintrc.base.json"
+  "extends": [
+    "plugin:react/recommended",
+    "../../.eslintrc.base.json"
+  ],
+  "plugins": [
+    "react"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "rules": {
+    "react/prop-types": "off"
+  }
 }

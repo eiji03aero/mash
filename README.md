@@ -8,6 +8,8 @@
   - filesystem for mash
 - mash-term
   - terminal-ish canvas module
+- mash-viewer
+  - to view the pages with filesystem explorer
 - mash-common
   - shared stuff
 - web
@@ -60,9 +62,15 @@
     - delete row by index
 
 - web
-  - create basis
-    - react
-    - graphql
+  - start integrating components
+    - keep in mind that mash should have a refactor around context object
+  - setup tests
+
+- mash-viewer
+  - features
+    - display markdown
+    - display react component
+    - file explorer along with filesystem nodes
 
 - frontend-service
   - features

@@ -52,6 +52,8 @@ elif [ $COMMAND = 'bash-m-fs' ]; then
   execute-docker-compose exec -w /projects/packages/mash-filesystem mash bash
 elif [ $COMMAND = 'bash-m-c' ]; then
   execute-docker-compose exec -w /projects/packages/mash-common mash bash
+elif [ $COMMAND = 'bash-m-w' ]; then
+  execute-docker-compose exec -w /projects/packages/web mash bash
 elif [ $COMMAND = 'bash-s-f' ]; then
   execute-docker-compose exec frontend-service bash
 elif [ $COMMAND = 'bash-s-a' ]; then

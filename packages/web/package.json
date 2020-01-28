@@ -1,7 +1,7 @@
 {
   "name": "web",
   "version": "0.0.0",
-  "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
+  "description": "",
   "keywords": [],
   "author": "eiji03aero <eiji03aero@gmail.com>",
   "license": "ISC",
@@ -18,7 +18,8 @@
     "url": "git+https://github.com/eiji03aero/mash.git"
   },
   "scripts": {
-    "test": "echo test"
+    "dev": "webpack-dev-server --config webpack.dev.config.js",
+    "lint": "eslint --ext .ts --ext .tsx ."
   },
   "bugs": {
     "url": "https://github.com/eiji03aero/mash/issues"
@@ -27,17 +28,34 @@
   "devDependencies": {
     "@types/jest": "^24.0.25",
     "@types/node": "^13.1.4",
+    "@types/react": "^16.9.19",
+    "@types/react-dom": "^16.9.5",
     "@typescript-eslint/eslint-plugin": "^2.14.0",
     "@typescript-eslint/parser": "^2.14.0",
     "dev": "^0.1.3",
     "eslint": "^6.8.0",
+    "eslint-plugin-react": "^7.18.0",
+    "html-webpack-plugin": "^3.2.0",
     "jest": "^24.9.0",
     "ts-jest": "^24.2.0",
     "ts-loader": "^6.2.1",
     "ts-node": "^8.5.4",
     "typescript": "^3.7.4",
     "webpack": "^4.41.5",
-    "webpack-dev-server": "^3.10.1"
+    "webpack-dev-server": "^3.10.1",
+    "webpack-merge": "^4.2.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@apollo/react-hooks": "^3.1.3",
+    "apollo-cache-inmemory": "^1.6.5",
+    "apollo-client": "^2.6.8",
+    "apollo-link": "^1.2.13",
+    "apollo-link-http": "^1.5.16",
+    "apollo-link-state": "^0.4.2",
+    "graphql": "^14.6.0",
+    "graphql-tag": "^2.10.1",
+    "graphql-tools": "^4.0.6",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
+  }
 }

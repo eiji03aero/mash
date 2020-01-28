@@ -9,6 +9,8 @@ module.exports = {
   "moduleFileExtensions": [
     "ts",
     "js",
+    "tsx",
+    "jsx",
   ],
   verbose: true,
   collectCoverage: true
