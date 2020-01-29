@@ -1,1 +1,2 @@
-export { graphqlHandler } from "./handler";
+export { typeDefs } from "./typeDefs";
+export { resolvers } from "./resolvers";

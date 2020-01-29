@@ -1,20 +1,26 @@
-import app from "../app";
 import mongoose from "mongoose";
-import { getDbUrlFromEnv, connectOption } from "../mongo";
 import debugModule from "debug";
 import http from "http";
 import dotenv from "dotenv";
 
+import { app, server } from "../app";
+import { getDbUrlFromEnv, connectOption } from "../mongo";
+import { pubsub } from "../graphql/pubsub";
+
 dotenv.config();
 const debug = debugModule("express-test:server");
+const port = process.env.PORT;
 
-const port = process.env.PORT || "8090";
-app.set("port", port);
+const httpServer = http.createServer(app);
+server.installSubscriptionHandlers(httpServer);
+httpServer.listen(port);
 
-const server = http.createServer(app);
-server.listen(port);
+global.setInterval(() => {
+  pubsub.publish("publish_hello", { hello: "from world" });
+  console.log("published");
+}, 5000);
 
-server.on("error", (error: any) => {
+httpServer.on("error", (error: any) => {
   if (error.syscall !== "listen") {
     throw error;
   }
@@ -38,8 +44,8 @@ server.on("error", (error: any) => {
   }
 });
 
-server.on("listening", () => {
-  const addr = server.address() || "";
+httpServer.on("listening", () => {
+  const addr = httpServer.address() || "";
   const bind = typeof addr === "string"
     ? "pipe " + addr
     : "port " + addr.port;

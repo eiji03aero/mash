@@ -1,5 +1,5 @@
 import React from "react";
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery, useSubscription } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
 interface IProps {
@@ -12,13 +12,29 @@ const GET_DATA = gql`
   }
 `;
 
+const SUBSCRIPTION = gql`
+  subscription helloDesu {
+    hello
+  }
+`;
+
 export const App: React.SFC<IProps> = ({
 
 }) => {
+  const [messages, setMessages] = React.useState<string[]>([]);
+
   const {
     data,
     loading,
   } = useQuery(GET_DATA);
+
+  useSubscription(SUBSCRIPTION, {
+    onSubscriptionData: ({ subscriptionData }: any) => {
+      const { data: { hello } } = subscriptionData;
+      const str = new Date().toISOString() + ": domo " + hello;
+      setMessages(messages.concat(str));
+    }
+  });
 
   return (
     <div>
@@ -28,6 +44,9 @@ export const App: React.SFC<IProps> = ({
       <h1>
         domo {data.domo}
       </h1>
+      { messages.map((m: any) => {
+        return <p key={m}>{ m }</p>;
+      })}
     </div>
   );
 };

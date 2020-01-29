@@ -19,7 +19,7 @@ module.exports = merge(baseConfig, {
   },
   plugins: [
     new webpack.DefinePlugin({
-      "process.env.GRAPHQL_SERVER_HOST": "localhost:4000",
+      "process.env.GRAPHQL_SERVER_HOST": JSON.stringify("localhost:4000"),
     }),
   ],
 });

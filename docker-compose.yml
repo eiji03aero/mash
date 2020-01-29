@@ -17,6 +17,7 @@ services:
     build:
       context: ./services/frontend-service
     environment:
+      PORT: 4000
       DB_HOST: frontend-service-mongo
       DB_PORT: 27017
       DB_NAME: frontend-service
@@ -24,6 +25,8 @@ services:
       RABBITMQ_PORT: 5672
     volumes:
       - ./services/frontend-service:/projects
+    ports:
+      - "4000:4000"
     tty: true
     depends_on:
       - rabbitmq

@@ -1,9 +1,23 @@
 version: "2"
+
 options:
   compose-file-path: 'docker-compose.yml'
   compose-dev-file-path: 'docker-compose.dev.yml'
   verbose: true
+
 syncs:
   v-sync-mash-node_modules:
     src: './node_modules'
+    notify_terminal: true
+
+  v-sync-frontend-service-node_modules:
+    src: './services/frontend-service/node_modules'
+    notify_terminal: true
+
+  v-sync-auth-service-node_modules:
+    src: './services/auth-service/node_modules'
+    notify_terminal: true
+
+  v-sync-filesystem-service-node_modules:
+    src: './services/filesystem-service/node_modules'
     notify_terminal: true

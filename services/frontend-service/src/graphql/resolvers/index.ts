@@ -1,5 +1,11 @@
-// import * as fsResolvers from "./fs";
+import { pubsub } from "../pubsub";
 
-export default {
-  // ...fsResolvers,
-}
+export const resolvers = {
+  Subscription: {
+    hello: {
+      subscribe () {
+        return pubsub.asyncIterator("publish_hello");
+      }
+    }
+  }
+};

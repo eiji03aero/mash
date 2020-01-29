@@ -1,9 +1,11 @@
-import { buildSchema } from "graphql";
-
-export default buildSchema(`
+export const typeDefs = `
   type Query {
     message: String
     nodes: FileSystemNodes
+  }
+
+  type Subscription {
+    hello: String
   }
 
   type FileSystemNodes {
@@ -18,8 +20,8 @@ export default buildSchema(`
   }
 
   type File {
-    cid: Stinrg!
+    cid: String!
     name: String
     content: String
   }
-`);
+`;
