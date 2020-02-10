@@ -57,6 +57,7 @@ export interface INodeStore {
 
 export interface IFileSystem {
   currentDirectory: IDirectory;
+  rootDirectory: IDirectory;
   size: number;
   changeCurrentDirectory(id: string): Either;
   createFile(params: {
@@ -64,14 +65,15 @@ export interface IFileSystem {
     params: IFileBasis;
   }): Either<IFile>;
   deleteFile(id: string): Either;
-  resolveNodeFromPath(path: string): Either<IFileSystemNode>;
-  resolveAbsolutePath(id: string): Either<string>;
-  getNodes(ids: string[]): Either<Nodes>;
   createDirectory(params: {
     parentNodeId: string;
     params: IDirectoryBasis;
   }): Either<IDirectory>;
   deleteDirectory(id: string): Either;
+  resolveNodeFromPath(path: string): Either<IFileSystemNode>;
+  resolveAbsolutePath(id: string): Either<string>;
+  getNodes(ids: string[]): Either<Nodes>;
+  installNodes(parentDirectoryId: string, nodes: any[]): void;
 }
 
 export interface ITargetNodePathStat {

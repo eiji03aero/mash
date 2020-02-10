@@ -1,8 +1,8 @@
 import { Either, Errors, Monad, date } from "mash-common";
+import uuid from "uuid/v4";
 
 import { Directory } from "./Directory";
 import { File } from "./File";
-// import { FileSystemNode } from "./FileSystemNode";
 import { NodeStore } from "./NodeStore";
 import {
   IDirectory,
@@ -54,8 +54,14 @@ export class FileSystem implements IFileSystem {
     return this._nodeStore.size;
   }
 
+  get rootDirectory () {
+    const r = this.resolveNodeFromPath("/");
+    if (r.isError) throw Errors.Factory.standard("root directory is not properly set");
+    return r.value as IDirectory;
+  }
+
   get currentDirectory () {
-    const r = this._expectDirectory(this._currentDirectoryId);
+    const r = this._expectDirectoryById(this._currentDirectoryId);
     if (r.isError) throw Errors.Factory.standard("current directory is not properly set");
     return r.value;
   }
@@ -103,7 +109,7 @@ export class FileSystem implements IFileSystem {
   }
 
   changeCurrentDirectory (id: string): Either {
-    const r = this._expectDirectory(id);
+    const r = this._expectDirectoryById(id);
     if (Monad.either.isLeft(r)) return r;
 
     this._currentDirectoryId = id
@@ -125,7 +131,17 @@ export class FileSystem implements IFileSystem {
     return this._nodeStore.getNodes(ids);
   }
 
-  private _expectDirectory (id: string): Either<IDirectory> {
+  installNodes (parentNodeId: string, nodes: any[]) {
+    const r = this._expectDirectoryById(parentNodeId);
+    if (Monad.either.isLeft(r)) throw r.error;
+    const parentNode = r.value;
+
+    for (const n of nodes) {
+      this._installNode(parentNode.id, n);
+    }
+  }
+
+  private _expectDirectoryById (id: string): Either<IDirectory> {
     const r = this._nodeStore.getNode(id);
     if (Monad.either.isLeft(r)) return r;
     if (!utils.isDirectory(r.value)) {
@@ -133,5 +149,46 @@ export class FileSystem implements IFileSystem {
       return Monad.either.left(error);
     }
     return Monad.either.right(r.value);
+  }
+
+  private _installNode (parentNodeId: string, params: any) {
+    const ownId = uuid();
+
+    if (params.children) {
+      this._installDirectory(parentNodeId, { ...params, id: ownId });
+      for (const c of params.children) {
+        this._installNode(ownId, c);
+      }
+    }
+    else if (params.content) {
+      this._installFile(parentNodeId, { ...params, id: ownId });
+    }
+  }
+
+  private _installDirectory (parentNodeId: string, params: any) {
+    this.createDirectory({
+      parentNodeId,
+      params: {
+        id: params.id,
+        name: params.name,
+        parentNodeId,
+        createdAt: date.getCurrentTime(),
+        updatedAt: date.getCurrentTime(),
+      },
+    });
+  }
+
+  private _installFile (parentNodeId: string, params: any) {
+    this.createFile({
+      parentNodeId,
+      params: {
+        id: params.id,
+        name: params.name,
+        content: params.content,
+        parentNodeId,
+        createdAt: date.getCurrentTime(),
+        updatedAt: date.getCurrentTime(),
+      },
+    });
   }
 }

@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "@types/lodash": "^4.14.146",
+    "events": "^3.1.0",
     "lodash": "^4.17.15",
     "mash-common": "^0.0.0"
   }

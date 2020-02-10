@@ -1,7 +1,3 @@
-import {
-  IFileSystem,
-} from "mash-filesystem";
-
 export type TokenType = string;
 export interface IToken {
   type: TokenType;
@@ -48,11 +44,37 @@ export enum ExitStatus {
   Failure = 1,
 }
 
-export interface ICommandPayload {
-  args: string[];
-  fileSystem: IFileSystem;
-  environment: IEnvironment;
+export type EnvironmentWriteHandler = (s: string) => void;
+
+export interface IEnvironment {
+  exitStatus: ExitStatus;
+  onWriteln(cb: EnvironmentWriteHandler): void;
+  writeln(input: string): void;
+  reset(): void;
+  error(code: ExitStatus, message?: string): void;
 }
+
+export interface IEvaluator {
+  // TODO: update return type for eval
+  // looking up builtins here
+  eval(node: IAstNode): any;
+}
+
+export interface IContext {
+  _?: any;
+}
+
+export interface ICommandMap<T extends IContext> {
+  [index: string]: CommandFunction<T>;
+}
+
+export interface ICommandPayload<T> {
+  args: string[];
+  environment: IEnvironment;
+  context: T;
+}
+
+export type CommandFunction<T extends IContext> = (p: ICommandPayload<T>) => void;
 
 export interface ICommandOptionMap {
   [index: string]: string | boolean;
@@ -63,24 +85,6 @@ export interface IParsedCommandArgs {
   options: ICommandOptionMap;
 }
 
-export type Command = (args: ICommandPayload) => void;
-
-export interface ICommandMap {
-  [index: string]: Command;
-}
-
-export type EnvironmentWriteHandler = (str: string) => void;
-
-export interface IEnvironment {
-  exitStatus: ExitStatus;
-  error(code: ExitStatus, message?: string): void;
-  writeln(str: string): void;
-  eval(str: string): void;
-  onWrite(func: EnvironmentWriteHandler): void;
-}
-
-export interface IEvaluator {
-  // TODO: update return type for eval
-  // looking up builtins here
-  eval(node: IAstNode, env: IEnvironment): any;
+export interface IMashClient<T extends IContext> {
+  eval(input: string, context: T): void;
 }

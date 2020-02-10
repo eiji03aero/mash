@@ -119,4 +119,8 @@ describe("FileSystem", () => {
       expect(r.value.length).toEqual(size);
     });
   });
+
+  describe("#installNodes", () => {
+    it.todo("works");
+  });
 });

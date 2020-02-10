@@ -9,9 +9,9 @@ describe("Terminal", () => {
     subject = terminal;
   });
 
-  describe("#getWindowStat", () => {
+  describe("#windowStat", () => {
     it("should return correct value", () => {
-      const result = subject.getWindowStat();
+      const result = subject.windowStat;
       const expected = {
         width: 0,
         height: 0,

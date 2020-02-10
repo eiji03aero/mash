@@ -1,23 +1,26 @@
 import { utils as futils } from "mash-filesystem";
 import { Monad } from "mash-common";
-import { ICommandPayload } from "../types";
-import * as utils from "../utils";
+import { ICommandPayload, utils } from "mash";
+
+import { IContext } from "../types";
 
 export default ({
   args: _args,
-  fileSystem,
   environment,
-}: ICommandPayload) => {
+  context: {
+    filesystem
+  }
+}: ICommandPayload<IContext>) => {
   const { args, options } = utils.parseCommandArgs(_args, {
     r: false,
   });
-  if (args.length < 2) {
+  if (args.length < 1) {
     environment.error(1, "needs 1 argument. usage required here");
     return;
   }
 
   const path = args[1];
-  let r = fileSystem.resolveNodeFromPath(path);
+  let r = filesystem.resolveNodeFromPath(path);
   if (Monad.either.isLeft(r)) {
     environment.error(1, r.error.message());
     return;
@@ -29,9 +32,9 @@ export default ({
       environment.error(1, `${node.name}: is a directory`);
       return;
     }
-    r = fileSystem.deleteDirectory(node.id);
+    r = filesystem.deleteDirectory(node.id);
   } else if (futils.isFile(node)) {
-    r = fileSystem.deleteFile(node.id);
+    r = filesystem.deleteFile(node.id);
   }
 
   if (Monad.either.isLeft(r)) {

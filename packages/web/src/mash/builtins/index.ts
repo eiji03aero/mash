@@ -1,4 +1,6 @@
-import { ICommandMap } from "../types";
+import { ICommandMap } from "mash";
+
+import { IContext } from "../types";
 
 import basename from "./basename";
 import cat from "./cat";
@@ -11,15 +13,15 @@ import pwd from "./pwd";
 import rm from "./rm";
 import touch from "./touch";
 
-export const builtins: ICommandMap = {
+export const builtins: ICommandMap<IContext> = {
   basename,
+  cat,
   cd,
   dirname,
   echo,
-  pwd,
-  touch,
-  mkdir,
   ls,
-  cat,
+  mkdir,
+  pwd,
   rm,
+  touch,
 };

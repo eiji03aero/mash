@@ -1,33 +1,32 @@
-nodes:
-  - name: home
-    children:
-      - name: Applications
-        children:
-          - name: game.txt
-            content: game is here
-          - name: editor.txt
-            content: editor will be here
-      - name: Desktop
-        children:
-          - name: memo.txt
-            content: do some study
-          - name: work
-            children:
-              - name: todos
-                content: send an email
-              - name: stats.csv
-                content: name,domo,kore
-      - name: README.txt
-        content: read me here man
-      - name: todo.txt
-        content: "do it man"
-      - name: site-policy
-        content: there is no such thing as policy man
-  - name: var
-    children:
-      - name: error.log
-        content: your errror is here
-  - name: etc
-    children:
-      - name: "null"
-        content: "null file is here"
+- name: home
+  children:
+    - name: Applications
+      children:
+        - name: game.txt
+          content: game is here
+        - name: editor.txt
+          content: editor will be here
+    - name: Desktop
+      children:
+        - name: memo.txt
+          content: do some study
+        - name: work
+          children:
+            - name: todos
+              content: send an email
+            - name: stats.csv
+              content: name,domo,kore
+    - name: README.txt
+      content: read me here man
+    - name: todo.txt
+      content: "do it man"
+    - name: site-policy
+      content: there is no such thing as policy man
+- name: var
+  children:
+    - name: error.log
+      content: your errror is here
+- name: etc
+  children:
+    - name: "null"
+      content: "null file is here"

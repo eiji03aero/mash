@@ -51,10 +51,17 @@ export interface IBaseRenderLayer {
   clear(): void;
 }
 
+export interface ICursorRenderLayer extends IBaseRenderLayer {
+  showCursor(): void;
+  hideCursor(): void;
+}
+
 export interface IRenderer {
   renderLayers: IBaseRenderLayer[];
   render(params: IRenderPayload): void;
   resize(params: IRenderPayload): void;
+  showCursor(): void;
+  hideCursor(): void;
 }
 
 /* -------------------- main -------------------- */
@@ -72,26 +79,48 @@ export interface IParsedRow {
 
 export type CachedRows = IParsedRow[];
 
+export interface IInputHandler {
+  onKeyDown: (cb: KeyboardEventHandler) => void;
+  onKeyPress: (cb: KeyboardEventHandler) => void;
+  onKeyUp: (cb: KeyboardEventHandler) => void;
+}
+
+export interface IBuffer {
+  rowPosition: number;
+  rawRows: string[];
+  rows: CachedRows;
+  displayedRows: CachedRows;
+  isOnBottom: boolean;
+  bottomPosition: number;
+  numberOfDisplayedRows: number;
+  appendRow(str: string): void;
+  updateRowByIndex(idx: number, str: string): void;
+  updateRows(): void;
+  scroll(numToScroll: number): void;
+  scrollToBottom(): void;
+}
+
 export interface ITerminal {
   container: HTMLElement;
-  renderer: IRenderer;
   textarea: HTMLTextAreaElement;
   config: IConfig;
-  rows: string[];
-  rowPosition: number;
-  relativePromptRowPosition: number;
   rowHeight: number;
-  isCursorShown: boolean;
-  calculateService: ICalculateService;
-  getWindowStat(): IWindowStat;
+  windowStat: IWindowStat;
+  relativePromptRowPosition: number;
+  onKeyDown: (e: KeyboardEventHandler) => void;
+  onKeyPress: (e: KeyboardEventHandler) => void;
+  onKeyUp: (e: KeyboardEventHandler) => void;
   measureText(str: string): TextMetrics;
   focus(): void;
   blur(): void;
   prompt(): void;
   clear(): void;
+  showCursor(): void;
+  hideCursor(): void;
   writeln(str: string): void;
   appendRow(str: string): void;
   updateRowByIndex(index: number, str: string): void;
+  updateLastRow(str: string): void;
   scroll(numberToScroll: number): void;
   scrollToBottom(): void;
 }

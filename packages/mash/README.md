@@ -16,7 +16,31 @@
     - value: string
 
 - Evaluator
+
+- MashClient<T extends IContext>
+  - #eval(str: string, cmdMap: ICommandMap<T>, context: T)
+    - flow
+      - new Environment
+      - new Lexer
+      - new Parser
+      - new Evaluator
+      - evaluator.eval
+
 - Environment
+
+- IContext
+  - onWrite(cb): void
+  - ? onUpdateColumns(cb): void
+
+- ICommandMap<T>
+  [index: string]: CommandFunction<T>
+
+- CommandFunction<T>
+  (args: string[], context: T) => void
+
+term new Term
+env new Env
+env.eval(str, context)
 
 ## features
 
@@ -59,19 +83,3 @@
   - $@: contains all the arguments
   - $#: number of arguments
   - $?: the previous exit status
-
-
-## examples
-
-```sh
-
-$ echo hoge # => hoge
-$ ls # => hoge huga
-$ echo 'domo'
-$ touch hoge.{,umu}.txt
-```
-
-## Memo
-
-- color attributes should be on the format that bash uses
-- when piped, attributes for color should be removed

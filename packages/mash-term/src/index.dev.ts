@@ -17,22 +17,23 @@ document.addEventListener("DOMContentLoaded", (_: Event) => {
     "That was it",
   ];
 
+  const interval = 500;
   let count = 0;
   for (const t of dummy) {
     count += 1;
     const c = count;
     setTimeout(() => {
-      terminal.writeln(promptStr + t);
-    }, c * 100);
+      terminal.writeln(t);
+    }, c * interval);
   }
 
   setTimeout(() => {
     terminal.prompt();
-  }, dummy.length * 100);
+  }, dummy.length * interval);
 
   (window as any).t = terminal;
 
-  terminal.onKeyPress((e: KeyboardEvent) => {
+  terminal.onKeyUp((e: KeyboardEvent) => {
     switch (e.key) {
       case "Enter":
         e.preventDefault();

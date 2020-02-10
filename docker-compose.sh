@@ -40,7 +40,7 @@ clean () {
 
 if [ $COMMAND = 'up' ]; then
   docker-sync start
-  execute-docker-compose up -d
+  execute-docker-compose up -d mash
   execute-docker-compose exec mash bash
   stop-docker-compose
 
@@ -52,6 +52,8 @@ elif [ $COMMAND = 'bash-m-fs' ]; then
   execute-docker-compose exec -w /projects/packages/mash-filesystem mash bash
 elif [ $COMMAND = 'bash-m-c' ]; then
   execute-docker-compose exec -w /projects/packages/mash-common mash bash
+elif [ $COMMAND = 'bash-m-t' ]; then
+  execute-docker-compose exec -w /projects/packages/mash-term mash bash
 elif [ $COMMAND = 'bash-m-w' ]; then
   execute-docker-compose exec -w /projects/packages/web mash bash
 elif [ $COMMAND = 'bash-s-f' ]; then

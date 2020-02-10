@@ -22,16 +22,30 @@
   - auth kind of server
 - filesystem-service
   - filesystem server
+- term-service?
+  - mada wakaran
+  - possible features
+    - command history
+- m-chan-service
+  - provides m-chan related service
 
 ## Todos
 
 ```
 - whole
-  - none
+  fix
+    - none for now
+  feature
+    - add Buffer class
+      - add command history feature
+    - add tab completion
+    - dynamically change prompt
+      - like current directory
+    - let multiple single character be parsed
+      - something like -rf, vise versa as well (-fr)
+    - cursor up/down to move history
 
 - mash
-  - move the commands to web when ready
-  - have context object on run so that we can pass external apis to commands
   - [WIP] refactor token for commandline and program
     - kind of don't know what to do
   - [WIP] add usage for all the commands
@@ -50,8 +64,8 @@
     - let user defined script run
 
 - mash-filesystem
-  - re-consider internal representation of nodes, like having map of id/node
-    - add NodeStore class to handle stuff
+  - deserialize nodes
+    - for static files/dirs
   - serialize nodes for saving
 
 - mash-common
@@ -68,7 +82,7 @@
 
 - mash-viewer
   - features
-    - display markdown
+    - switch display markdown/raw text
     - display react component
     - file explorer along with filesystem nodes
 
@@ -82,8 +96,9 @@
       - logout
         - remove cookie
     - fetch filesystem
-      - if logged in, get the ones for them in home directory
-      - if not, get only the default ones
+      - only the home directory fetched from BE
+      - loads static nodes from yaml
+
     - thread feature
       - user posts something
       - user can create thread

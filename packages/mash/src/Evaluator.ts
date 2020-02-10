@@ -1,29 +1,33 @@
 import {
-  IFileSystem,
-} from "mash-filesystem";
-
-import {
   AstCommandLine,
   AstProgram,
 } from "./Ast";
-import { builtins } from "./builtins";
 import {
   ExitStatus,
   IAstNode,
-  IEnvironment,
+  ICommandMap,
+  IContext,
   IEvaluator,
+  IEnvironment,
 } from "./types";
 
-export class Evaluator implements IEvaluator {
-  private _fileSystem: IFileSystem;
+export class Evaluator<T extends IContext> implements IEvaluator {
   private _environment: IEnvironment;
+  private _commandMap: ICommandMap<T>;
+  private _context: T;
 
-  constructor (
-    fs: IFileSystem,
-    env: IEnvironment,
-  ) {
-    this._environment = env;
-    this._fileSystem = fs;
+  constructor ({
+    environment,
+    commandMap,
+    context,
+  }: {
+    environment: IEnvironment;
+    commandMap: ICommandMap<T>;
+    context: T;
+  }) {
+    this._environment = environment;
+    this._commandMap = commandMap;
+    this._context = context;
   }
 
   public eval (node: IAstNode) {
@@ -48,7 +52,7 @@ export class Evaluator implements IEvaluator {
 
   private _evalCommandLine (commandLine: AstCommandLine) {
     const command = commandLine.args[0].tokenLiteral();
-    const func = builtins[command];
+    const func = this._commandMap[command];
 
     if (typeof func !== "function") {
       this._environment.error(1, `command not found: ${command}`);
@@ -57,8 +61,8 @@ export class Evaluator implements IEvaluator {
 
     func({
       args: commandLine.args.map((a: IAstNode) => a.toString()),
-      fileSystem: this._fileSystem,
       environment: this._environment,
+      context: this._context,
     });
   }
 }

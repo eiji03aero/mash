@@ -1,10 +1,16 @@
-import { IBaseRenderLayer, IRenderer, IRenderPayload, ITerminal } from "../types";
+import {
+  IBaseRenderLayer,
+  ICursorRenderLayer,
+  IRenderer,
+  IRenderPayload,
+  ITerminal
+} from "../types";
 import { BackdropRenderLayer } from "./BackdropRenderLayer";
 import { CursorRenderLayer } from "./CursorRenderLayer";
 import { TextRenderLayer } from "./TextRenderLayer";
 
 export class Renderer implements IRenderer {
-  public renderLayers: IBaseRenderLayer[];
+  renderLayers: IBaseRenderLayer[];
 
   constructor (
     terminal: ITerminal,
@@ -16,15 +22,25 @@ export class Renderer implements IRenderer {
     ];
   }
 
-  public render (params: IRenderPayload) {
+  render (params: IRenderPayload) {
     for (const l of this.renderLayers) {
       l.render(params);
     }
   }
 
-  public resize (params: IRenderPayload) {
+  resize (params: IRenderPayload) {
     for (const l of this.renderLayers) {
       l.resize(params);
     }
   }
+
+  showCursor () {
+    this._cursorRenderLayer.showCursor();
+  }
+
+  hideCursor () {
+    this._cursorRenderLayer.hideCursor();
+  }
+
+  private get _cursorRenderLayer () { return this.renderLayers[2] as ICursorRenderLayer; }
 }

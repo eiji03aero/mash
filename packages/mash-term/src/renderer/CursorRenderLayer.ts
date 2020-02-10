@@ -19,10 +19,23 @@ export class CursorRenderLayer extends BaseRenderLayer {
     this._isCursorShown = false;
   }
 
-  public render = (_: IRenderPayload) => {
+  render = (_: IRenderPayload) => {
+    if (this._isCursorShown) {
+      this.showCursor();
+    } else {
+      this.hideCursor();
+    }
+  }
+
+  showCursor = () => {
     this.clear();
     this._clearIntervals();
     this._beginBlinkCursor();
+  }
+
+  hideCursor = () => {
+    this.clear();
+    this._clearIntervals();
   }
 
   private _clearIntervals () {

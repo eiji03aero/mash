@@ -4,7 +4,7 @@ import { ApolloProvider } from "@apollo/react-hooks";
 
 import { App } from "./App";
 
-import { client } from "./apolloClient";
+import { client } from "./graphql";
 
 document.addEventListener("DOMContentLoaded", () => {
   ReactDOM.render(

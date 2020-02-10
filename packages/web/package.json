@@ -57,6 +57,9 @@
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.1",
     "graphql-tools": "^4.0.6",
+    "mash": "^0.0.0",
+    "mash-filesystem": "^0.0.0",
+    "mash-term": "^0.0.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "subscriptions-transport-ws": "^0.9.16"
