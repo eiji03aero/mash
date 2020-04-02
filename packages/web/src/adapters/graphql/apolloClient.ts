@@ -5,6 +5,7 @@ import { HttpLink } from "apollo-link-http";
 import { WebSocketLink } from "apollo-link-ws";
 import { getMainDefinition } from "apollo-utilities";
 
+import { CustomApolloClient } from "../../types";
 import { initialState, resolvers } from "./resolvers";
 
 const cache = new InMemoryCache;
@@ -34,7 +35,7 @@ const link = ApolloLink.from([
   )
 ]);
 
-export const client = new ApolloClient<NormalizedCacheObject>({
+export const apolloClient: CustomApolloClient = new ApolloClient<NormalizedCacheObject>({
   cache,
   link,
   resolvers,
@@ -42,7 +43,7 @@ export const client = new ApolloClient<NormalizedCacheObject>({
 
 cache.writeData({ data: initialState });
 
-client.onResetStore(() => {
+apolloClient.onResetStore(() => {
   cache.writeData({ data: initialState });
   // returning promise in favor of onResetStore's signature
   return Promise.resolve();

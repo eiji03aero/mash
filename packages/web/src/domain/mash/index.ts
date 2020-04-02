@@ -1,3 +1,3 @@
 export { builtins } from "./builtins";
-export { initialize } from "./initialize";
+export { Mash } from "./Mash";
 export * from "./types";

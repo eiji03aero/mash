@@ -1,16 +1,19 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { ApolloProvider } from "@apollo/react-hooks";
+import { Mash } from "./domain/mash";
+import { Service } from "./service";
 
-import { App } from "./App";
-
-import { client } from "./graphql";
+import { apolloClient } from "./adapters/graphql";
+import { render } from "./adapters/ui";
 
 document.addEventListener("DOMContentLoaded", () => {
-  ReactDOM.render(
-    <ApolloProvider client={client}>
-      <App />
-    </ApolloProvider>,
-    document.getElementById("app")
-  );
+  const mash = new Mash();
+  const service = new Service(mash);
+
+  const container = document.getElementById("app");
+  if (!container) throw new Error("container not found with id app");
+
+  render({
+    service,
+    apolloClient,
+    container,
+  });
 });

@@ -34,8 +34,11 @@
 ```
 - whole
   fix
-    - none for now
+    - separate fe packages and services clearly for better readability on repo
+
   feature
+    - replace frontend service with go
+      - https://gqlgen.com/
     - add Buffer class
       - add command history feature
     - add tab completion
@@ -52,6 +55,7 @@
     - should be after figuring out apis on term and environment
   - tbd features
     - string interpolation
+    - stat
     - rm -f
       - need to create access to prompt for commands
     - ls command

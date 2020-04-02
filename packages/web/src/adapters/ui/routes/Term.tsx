@@ -1,20 +1,22 @@
 import React from "react";
 
-import { initialize } from "../../mash";
+import { AppContext } from "../context";
 
 interface IProps {
   _?: any;
 }
 
 export const Term: React.SFC<IProps> = ({
-
 }) => {
+  const ctx = React.useContext(AppContext);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    if (containerRef.current === null) return;
+    if (!containerRef.current) return;
 
-    initialize(containerRef.current);
+    ctx.service.initialize({
+      terminalContainer: containerRef.current,
+    });
   }, []);
 
   return (
