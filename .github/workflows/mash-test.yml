@@ -2,6 +2,8 @@ name: mash
 
 on:
   push:
+    branches-ignore:
+    - master
     paths:
     - "packages/**"
 
