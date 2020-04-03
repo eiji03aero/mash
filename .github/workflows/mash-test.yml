@@ -8,7 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
 
@@ -16,4 +15,4 @@ jobs:
       run: |
         docker-compose build mash
         docker-compose up -d mash
-        docker-compose exec -T mash bash -c 'npx lerna bootstrap && yarn fulltest'
+        docker-compose exec -T mash bash -c 'yarn bootstrap && yarn fulltest'

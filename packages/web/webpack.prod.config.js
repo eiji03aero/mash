@@ -3,19 +3,12 @@ const merge = require("webpack-merge");
 const baseConfig = require("./webpack.base.config");
 
 module.exports = merge(baseConfig, {
-  mode: "development",
+  mode: "production",
+  // TODO: should have production entry point
   entry: "./src/index.dev.tsx",
   output: {
-    path: `${__dirname}/lib`,
+    path: `${__dirname}/dist`,
     filename: "bundle.js",
-  },
-  devServer: {
-    inline: true,
-    progress: true,
-    contentBase: `${__dirname}/lib`,
-    watchContentBase: true,
-    host: '0.0.0.0',
-    port: 8090,
   },
   plugins: [
     new webpack.DefinePlugin({

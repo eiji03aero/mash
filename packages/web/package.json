@@ -18,7 +18,9 @@
     "url": "git+https://github.com/eiji03aero/mash.git"
   },
   "scripts": {
+    "build": "webpack --config webpack.prod.config.js",
     "dev": "webpack-dev-server --config webpack.dev.config.js",
+    "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint --ext .ts --ext .tsx ."
   },
