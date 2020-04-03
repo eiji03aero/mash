@@ -1,0 +1,27 @@
+name: mash
+
+on:
+  push:
+    branches:
+    - master
+    paths:
+    - "packages/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: build
+      run: |
+        docker-compose build mash
+        docker-compose up -d mash
+        docker-compose exec -T mash bash -c 'yarn bootstrap && yarn build'
+
+    - name: deploy
+      run: |
+        npx netlify-cli deploy --prod --dir=./packages/web/dist
+      env:
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}

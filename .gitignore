@@ -3,6 +3,7 @@ node_modules/
 coverage/
 .docker-sync/
 .env
+.netlify/
 
 lerna-debug.log
 yarn-error.log*
