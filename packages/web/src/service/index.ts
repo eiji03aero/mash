@@ -1,1 +1,1 @@
-export { Service, stubService } from "./Service";
+export { Service } from "./Service";

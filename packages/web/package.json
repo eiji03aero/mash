@@ -19,6 +19,7 @@
   },
   "scripts": {
     "dev": "webpack-dev-server --config webpack.dev.config.js",
+    "test:watch": "jest --watch",
     "lint": "eslint --ext .ts --ext .tsx ."
   },
   "bugs": {

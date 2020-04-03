@@ -3,12 +3,6 @@ import {
   IMash,
 } from "../types";
 
-export const stubService = {
-  initialize (_: {
-    terminalContainer: HTMLElement;
-  }) {},
-};
-
 export class Service implements IService {
   constructor (
     private mash: IMash,
