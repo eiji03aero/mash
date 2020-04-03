@@ -35,10 +35,9 @@ clean () {
   stop-docker-compose
   docker-sync clean
   execute-docker-compose down --volumes
-  docker volume rm c-mash-sync
 }
 
-if [ $COMMAND = 'up' ]; then
+if [ $COMMAND = 'up' ] && [ $# -le 1 ]; then
   docker-sync start
   execute-docker-compose up -d mash
   execute-docker-compose exec mash bash
@@ -59,7 +58,9 @@ elif [ $COMMAND = 'bash-m-w' ]; then
 elif [ $COMMAND = 'bash-s-f' ]; then
   execute-docker-compose exec frontend-service bash
 elif [ $COMMAND = 'bash-s-a' ]; then
+  execute-docker-compose up -d auth-service
   execute-docker-compose exec auth-service bash
+  execute-docker-compose stop auth-service
 elif [ $COMMAND = 'bash-s-fs' ]; then
   execute-docker-compose exec filesystem-service bash
 elif [ $COMMAND = 'bash-rm' ]; then

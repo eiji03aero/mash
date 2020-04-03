@@ -1,3 +1,4 @@
-FROM node:10.18.0-buster
+FROM golang:1.13.7-buster
 
-WORKDIR /projects
+RUN mkdir /app
+WORKDIR /app

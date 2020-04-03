@@ -40,25 +40,25 @@ services:
 
   auth-service:
     container_name: auth-service
-    build:
-      context: ./services/auth-service
+    build: services/auth-service
     environment:
-      DB_HOST: auth-service-mongo
-      DB_PORT: 27017
+      DB_HOST: auth-service-postgres
+      DB_PORT: 5432
       DB_NAME: auth-service
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
+      DB_USER: mash
+      DB_PASSWORD: mash123
     volumes:
-      - ./services/auth-service:/projects
-    tty: true
+      - ./services/auth-service:/app
     depends_on:
-      - rabbitmq
-      - auth-service-mongo
-  auth-service-mongo:
-    container_name: auth-service-mongo
-    image: mongo:4.2.2
-    volumes:
-      - v-auth-service-mongo:/data/db
+      - auth-service-postgres
+    tty: true
+  auth-service-postgres:
+    container_name: auth-service-postgres
+    image: postgres:12.1-alpine
+    environment:
+      POSTGRES_USER: mash
+      POSTGRES_PASSWORD: mash123
+      POSTGRES_DB: auth-service
     tty: true
 
   filesystem-service:
