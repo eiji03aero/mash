@@ -1,0 +1,25 @@
+version: '3.7'
+
+x-go-service-default: &go-service-default
+  build:
+    context: ../
+    dockerfile: Dockerfile.go-service
+  volumes:
+    - ..:/app
+  tty: true
+  command: /bin/bash
+
+x-mongo-default: &mongo-default
+  image: mongo:4.2.2
+  tty: true
+
+services:
+  frontend:
+    <<: *go-service-default
+    working_dir: /app/services/frontend
+  frontend-mongo:
+    <<: *mongo-default
+
+  rabbitmq:
+    image: rabbitmq:3.7-alpine
+    tty: true

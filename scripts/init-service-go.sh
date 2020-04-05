@@ -2,9 +2,9 @@
 
 service_name="$1"
 
-go_image="golang:1.13.7-buster"
+docker_image="mash-build-go-service:latest"
 root_dir=$(cd $(dirname $0); cd ../; pwd)
-module_path="github.com/eiji03aero/mash/services/$service_name"
+module_path="$service_name"
 service_path="$root_dir/services/$service_name"
 service_template_path="$root_dir/templates/go"
 
@@ -19,15 +19,12 @@ if [ -e $service_path ]; then
   exit 1
 fi
 
-commands=$(cat <<- EOF
-go mod init $module_path
-EOF
-)
-
 cp -r templates/go $service_path
+
+docker build -t $docker_image -f ./docker/Dockerfile.go-service .
 
 docker run --rm \
   -w /app \
   -v $service_path:/app \
-  $go_image \
-  /bin/bash -c "$commands"
+  $docker_image \
+  /bin/bash -c "mskit init . --name $service_name"

@@ -2,15 +2,23 @@
 
 COMMAND=${1:-up}
 
+js_cname="js-client"
+
 execute-docker-compose () {
   docker-compose \
-    -f docker-compose.yml \
-    -f docker-compose.dev.yml \
+    -f ./docker/mash/docker-compose.yml \
+    -f ./docker/mash/docker-compose.dev.yml \
     $@
 }
 
+execute-docker-sync () {
+  docker-sync \
+    $@ \
+    -c ./docker/mash/docker-sync.yml
+}
+
 stop-docker-compose () {
-  docker-sync stop
+  execute-docker-sync stop
   execute-docker-compose stop
 }
 
@@ -18,7 +26,7 @@ stop-docker-compose () {
 # otherwise local packages will not have symlinks properly
 # and not to hoist typescript cuz tsuquyomi needs it on package's root
 bootstrap () {
-  docker-sync start
+  execute-docker-sync start
   execute-docker-compose build
   execute-docker-compose up -d
 
@@ -33,38 +41,28 @@ bootstrap () {
 
 clean () {
   stop-docker-compose
-  docker-sync clean
+  execute-docker-sync clean
   execute-docker-compose down --volumes
 }
 
 if [ $COMMAND = 'up' ] && [ $# -le 1 ]; then
-  docker-sync start
-  execute-docker-compose up -d mash
-  execute-docker-compose exec mash bash
+  execute-docker-sync start
+  execute-docker-compose up -d --remove-orphans
+  execute-docker-compose exec $js_cname bash
   stop-docker-compose
 
 elif [ $COMMAND = 'bash' ]; then
-  execute-docker-compose exec mash bash
+  execute-docker-compose exec $js_cname bash
 elif [ $COMMAND = 'bash-m-m' ]; then
-  execute-docker-compose exec -w /projects/packages/mash mash bash
+  execute-docker-compose exec -w /projects/packages/mash $js_cname bash
 elif [ $COMMAND = 'bash-m-fs' ]; then
-  execute-docker-compose exec -w /projects/packages/mash-filesystem mash bash
+  execute-docker-compose exec -w /projects/packages/mash-filesystem $js_cname bash
 elif [ $COMMAND = 'bash-m-c' ]; then
-  execute-docker-compose exec -w /projects/packages/mash-common mash bash
+  execute-docker-compose exec -w /projects/packages/mash-common $js_cname bash
 elif [ $COMMAND = 'bash-m-t' ]; then
-  execute-docker-compose exec -w /projects/packages/mash-term mash bash
+  execute-docker-compose exec -w /projects/packages/mash-term $js_cname bash
 elif [ $COMMAND = 'bash-m-w' ]; then
-  execute-docker-compose exec -w /projects/packages/web mash bash
-elif [ $COMMAND = 'bash-s-f' ]; then
-  execute-docker-compose exec frontend-service bash
-elif [ $COMMAND = 'bash-s-a' ]; then
-  execute-docker-compose up -d auth-service
-  execute-docker-compose exec auth-service bash
-  execute-docker-compose stop auth-service
-elif [ $COMMAND = 'bash-s-fs' ]; then
-  execute-docker-compose exec filesystem-service bash
-elif [ $COMMAND = 'bash-rm' ]; then
-  execute-docker-compose exec rabbitmq bash
+  execute-docker-compose exec -w /projects/packages/web $js_cname bash
 
 elif [ $COMMAND = 'bootstrap' ]; then
   bootstrap
@@ -73,9 +71,9 @@ elif [ $COMMAND = 'clean' ]; then
   clean
 
 elif [ $COMMAND = 'sync-reset' ]; then
-  docker-sync stop
-  docker-sync clean
-  docker-sync start
+  execute-docker-sync stop
+  execute-docker-sync clean
+  execute-docker-sync start
 
 else
   execute-docker-compose $@

@@ -1,4 +1,4 @@
-FROM golang:1.13.0-buster
+FROM golang:1.14.1-buster
 USER root
 
 WORKDIR /app
@@ -17,6 +17,7 @@ RUN curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.7.
 RUN go get -u \
   github.com/golang/protobuf/protoc-gen-go \
   github.com/go-delve/delve/cmd/dlv \
-  github.com/cespare/reflex
+  github.com/cespare/reflex \
+  github.com/eiji03aero/mskit/cmd/mskit
 
 CMD ["/bin/bash"]

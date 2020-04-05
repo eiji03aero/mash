@@ -1,17 +1,9 @@
 version: '3.7'
 
 services:
-  mash:
+  js-client:
     volumes:
       - v-sync-mash-node_modules:/projects/node_modules
-      - v-mash-yarn:/usr/local/share/.cache/yarn
-
-  frontend-service:
-    volumes:
-      - v-mash-yarn:/usr/local/share/.cache/yarn
-
-  filesystem-service:
-    volumes:
       - v-mash-yarn:/usr/local/share/.cache/yarn
 
 volumes:

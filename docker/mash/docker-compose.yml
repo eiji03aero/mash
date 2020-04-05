@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+  js-client:
+    build:
+      context: ../
+      dockerfile: Dockerfile.js-client
+    ports:
+      - "8080:8080"
+      - "8090:8090"
+    volumes:
+      - ../../:/projects
+    working_dir: /projects
+    tty: true
