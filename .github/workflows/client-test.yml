@@ -13,6 +13,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - run: cd client
-    - run: docker-compose build mash
-    - run: docker-compose up -d mash
-    - run: docker-compose exec -T mash bash -c 'yarn bootstrap && yarn fulltest'
+    - run: docker-compose build
+    - run: docker-compose up -d
+    - run: docker-compose exec -T mash-client bash -c 'yarn bootstrap && yarn fulltest'
