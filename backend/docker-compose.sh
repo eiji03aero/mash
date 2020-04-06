@@ -2,27 +2,20 @@
 
 COMMAND=${1:-up}
 
-frontend_cname="frontend"
-rabbitmq_cname="rabbitmq"
+frontend_cname="mash-s-frontend"
+rabbitmq_cname="mash-rabbitmq"
 
 execute-docker-compose () {
   docker-compose \
-    -f ./docker/services/docker-compose.yml \
+    -f ./docker-compose.yml \
     $@
 }
 
-# execute-docker-sync () {
-#   docker-sync \
-#     $@
-# }
-
 stop-docker-compose () {
-  # execute-docker-sync stop
   execute-docker-compose stop
 }
 
 if [ $COMMAND = 'up' ] && [ $# -le 1 ]; then
-  # execute-docker-sync start
   execute-docker-compose up -d
   execute-docker-compose exec $frontend_cname bash
   stop-docker-compose

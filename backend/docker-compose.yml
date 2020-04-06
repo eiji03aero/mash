@@ -2,10 +2,10 @@ version: '3.7'
 
 x-go-service-default: &go-service-default
   build:
-    context: ../
-    dockerfile: Dockerfile.go-service
+    context: ./docker
+    dockerfile: Dockerfile.golang
   volumes:
-    - ..:/app
+    - .:/backend
   tty: true
   command: /bin/bash
 
@@ -14,12 +14,15 @@ x-mongo-default: &mongo-default
   tty: true
 
 services:
-  frontend:
+  mash-s-frontend:
     <<: *go-service-default
-    working_dir: /app/services/frontend
-  frontend-mongo:
+    container_name: mash-s-frontend
+    working_dir: /backend/services/frontend
+  mash-s-frontend-mongo:
     <<: *mongo-default
+    container_name: mash-s-frontend-mongo
 
   rabbitmq:
     image: rabbitmq:3.7-alpine
+    container_name: mash-rabbitmq
     tty: true

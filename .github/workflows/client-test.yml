@@ -5,13 +5,14 @@ on:
     branches-ignore:
     - master
     paths:
-    - "packages/**"
+    - "client/packages/**"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - run: cd client
     - run: docker-compose build mash
     - run: docker-compose up -d mash
     - run: docker-compose exec -T mash bash -c 'yarn bootstrap && yarn fulltest'

@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  mash-client:
+    container_name: mash-client
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.client
+    ports:
+      - "8080:8080"
+      - "8090:8090"
+    volumes:
+      - ../:/projects
+    working_dir: /projects/client
+    tty: true

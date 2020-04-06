@@ -2,19 +2,19 @@
 
 COMMAND=${1:-up}
 
-js_cname="js-client"
+client_cname="mash-client"
 
 execute-docker-compose () {
   docker-compose \
-    -f ./docker/mash/docker-compose.yml \
-    -f ./docker/mash/docker-compose.dev.yml \
+    -f ./docker-compose.yml \
+    -f ./docker-compose.dev.yml \
     $@
 }
 
 execute-docker-sync () {
   docker-sync \
     $@ \
-    -c ./docker/mash/docker-sync.yml
+    -c ./docker-sync.yml
 }
 
 stop-docker-compose () {
@@ -48,21 +48,21 @@ clean () {
 if [ $COMMAND = 'up' ] && [ $# -le 1 ]; then
   execute-docker-sync start
   execute-docker-compose up -d --remove-orphans
-  execute-docker-compose exec $js_cname bash
+  execute-docker-compose exec $client_cname bash
   stop-docker-compose
 
 elif [ $COMMAND = 'bash' ]; then
-  execute-docker-compose exec $js_cname bash
+  execute-docker-compose exec $client_cname bash
 elif [ $COMMAND = 'bash-m-m' ]; then
-  execute-docker-compose exec -w /projects/packages/mash $js_cname bash
+  execute-docker-compose exec -w /projects/packages/mash $client_cname bash
 elif [ $COMMAND = 'bash-m-fs' ]; then
-  execute-docker-compose exec -w /projects/packages/mash-filesystem $js_cname bash
+  execute-docker-compose exec -w /projects/packages/mash-filesystem $client_cname bash
 elif [ $COMMAND = 'bash-m-c' ]; then
-  execute-docker-compose exec -w /projects/packages/mash-common $js_cname bash
+  execute-docker-compose exec -w /projects/packages/mash-common $client_cname bash
 elif [ $COMMAND = 'bash-m-t' ]; then
-  execute-docker-compose exec -w /projects/packages/mash-term $js_cname bash
+  execute-docker-compose exec -w /projects/packages/mash-term $client_cname bash
 elif [ $COMMAND = 'bash-m-w' ]; then
-  execute-docker-compose exec -w /projects/packages/web $js_cname bash
+  execute-docker-compose exec -w /projects/packages/web $client_cname bash
 
 elif [ $COMMAND = 'bootstrap' ]; then
   bootstrap

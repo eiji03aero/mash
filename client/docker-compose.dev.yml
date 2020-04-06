@@ -1,10 +1,10 @@
 version: '3.7'
 
 services:
-  js-client:
+  mash-client:
     volumes:
-      - v-sync-mash-node_modules:/projects/node_modules
       - v-mash-yarn:/usr/local/share/.cache/yarn
+      - v-sync-mash-node_modules:/projects/client/node_modules
 
 volumes:
   v-mash-yarn:

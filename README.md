@@ -16,27 +16,27 @@
   - web app for mash
 
 ## Services
-- frontend-service
+- frontend
   - the server for mash
-- auth-service
+- auth
   - auth kind of server
-- filesystem-service
+- filesystem
   - filesystem server
 - term-service?
   - mada wakaran
   - possible features
     - command history
-- m-chan-service
-  - provides m-chan related service
+- mchan
+  - provides mchan related service
 
 ## Todos
 
 ```
 - whole
-  fix
+  - fix
     - separate fe packages and services clearly for better readability on repo
 
-  feature
+  - feature
     - replace frontend service with go
       - https://gqlgen.com/
     - add Buffer class
@@ -47,6 +47,10 @@
     - let multiple single character be parsed
       - something like -rf, vise versa as well (-fr)
     - cursor up/down to move history
+
+  - refactor
+    - for client, add base config package
+    - create template stuff for client package
 
 - mash
   - [WIP] refactor token for commandline and program
@@ -82,6 +86,9 @@
 - web
   - start integrating components
     - keep in mind that mash should have a refactor around context object
+  - refactor
+    - adapters/graphql
+      - should add initialize function so that instance is not hard coded on compile code
   - setup tests
 
 - mash-viewer
