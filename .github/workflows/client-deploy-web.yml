@@ -12,10 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+
     - run: cd client
-    - run: docker-compose build
-    - run: docker-compose up -d
-    - run: docker-compose exec -T mash-client bash -c 'yarn bootstrap && yarn build'
+    - run: ./docker-compose.sh build
+    - run: ./docker-compose.sh up -d
+    - run: ./docker-compose.sh exec -T mash-client bash -c 'yarn bootstrap && yarn fulltest'
+
     - run: ./scripts/deploy-web.sh
       env:
         NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

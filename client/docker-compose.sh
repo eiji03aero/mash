@@ -24,7 +24,7 @@ stop-docker-compose () {
 
 # Required to let plugins on editor work properly,
 # otherwise local packages will not have symlinks properly
-# and not to hoist typescript cuz tsuquyomi needs it on package's root
+# and not to hoist typescript cuz tsuquyomi needs it on package's root.
 bootstrap () {
   execute-docker-sync start
   execute-docker-compose build
