@@ -47,7 +47,8 @@ clean () {
 
 if [ $COMMAND = 'up' ] && [ $# -le 1 ]; then
   execute-docker-sync start
-  execute-docker-compose up -d --remove-orphans
+  execute-docker-compose up -d
+  execute-docker-compose exec $client_cname yarn build
   execute-docker-compose exec $client_cname bash
   stop-docker-compose
 
