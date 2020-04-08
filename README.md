@@ -17,7 +17,7 @@
 
 ## Services
 - frontend
-  - the server for mash
+  - frontend server for backend
 - auth
   - auth kind of server
 - filesystem
@@ -34,42 +34,31 @@
 ```
 - whole
   - fix
-    - separate fe packages and services clearly for better readability on repo
-
-  - feature
-    - replace frontend service with go
-      - https://gqlgen.com/
-    - add Buffer class
-      - add command history feature
-    - add tab completion
-    - dynamically change prompt
-      - like current directory
-    - let multiple single character be parsed
-      - something like -rf, vise versa as well (-fr)
-    - cursor up/down to move history
+    - none for now
 
   - refactor
-    - for client, add base config package
     - create template stuff for client package
+      - when adding next package
 
 - mash
   - [WIP] refactor token for commandline and program
     - kind of don't know what to do
   - [WIP] add usage for all the commands
     - should be after figuring out apis on term and environment
-  - tbd features
-    - string interpolation
-    - stat
-    - rm -f
-      - need to create access to prompt for commands
-    - ls command
-      - align feature
-    - test command
-    - grep command
-    - pipe
-    - redirect
-    - argument variables
-    - let user defined script run
+  - let multiple single character be parsed
+    - something like -rf, vise versa as well (-fr)
+  - string interpolation
+  - stat
+  - rm -f
+    - need to create access to prompt for commands
+  - ls command
+    - align feature
+  - test command
+  - grep command
+  - pipe
+  - redirect
+  - argument variables
+  - let user defined script run
 
 - mash-filesystem
   - deserialize nodes
@@ -80,12 +69,13 @@
 
 - mash-term
   - add test
-  - tbd
-    - delete row by index
+  - command history feature
+  - tab completion
+  - delete row by index
+  - dynamically change prompt
+    - like current directory
 
 - web
-  - start integrating components
-    - keep in mind that mash should have a refactor around context object
   - refactor
     - adapters/graphql
       - should add initialize function so that instance is not hard coded on compile code
@@ -118,5 +108,4 @@
 - auth-service
 
 - filesystem-service
-  - deal with types on CIFile and CIDirectory
 ```

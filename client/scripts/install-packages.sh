@@ -21,5 +21,5 @@ else
 fi
 
 for pname in $package_names; do
-  lerna add $dep_type $pname --scope=$filter_glob
+  npx lerna add $dep_type $pname --scope=$filter_glob
 done

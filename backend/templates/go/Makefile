@@ -4,4 +4,4 @@ build:
 
 .PHONY: run
 run:
-	reflex -r '(\.go|go\.mod)' -s go run ./cmd/app/main.go
+	reflex -r '(\.go|go\.mod)' -s go run ./cmd/app/*.go

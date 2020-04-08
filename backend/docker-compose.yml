@@ -7,7 +7,17 @@ x-go-service-default: &go-service-default
   volumes:
     - .:/backend
   tty: true
-  command: /bin/bash
+  command:
+    - /bin/bash
+    - -c
+    - |
+      echo wait for rabbitmq to get ready
+      while ! nc -z mash-rabbitmq 5672; do
+        echo waiting for rabbitmq...
+        sleep 3s
+      done
+      echo Connected to rabbitmq
+      make run
 
 x-mongo-default: &mongo-default
   image: mongo:4.2.2
@@ -18,11 +28,22 @@ services:
     <<: *go-service-default
     container_name: mash-s-frontend
     working_dir: /backend/services/frontend
+    environment:
+      HOST: 0.0.0.0
+      PORT: 4000
+      REDIS_HOST: mash-redis:6379
+    ports:
+      - 4000:4000
   mash-s-frontend-mongo:
     <<: *mongo-default
     container_name: mash-s-frontend-mongo
 
-  rabbitmq:
+  mash-rabbitmq:
     image: rabbitmq:3.7-alpine
     container_name: mash-rabbitmq
+    tty: true
+
+  mash-redis:
+    image: redis:5.0.8-buster
+    container_name: mash-redis
     tty: true

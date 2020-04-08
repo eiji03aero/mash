@@ -4,11 +4,8 @@ const baseConfig = require("./webpack.base.config");
 
 module.exports = merge(baseConfig, {
   mode: "development",
+  devtool: "source-map",
   entry: "./src/index.dev.tsx",
-  output: {
-    path: `${__dirname}/lib`,
-    filename: "bundle.js",
-  },
   devServer: {
     inline: true,
     progress: true,

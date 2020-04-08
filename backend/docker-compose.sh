@@ -16,8 +16,7 @@ stop-docker-compose () {
 }
 
 if [ $COMMAND = 'up' ] && [ $# -le 1 ]; then
-  execute-docker-compose up -d
-  execute-docker-compose exec $frontend_cname bash
+  execute-docker-compose up
   stop-docker-compose
 
 elif [ $COMMAND = 'bash-f' ]; then

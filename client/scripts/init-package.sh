@@ -31,12 +31,12 @@ if [ $# -lt 1 ]; then
   exit 1
 fi
 
-lerna create $package_name --yes
+npx lerna create $package_name --yes
 
 for fname in $file_names; do
   cp "$src_package_path/$fname" "$package_path"
 done
 
 for lname in $lib_names; do
-  lerna add -D $lname --scope=$package_name
+  npx lerna add -D $lname --scope=$package_name
 done

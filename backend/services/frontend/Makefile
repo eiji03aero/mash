@@ -4,4 +4,8 @@ build:
 
 .PHONY: run
 run:
-	reflex -r '(\.go|go\.mod)' -s go run ./cmd/app/main.go
+	reflex -r '(\.go|go\.mod)' -s go run ./cmd/app/*.go
+
+.PHONY: gql-generate
+gql-generate:
+	go run github.com/99designs/gqlgen generate

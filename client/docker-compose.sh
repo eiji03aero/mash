@@ -53,16 +53,16 @@ if [ $COMMAND = 'up' ] && [ $# -le 1 ]; then
 
 elif [ $COMMAND = 'bash' ]; then
   execute-docker-compose exec $client_cname bash
-elif [ $COMMAND = 'bash-m-m' ]; then
-  execute-docker-compose exec -w /projects/packages/mash $client_cname bash
-elif [ $COMMAND = 'bash-m-fs' ]; then
-  execute-docker-compose exec -w /projects/packages/mash-filesystem $client_cname bash
-elif [ $COMMAND = 'bash-m-c' ]; then
-  execute-docker-compose exec -w /projects/packages/mash-common $client_cname bash
-elif [ $COMMAND = 'bash-m-t' ]; then
-  execute-docker-compose exec -w /projects/packages/mash-term $client_cname bash
-elif [ $COMMAND = 'bash-m-w' ]; then
-  execute-docker-compose exec -w /projects/packages/web $client_cname bash
+elif [ $COMMAND = 'bash-m' ]; then
+  execute-docker-compose exec -w /projects/client/packages/mash $client_cname bash
+elif [ $COMMAND = 'bash-fs' ]; then
+  execute-docker-compose exec -w /projects/client/packages/mash-filesystem $client_cname bash
+elif [ $COMMAND = 'bash-c' ]; then
+  execute-docker-compose exec -w /projects/client/packages/mash-common $client_cname bash
+elif [ $COMMAND = 'bash-t' ]; then
+  execute-docker-compose exec -w /projects/client/packages/mash-term $client_cname bash
+elif [ $COMMAND = 'bash-w' ]; then
+  execute-docker-compose exec -w /projects/client/packages/web $client_cname bash
 
 elif [ $COMMAND = 'bootstrap' ]; then
   bootstrap
