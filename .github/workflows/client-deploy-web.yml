@@ -4,8 +4,8 @@ on:
   push:
     branches:
     - master
-    paths:
-    - "client/packages/**"
+    # paths:
+    # - "client/packages/**"
 
 jobs:
   build:
@@ -13,7 +13,9 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - run: cd client
+    - run: cd ./client
+    - run: pwd
+    - run: ls
     - run: ./docker-compose.sh build
     - run: ./docker-compose.sh up -d
     - run: ./docker-compose.sh exec -T mash-client bash -c 'yarn bootstrap && yarn fulltest'
