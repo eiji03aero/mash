@@ -15,11 +15,11 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - run: ./docker-compose.sh build
+    - run: docker-compose build
       working-directory: ${{ env.wd }}
-    - run: ./docker-compose.sh up -d
+    - run: docker-compose up -d
       working-directory: ${{ env.wd }}
-    - run: ./docker-compose.sh exec -T mash-client bash -c 'yarn bootstrap && yarn fulltest'
+    - run: docker-compose exec -T mash-client bash -c 'yarn bootstrap && yarn fulltest'
       working-directory: ${{ env.wd }}
 
     - run: ./scripts/deploy-web.sh
