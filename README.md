@@ -76,9 +76,6 @@
     - like current directory
 
 - web
-  - refactor
-    - adapters/graphql
-      - should add initialize function so that instance is not hard coded on compile code
   - setup tests
 
 - mash-viewer
