@@ -83,6 +83,9 @@ export interface IInputHandler {
   onKeyDown: (cb: KeyboardEventHandler) => void;
   onKeyPress: (cb: KeyboardEventHandler) => void;
   onKeyUp: (cb: KeyboardEventHandler) => void;
+  offKeyDown: (cb: KeyboardEventHandler) => void;
+  offKeyPress: (cb: KeyboardEventHandler) => void;
+  offKeyUp: (cb: KeyboardEventHandler) => void;
 }
 
 export interface IBuffer {
@@ -107,9 +110,12 @@ export interface ITerminal {
   rowHeight: number;
   windowStat: IWindowStat;
   relativePromptRowPosition: number;
-  onKeyDown: (e: KeyboardEventHandler) => void;
-  onKeyPress: (e: KeyboardEventHandler) => void;
-  onKeyUp: (e: KeyboardEventHandler) => void;
+  onKeyDown: (cb: KeyboardEventHandler) => void;
+  onKeyPress: (cb: KeyboardEventHandler) => void;
+  onKeyUp: (cb: KeyboardEventHandler) => void;
+  offKeyDown: (cb: KeyboardEventHandler) => void;
+  offKeyPress: (cb: KeyboardEventHandler) => void;
+  offKeyUp: (cb: KeyboardEventHandler) => void;
   measureText(str: string): TextMetrics;
   focus(): void;
   blur(): void;

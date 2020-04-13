@@ -1,15 +1,14 @@
 import { Monad } from "mash-common";
-import { ICommandPayload } from "mash";
 
-import { IContext } from "../types";
+import { CommandPayload } from "../types";
 
-export default ({
+export default async ({
   args,
   environment,
   context: {
     filesystem
   }
-}: ICommandPayload<IContext>) => {
+}: CommandPayload) => {
   if (args.length < 2) {
     environment.error(1, "needs 1 argument. usage required here");
     return;

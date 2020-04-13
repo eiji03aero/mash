@@ -4,19 +4,21 @@ import { ApolloLink, split, Operation } from "apollo-link";
 import { HttpLink } from "apollo-link-http";
 import { WebSocketLink } from "apollo-link-ws";
 import { onError } from "apollo-link-error";
+import { setContext } from  "apollo-link-context";
 import { getMainDefinition } from "apollo-utilities";
 
-import { CustomApolloClient } from "../../types";
+import { CustomApolloClient } from "../types";
 import { initialState, resolvers } from "./resolvers";
+import { getToken } from "../adapters/sessionStore";
 
 const cache = new InMemoryCache;
 
 const httpLink = new HttpLink({
-  uri: `http://${process.env.GRAPHQL_SERVER_HOST}/graphql`,
+  uri: `${process.env.GRAPHQL_SERVER_HTTP_URL}`,
 });
 
 const wsLink = new WebSocketLink({
-  uri: `ws://${process.env.GRAPHQL_SERVER_HOST}/graphql`,
+  uri: `${process.env.GRAPHQL_SERVER_WS_URL}`,
   options: {
     reconnect: true,
   },
@@ -33,8 +35,18 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   }
 });
 
+const authLink = setContext((_, { headers }) => {
+  const token = getToken();
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : "",
+    }
+  }
+});
+
 const link = ApolloLink.from([
-  errorLink,
+  authLink,
   split(
     ({ query }: Operation) => {
       const definition = getMainDefinition(query);
@@ -45,7 +57,8 @@ const link = ApolloLink.from([
     },
     wsLink,
     httpLink,
-  )
+  ),
+  errorLink,
 ]);
 
 export const apolloClient: CustomApolloClient = new ApolloClient<NormalizedCacheObject>({

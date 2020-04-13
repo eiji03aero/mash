@@ -7,8 +7,8 @@ services:
       context: .
       dockerfile: ./docker/Dockerfile.client
     ports:
-      - "8080:8080"
-      - "8090:8090"
+      - "8000:8000" # web
+      - "8080:8080" # mash-term
     volumes:
       - ../:/projects
     working_dir: /projects/client

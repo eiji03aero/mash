@@ -1,8 +1,10 @@
 import { ApolloClient } from "apollo-client";
 import { NormalizedCacheObject } from "apollo-cache-inmemory";
+import { Either } from "mash-common";
 
 export interface IMash {
-  initialize(container: HTMLElement): void;
+  initialize(): void;
+  read(promptStr: string): Promise<string>;
 }
 
 export interface IService {
@@ -12,3 +14,10 @@ export interface IService {
 }
 
 export type CustomApolloClient = ApolloClient<NormalizedCacheObject>;
+
+export interface IProxy {
+  signup(params: {
+    name: string;
+    password: string;
+  }): Promise<Either>;
+}

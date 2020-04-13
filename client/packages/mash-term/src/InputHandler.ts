@@ -11,14 +11,18 @@ export class InputHandler implements IInputHandler {
     this._emitter = new EventEmitter();
     this._eventTimestamp = 0;
 
-    this._terminal.textarea.addEventListener("keypress", this._onKeyPress.bind(this));
     this._terminal.textarea.addEventListener("keydown", this._onKeyDown.bind(this));
+    this._terminal.textarea.addEventListener("keypress", this._onKeyPress.bind(this));
     this._terminal.textarea.addEventListener("keyup", this._onKeyUp.bind(this));
   }
 
-  get onKeyDown () { return this._emitter.on.bind(this._emitter, "keypress"); }
+  get onKeyDown () { return this._emitter.on.bind(this._emitter, "keydown"); }
   get onKeyPress () { return this._emitter.on.bind(this._emitter, "keypress"); }
   get onKeyUp () { return this._emitter.on.bind(this._emitter, "keyup"); }
+
+  get offKeyDown () { return this._emitter.off.bind(this._emitter, "keydown"); }
+  get offKeyPress () { return this._emitter.off.bind(this._emitter, "keypress"); }
+  get offKeyUp () { return this._emitter.off.bind(this._emitter, "keyup"); }
 
   private _onKeyDown (e: KeyboardEvent) {
     if (!this._checkEventTimeStamp(e)) {

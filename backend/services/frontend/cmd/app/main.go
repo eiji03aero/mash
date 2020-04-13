@@ -3,26 +3,21 @@ package main
 import (
 	"log"
 	"net/http"
-	"time"
+	"strings"
 
+	httpadapter "frontend/adapter/http"
+	authpxy "frontend/adapter/proxy/auth"
+	authquerypxy "frontend/adapter/proxy/authquery"
 	"frontend/graph"
-	"frontend/graph/generated"
-	"frontend/service"
+	frontendsvc "frontend/service"
 
-	"github.com/99designs/gqlgen/graphql/handler"
-	"github.com/99designs/gqlgen/graphql/handler/transport"
-	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/go-chi/chi"
+	"github.com/eiji03aero/mskit/eventbus/rabbitmq"
 	"github.com/go-redis/redis"
-	"github.com/gorilla/websocket"
-	"github.com/rs/cors"
 )
 
 func main() {
-	_ = service.New()
-
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     env.REDIS_HOST,
+		Addr:     env.REDIS_HOST + ":" + env.REDIS_PORT,
 		Password: "",
 		DB:       0,
 	})
@@ -31,35 +26,32 @@ func main() {
 		panic(err)
 	}
 
-	router := chi.NewRouter()
-	router.Use(cors.New(cors.Options{
-		AllowedOrigins: []string{
-			"http://localhost:8090",
-		},
-		AllowCredentials: true,
-		Debug:            true,
-	}).Handler)
+	rabbitmqOption := rabbitmq.Option{
+		Host: env.RABBITMQ_HOST,
+		Port: env.RABBITMQ_PORT,
+	}
+	eb, err := rabbitmq.NewClient(rabbitmqOption)
+	if err != nil {
+		panic(err)
+	}
 
-	resolver := graph.NewResolver(redisClient)
-	go resolver.StartSubscribingRedis()
+	authProxy := authpxy.New(eb)
+	authQueryProxy := authquerypxy.New(eb)
 
-	srv := handler.New(generated.NewExecutableSchema(generated.Config{Resolvers: resolver}))
-	srv.AddTransport(transport.Options{})
-	srv.AddTransport(transport.GET{})
-	srv.AddTransport(transport.POST{})
-	srv.AddTransport(transport.MultipartForm{})
-	srv.AddTransport(transport.Websocket{
-		KeepAlivePingInterval: 10 * time.Second,
-		Upgrader: websocket.Upgrader{
-			CheckOrigin: func(r *http.Request) bool {
-				return true
-			},
-		},
-	})
+	_ = frontendsvc.New()
 
-	router.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
-	router.Handle("/graphql", srv)
+	gqlServer := graph.NewServer(
+		redisClient,
+		authProxy,
+		authQueryProxy,
+	)
 
-	log.Printf("connect to http://%s:%s/ for GraphQL playground", env.HOST, env.PORT)
-	log.Fatal(http.ListenAndServe(env.HOST+":"+env.PORT, router))
+	router := httpadapter.NewRouter(
+		strings.Split(env.CORS_ORIGINS, ","),
+		gqlServer,
+	)
+
+	host := env.HOST + ":" + env.PORT
+	log.Printf("connect to http://%s/ for GraphQL playground", host)
+	log.Fatal(http.ListenAndServe(host, router))
 }

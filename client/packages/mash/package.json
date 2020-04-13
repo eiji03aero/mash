@@ -15,6 +15,7 @@
   ],
   "scripts": {
     "build": "rm -rf ./lib && tsc",
+    "build:watch": "rm -rf ./lib && tsc -w",
     "repl": "ts-node ./src/Repl.ts",
     "test": "jest",
     "test:watch": "jest --watch",

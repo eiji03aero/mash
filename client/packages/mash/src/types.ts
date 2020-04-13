@@ -57,7 +57,7 @@ export interface IEnvironment {
 export interface IEvaluator {
   // TODO: update return type for eval
   // looking up builtins here
-  eval(node: IAstNode): any;
+  eval(node: IAstNode): Promise<void>;
 }
 
 export interface IContext {
@@ -74,7 +74,7 @@ export interface ICommandPayload<T> {
   context: T;
 }
 
-export type CommandFunction<T extends IContext> = (p: ICommandPayload<T>) => void;
+export type CommandFunction<T extends IContext> = (p: ICommandPayload<T>) => Promise<void>;
 
 export interface ICommandOptionMap {
   [index: string]: string | boolean;
@@ -86,5 +86,5 @@ export interface IParsedCommandArgs {
 }
 
 export interface IMashClient<T extends IContext> {
-  eval(input: string, context: T): void;
+  eval(input: string, context: T): Promise<void>;
 }

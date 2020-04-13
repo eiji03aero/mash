@@ -4,7 +4,6 @@ import readline from "readline";
 import { Environment } from "./Environment";
 import { MashClient } from "./MashClient";
 
-/* tslint:disable */
 const fileSystem = FileSystem.bootstrap();
 const environment = new Environment({
   onWriteln: (str: string) => {
@@ -14,7 +13,11 @@ const environment = new Environment({
 const client = new MashClient<any>({
   environment,
   commandMap: {
-    hoge: ({ args }) => {
+    hoge: async ({ args }) => {
+      console.log(args);
+    },
+    hogesleep: async ({ args }) => {
+      await new Promise((res) => global.setTimeout(res, 1000));
       console.log(args);
     },
   },
@@ -36,8 +39,8 @@ Ctl + C to finish
 
 rl.prompt();
 
-rl.on("line", (input: string) => {
-  client.eval(input, context);
+rl.on("line", async (input: string) => {
+  await client.eval(input, context);
 
   rl.setPrompt(getPrompt());
   rl.prompt();

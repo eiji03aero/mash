@@ -1,16 +1,15 @@
 import { IFileSystemNode, utils } from "mash-filesystem";
 import { Monad } from "mash-common";
-import { ICommandPayload } from "mash";
 
-import { IContext } from "../types";
+import { CommandPayload } from "../types";
 
-export default ({
+export default async ({
   args,
   environment,
   context: {
     filesystem
   }
-}: ICommandPayload<IContext>) => {
+}: CommandPayload) => {
   const path = args[1] || ".";
   const r = filesystem.resolveNodeFromPath(path);
   if (Monad.either.isLeft(r)) {

@@ -4,22 +4,31 @@ import (
 	"encoding/json"
 	"sync"
 
+	"frontend"
 	"frontend/graph/model"
 
 	"github.com/go-redis/redis"
 )
 
 type Resolver struct {
-	redisClient  *redis.Client
-	todoChannels map[string]chan *model.Todo
-	mutex        sync.Mutex
+	redisClient    *redis.Client
+	authProxy      frontend.AuthProxy
+	authQueryProxy frontend.AuthQueryProxy
+	todoChannels   map[string]chan *model.Todo
+	mutex          sync.Mutex
 }
 
-func NewResolver(rc *redis.Client) *Resolver {
+func NewResolver(
+	rc *redis.Client,
+	apxy frontend.AuthProxy,
+	aqpxy frontend.AuthQueryProxy,
+) *Resolver {
 	return &Resolver{
-		redisClient:  rc,
-		todoChannels: map[string]chan *model.Todo{},
-		mutex:        sync.Mutex{},
+		redisClient:    rc,
+		authProxy:      apxy,
+		authQueryProxy: aqpxy,
+		todoChannels:   map[string]chan *model.Todo{},
+		mutex:          sync.Mutex{},
 	}
 }
 

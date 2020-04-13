@@ -1,16 +1,16 @@
+import { utils } from "mash";
 import { utils as futils } from "mash-filesystem";
 import { Monad } from "mash-common";
-import { ICommandPayload, utils } from "mash";
 
-import { IContext } from "../types";
+import { CommandPayload } from "../types";
 
-export default ({
+export default async ({
   args: _args,
   environment,
   context: {
     filesystem
   }
-}: ICommandPayload<IContext>) => {
+}: CommandPayload) => {
   const { args, options } = utils.parseCommandArgs(_args, {
     r: false,
   });

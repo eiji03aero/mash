@@ -1,11 +1,18 @@
 version: '3.7'
 
+x-shared-env: &shared-env
+  REDIS_HOST: mash-redis
+  REDIS_PORT: 6379
+  RABBITMQ_HOST: mash-rabbitmq
+  RABBITMQ_PORT: 5672
+
 x-go-service-default: &go-service-default
   build:
     context: ./docker
     dockerfile: Dockerfile.golang
   volumes:
     - .:/backend
+    - v-go:/go
   tty: true
   command:
     - /bin/bash
@@ -29,21 +36,60 @@ services:
     container_name: mash-s-frontend
     working_dir: /backend/services/frontend
     environment:
+      <<: *shared-env
       HOST: 0.0.0.0
       PORT: 4000
-      REDIS_HOST: mash-redis:6379
+      CORS_ORIGINS: http://localhost:8000,http://localhost:4000
     ports:
       - 4000:4000
   mash-s-frontend-mongo:
     <<: *mongo-default
     container_name: mash-s-frontend-mongo
 
+  mash-s-auth:
+    <<: *go-service-default
+    container_name: mash-s-auth
+    working_dir: /backend/services/auth
+    environment:
+      <<: *shared-env
+      HOST: 0.0.0.0
+      PORT: 4001
+      DB_HOST: mash-s-auth-mongo
+      DB_PORT: 27017
+    ports:
+      - 4001:4001
+  mash-s-auth-mongo:
+    <<: *mongo-default
+    container_name: mash-s-auth-mongo
+
+  mash-s-authquery:
+    <<: *go-service-default
+    container_name: mash-s-authquery
+    working_dir: /backend/services/authquery
+    environment:
+      <<: *shared-env
+      HOST: 0.0.0.0
+      PORT: 4002
+      DB_HOST: mash-s-authquery-mongo
+      DB_PORT: 27017
+    ports:
+      - 4002:4002
+  mash-s-authquery-mongo:
+    <<: *mongo-default
+    container_name: mash-s-authquery-mongo
+
   mash-rabbitmq:
     image: rabbitmq:3.7-alpine
     container_name: mash-rabbitmq
+    volumes:
+      - v-rabbitmq:/var/lib/rabbitmq
     tty: true
 
   mash-redis:
     image: redis:5.0.8-buster
     container_name: mash-redis
     tty: true
+
+volumes:
+  v-rabbitmq:
+  v-go:

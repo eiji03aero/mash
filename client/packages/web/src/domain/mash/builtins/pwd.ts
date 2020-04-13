@@ -1,14 +1,13 @@
 import { Monad } from "mash-common";
-import { ICommandPayload } from "mash";
 
-import { IContext } from "../types";
+import { CommandPayload } from "../types";
 
-export default ({
+export default async ({
   environment,
   context: {
     filesystem
   }
-}: ICommandPayload<IContext>) => {
+}: CommandPayload) => {
   const currentDirectory = filesystem.currentDirectory;
   const r = filesystem.resolveAbsolutePath(currentDirectory.id);
   if (Monad.either.isLeft(r)) {

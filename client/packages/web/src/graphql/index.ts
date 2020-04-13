@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   apolloClient.query({
     query: tags.queries.Todos,
   })
-    .then((res) => {
+    .then((res: any) => {
       console.log("query:", res);
     })
 
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })
     .subscribe({
-      next (data) {
+      next (data: any) {
         console.log("subsc:", data);
       }
     });
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     })
-      .then((res) => {
+      .then((res: any) => {
         console.log("mutated:", res)
       })
   }, 1000);

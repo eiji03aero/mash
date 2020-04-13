@@ -30,27 +30,27 @@ export class Evaluator<T extends IContext> implements IEvaluator {
     this._context = context;
   }
 
-  public eval (node: IAstNode) {
+  async eval (node: IAstNode) {
     // Have to make use of constructor instead of interface,
     // since switch-case based on implement-interface is currently not supported
     switch (node.constructor) {
       case AstProgram:
-        return this._evalProgram(node as AstProgram);
+        return await this._evalProgram(node as AstProgram);
       case AstCommandLine:
-        return this._evalCommandLine(node as AstCommandLine);
+        return await this._evalCommandLine(node as AstCommandLine);
     }
   }
 
-  private _evalProgram (program: AstProgram) {
+  private async _evalProgram (program: AstProgram) {
     for (const node of program.nodes) {
-      this.eval(node);
+      await this.eval(node);
       if (this._environment.exitStatus !== ExitStatus.Success) {
         break;
       }
     }
   }
 
-  private _evalCommandLine (commandLine: AstCommandLine) {
+  private async _evalCommandLine (commandLine: AstCommandLine) {
     const command = commandLine.args[0].tokenLiteral();
     const func = this._commandMap[command];
 
@@ -59,7 +59,7 @@ export class Evaluator<T extends IContext> implements IEvaluator {
       return;
     }
 
-    func({
+    await func({
       args: commandLine.args.map((a: IAstNode) => a.toString()),
       environment: this._environment,
       context: this._context,

@@ -1,11 +1,9 @@
-import { ICommandPayload } from "mash";
+import { CommandPayload } from "../types";
 
-import { IContext } from "../types";
-
-export default ({
+export default async ({
   args,
   environment,
-}: ICommandPayload<IContext>) => {
+}: CommandPayload) => {
   const str = args.slice(1).join(" ");
   environment.writeln(str);
 };

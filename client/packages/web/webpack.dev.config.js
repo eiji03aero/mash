@@ -12,11 +12,12 @@ module.exports = merge(baseConfig, {
     contentBase: `${__dirname}/lib`,
     watchContentBase: true,
     host: '0.0.0.0',
-    port: 8090,
+    port: 8000,
   },
   plugins: [
     new webpack.DefinePlugin({
-      "process.env.GRAPHQL_SERVER_HOST": JSON.stringify("localhost:4000"),
+      "process.env.GRAPHQL_SERVER_HTTP_URL": JSON.stringify("http://localhost:4000/graphql"),
+      "process.env.GRAPHQL_SERVER_WS_URL": JSON.stringify("ws://localhost:4000/graphql"),
     }),
   ],
 });

@@ -1,12 +1,17 @@
-import { Mash } from "./domain/mash";
 import { Service } from "./service";
+import { Proxy } from "./adapters/proxy";
 
-import { apolloClient } from "./adapters/graphql";
+import { apolloClient } from "./graphql";
 import { render } from "./adapters/ui";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const mash = new Mash();
-  const service = new Service(mash);
+  const proxy = new Proxy({
+    apolloClient,
+  });
+
+  const service = new Service({
+    proxy,
+  });
 
   const container = document.getElementById("app");
   if (!container) throw new Error("container not found with id app");
