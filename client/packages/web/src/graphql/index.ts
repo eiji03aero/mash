@@ -1,23 +1,23 @@
 import { apolloClient } from "./apolloClient";
-import * as tags from "./tags";
+import * as tag from "./tag";
 
 export {
   apolloClient,
-  tags
+  tag
 }
 
 // This is just testing purpose.
 // Should be removed once real implementations begin
 document.addEventListener("DOMContentLoaded", () => {
   apolloClient.query({
-    query: tags.queries.Todos,
+    query: tag.queries.Todos,
   })
     .then((res: any) => {
       console.log("query:", res);
     })
 
   apolloClient.subscribe({
-    query: tags.subscriptions.TodoAdded,
+    query: tag.subscriptions.TodoAdded,
     variables: {
       userId: "hoge",
     }
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   setTimeout(() => {
     apolloClient.mutate({
-      mutation: tags.mutations.CreateTodo,
+      mutation: tag.mutations.CreateTodo,
       variables: {
         input: {
           text: "eena todo",

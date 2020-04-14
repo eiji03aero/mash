@@ -1,7 +1,7 @@
 import * as E from "fp-ts/lib/Either";
 
 import { CustomApolloClient, IProxy } from "../../types";
-import { tags } from "../../graphql";
+import { tag } from "../../graphql";
 
 export class Proxy implements IProxy {
   private _apolloClient: CustomApolloClient;
@@ -17,7 +17,7 @@ export class Proxy implements IProxy {
     password: string;
   }): Promise<E.Either<Error, null>> {
     const result = await this._apolloClient.mutate({
-      mutation: tags.mutations.Signup,
+      mutation: tag.mutations.Signup,
       variables: {
         input: {
           name: params.name,
