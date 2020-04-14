@@ -48,6 +48,7 @@ func main() {
 
 	router := httpadapter.NewRouter(
 		strings.Split(env.CORS_ORIGINS, ","),
+		strings.Split(env.CORS_ALLOWED_HEADERS, ","),
 		gqlServer,
 	)
 

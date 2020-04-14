@@ -35,7 +35,6 @@
 # features
 - user signup
   - todos
-    - impl query params on authquery#loadusers
     - add name check on UsersService#Create
   - flow
     - run signup command
@@ -54,13 +53,11 @@
 - user logout
 
 # refactor
-- replace monad from mash-common with fp-ts
-- replace custom errors with builtins error
 - create template stuff for client package
   - when adding next package
 
 # fix
-- curosr sometimes vanishes
+- cursor sometimes vanishes
   - eg after typed like crazy
 
 # packages

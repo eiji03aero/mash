@@ -9,13 +9,6 @@ export {
 // This is just testing purpose.
 // Should be removed once real implementations begin
 document.addEventListener("DOMContentLoaded", () => {
-  apolloClient.query({
-    query: tag.queries.Todos,
-  })
-    .then((res: any) => {
-      console.log("query:", res);
-    })
-
   apolloClient.subscribe({
     query: tag.subscriptions.TodoAdded,
     variables: {

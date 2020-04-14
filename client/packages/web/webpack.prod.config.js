@@ -8,7 +8,8 @@ module.exports = merge(baseConfig, {
   entry: "./src/index.dev.tsx",
   plugins: [
     new webpack.DefinePlugin({
-      "process.env.GRAPHQL_SERVER_HOST": JSON.stringify("localhost:4000"),
+      "process.env.GRAPHQL_SERVER_HOST": JSON.stringify("localhost:4000/graphql"),
+      "process.env.GRAPHQL_SERVER_WS_URL": JSON.stringify("ws://localhost:4000/graphql"),
     }),
   ],
 });

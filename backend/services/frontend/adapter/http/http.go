@@ -9,12 +9,14 @@ import (
 
 func NewRouter(
 	corsOrigins []string,
+	corsAllowedHeaders []string,
 	gqlServer *handler.Server,
 ) *chi.Mux {
 	router := chi.NewRouter()
 
 	router.Use(cors.New(cors.Options{
 		AllowedOrigins:   corsOrigins,
+		AllowedHeaders:   corsAllowedHeaders,
 		AllowCredentials: true,
 		Debug:            true,
 	}).Handler)
