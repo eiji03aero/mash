@@ -1,4 +1,5 @@
-import { Either, Monad, date } from "mash-common";
+import * as E from "fp-ts/lib/Either";
+import { date } from "mash-common";
 import uuid from "uuid/v4";
 
 import { Directory } from "./Directory";
@@ -56,14 +57,14 @@ export class FileSystem implements IFileSystem {
 
   get rootDirectory () {
     const r = this.resolveNodeFromPath("/");
-    if (r.isError) throw new Error("root directory is not properly set");
-    return r.value as IDirectory;
+    if (E.isLeft(r)) throw new Error("root directory is not properly set");
+    return r.right as IDirectory;
   }
 
   get currentDirectory () {
     const r = this._expectDirectoryById(this._currentDirectoryId);
-    if (r.isError) throw new Error("current directory is not properly set");
-    return r.value;
+    if (E.isLeft(r)) throw new Error("current directory is not properly set");
+    return r.right;
   }
 
   createFile ({
@@ -72,18 +73,18 @@ export class FileSystem implements IFileSystem {
   }: {
     parentNodeId: string;
     params: IFileBasis;
-  }): Either<IFile> {
+  }): E.Either<Error, IFile> {
     const file = new File(params);
     const r = this._nodeStore.addNode({
       parentNodeId: parentNodeId,
       node: file,
     });
-    if (r.isError) return r;
+    if (E.isLeft(r)) return r;
 
-    return Monad.either.right(file);
+    return E.right(file);
   }
 
-  deleteFile (id: string): Either {
+  deleteFile (id: string): E.Either<Error, null> {
     return this._nodeStore.deleteNode(id);
   }
 
@@ -93,62 +94,62 @@ export class FileSystem implements IFileSystem {
   }: {
     parentNodeId: string;
     params: IDirectoryBasis;
-  }): Either<IDirectory> {
+  }): E.Either<Error, IDirectory> {
     const directory = new Directory(params);
     const r = this._nodeStore.addNode({
       parentNodeId,
       node: directory,
     });
-    if (Monad.either.isLeft(r)) return r;
+    if (E.isLeft(r)) return r;
 
-    return Monad.either.right(directory);
+    return E.right(directory);
   }
 
-  deleteDirectory (id: string): Either {
+  deleteDirectory (id: string): E.Either<Error, null> {
     return this._nodeStore.deleteNode(id);
   }
 
-  changeCurrentDirectory (id: string): Either {
+  changeCurrentDirectory (id: string): E.Either<Error, null> {
     const r = this._expectDirectoryById(id);
-    if (Monad.either.isLeft(r)) return r;
+    if (E.isLeft(r)) return r;
 
     this._currentDirectoryId = id
-    return Monad.either.right(null);
+    return E.right(null);
   }
 
-  resolveNodeFromPath (path: string): Either<IFileSystemNode> {
+  resolveNodeFromPath (path: string): E.Either<Error, IFileSystemNode> {
     return this._nodeStore.resolveNodeFromPath({
       path: path,
       currentDirectoryId: this._currentDirectoryId,
     });
   }
 
-  resolveAbsolutePath (id: string): Either<string> {
+  resolveAbsolutePath (id: string): E.Either<Error, string> {
     return this._nodeStore.resolveAbsolutePath(id);
   }
 
-  getNodes (ids: string[]): Either<Nodes> {
+  getNodes (ids: string[]): E.Either<Error, Nodes> {
     return this._nodeStore.getNodes(ids);
   }
 
   installNodes (parentNodeId: string, nodes: any[]) {
     const r = this._expectDirectoryById(parentNodeId);
-    if (Monad.either.isLeft(r)) throw r.error;
-    const parentNode = r.value;
+    if (E.isLeft(r)) throw r.left;
+    const parentNode = r.right;
 
     for (const n of nodes) {
       this._installNode(parentNode.id, n);
     }
   }
 
-  private _expectDirectoryById (id: string): Either<IDirectory> {
+  private _expectDirectoryById (id: string): E.Either<Error, IDirectory> {
     const r = this._nodeStore.getNode(id);
-    if (Monad.either.isLeft(r)) return r;
-    if (!utils.isDirectory(r.value)) {
-      const error = new Error(`not a directory ${r.value.name}`);
-      return Monad.either.left(error);
+    if (E.isLeft(r)) return r;
+    if (!utils.isDirectory(r.right)) {
+      const error = new Error(`not a directory ${r.right.name}`);
+      return E.left(error);
     }
-    return Monad.either.right(r.value);
+    return E.right(r.right);
   }
 
   private _installNode (parentNodeId: string, params: any) {

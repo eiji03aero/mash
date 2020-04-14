@@ -1,7 +1,5 @@
-import {
-  Monad,
-  Either,
-} from "mash-common";
+import * as E from "fp-ts/lib/Either";
+
 import {
   IFileSystemNode,
   IDirectory,
@@ -31,48 +29,45 @@ export class NodeStore implements INodeStore {
     this._nodes.set(directory.id, directory);
   }
 
-  addNode ({
-    parentNodeId,
-    node,
-  }: {
+  addNode (params: {
     parentNodeId: string;
     node: IFileSystemNode;
-  }): Either {
-    const r = this.getNode(parentNodeId);
-    if (Monad.either.isLeft(r)) return r;
-    if (!utils.isDirectory(r.value)) {
+  }): E.Either<Error, null> {
+    const r = this.getNode(params.parentNodeId);
+    if (E.isLeft(r)) return r;
+    if (!utils.isDirectory(r.right)) {
       const error = new Error("parent is not a directory");
-      return Monad.either.left(error);
+      return E.left(error);
     }
-    const parentNode = r.value;
+    const parentNode = r.right;
 
     const r2 = this.getNodes(parentNode.children);
-    if (Monad.either.isLeft(r2)) return r2;
+    if (E.isLeft(r2)) return r2;
 
-    const sameNameExists = r2.value
+    const sameNameExists = r2.right
       .map((c: IFileSystemNode) => c.name)
-      .includes(node.name);
+      .includes(params.node.name);
     if (sameNameExists) {
-      const error = new Error(`node name already exists: ${node.name}`);
-      return Monad.either.left(error);
+      const error = new Error(`node name already exists: ${params.node.name}`);
+      return E.left(error);
     }
 
-    parentNode.addChild(node.id);
-    node.parentNodeId = parentNodeId;
-    this._nodes.set(node.id, node);
+    parentNode.addChild(params.node.id);
+    params.node.parentNodeId = params.parentNodeId;
+    this._nodes.set(params.node.id, params.node);
 
-    return Monad.either.right(null);
+    return E.right(null);
   }
 
-  deleteNode (id: string) {
-    const result = this.getNode(id);
-    if (Monad.either.isLeft(result)) return result;
+  deleteNode (id: string): E.Either<Error, null> {
+    const r1 = this.getNode(id);
+    if (E.isLeft(r1)) return r1;
 
-    const result2 = this.getNode(result.value.parentNodeId);
-    if (Monad.either.isLeft(result2)) return result2;
+    const r2 = this.getNode(r1.right.parentNodeId);
+    if (E.isLeft(r2)) return r2;
 
-    const node = result.value;
-    const parentNode = result2.value;
+    const node = r1.right;
+    const parentNode = r2.right;
 
     if (utils.isFile(node)) {
       this._nodes.delete(id);
@@ -88,69 +83,66 @@ export class NodeStore implements INodeStore {
       parentNode.removeChild(node.id);
     }
 
-    return Monad.either.right(null);
+    return E.right(null);
   }
 
-  getNode (id: string): Either<IFileSystemNode> {
+  getNode (id: string): E.Either<Error, IFileSystemNode> {
     const node = this._nodes.get(id);
 
-    if (!node) return Monad.either.left(new Error(`no such node with id: ${id}`));
+    if (!node) return E.left(new Error(`no such node with id: ${id}`));
 
-    return Monad.either.right(node);
+    return E.right(node);
   }
 
-  getNodes (ids: string[]): Either<Nodes> {
+  getNodes (ids: string[]): E.Either<Error, Nodes> {
     const nodes: Nodes = [];
 
     for (const id of ids) {
-      const result = this.getNode(id);
+      const r1 = this.getNode(id);
 
-      if (Monad.either.isRight(result)) {
-        nodes.push(result.value);
+      if (E.isRight(r1)) {
+        nodes.push(r1.right);
       }
     }
 
-    return Monad.either.right(nodes);
+    return E.right(nodes);
   }
 
-  resolveAbsolutePath (id: string): Either<string> {
-    const result = this.getNode(id);
-    if (Monad.either.isLeft(result)) return result;
+  resolveAbsolutePath (id: string): E.Either<Error, string> {
+    const r1 = this.getNode(id);
+    if (E.isLeft(r1)) return r1;
 
-    let currentNode = result.value;
+    let currentNode = r1.right;
     const nodeNames = [currentNode.name];
 
     while (!this._isRootDirectoryId(currentNode.parentNodeId)) {
-      const result = this.getNode(currentNode.parentNodeId);
-      if (Monad.either.isLeft(result)) return result;
+      const r = this.getNode(currentNode.parentNodeId);
+      if (E.isLeft(r)) return r;
 
-      currentNode = result.value;
+      currentNode = r.right;
       nodeNames.unshift(currentNode.name);
     }
 
     const path = `/${nodeNames.join("/")}`;
-    return Monad.either.right(path);
+    return E.right(path);
   }
 
-  resolveNodeFromPath ({
-    path,
-    currentDirectoryId
-  }: {
+  resolveNodeFromPath (params: {
     path: string;
     currentDirectoryId: string;
-  }): Either<IFileSystemNode> {
-    const { isAbsolutePath, fragments } = utils.parsePath(path);
+  }): E.Either<Error, IFileSystemNode> {
+    const { isAbsolutePath, fragments } = utils.parsePath(params.path);
     let resolvedNode: IFileSystemNode;
 
     if (isAbsolutePath) {
-      const result = this.getNode(this._rootDirectoryId);
-      if (Monad.either.isLeft(result)) return result;
-      resolvedNode = result.value;
+      const r = this.getNode(this._rootDirectoryId);
+      if (E.isLeft(r)) return r;
+      resolvedNode = r.right;
     }
     else {
-      const result = this.getNode(currentDirectoryId);
-      if (Monad.either.isLeft(result)) return result;
-      resolvedNode = result.value;
+      const r = this.getNode(params.currentDirectoryId);
+      if (E.isLeft(r)) return r;
+      resolvedNode = r.right;
     }
 
     for (let i = 0; i < fragments.length; i++) {
@@ -158,13 +150,13 @@ export class NodeStore implements INodeStore {
 
       if (fragment === "..") {
         if (this._isRootDirectoryId(resolvedNode.id)) {
-          const error = new Error(`no such file or directory: ${path}`);
-          return Monad.either.left(error);
+          const error = new Error(`no such file or directory: ${params.path}`);
+          return E.left(error);
         }
 
-        const result = this.getNode(resolvedNode.parentNodeId);
-        if (Monad.either.isLeft(result)) return result;
-        resolvedNode = result.value;
+        const r = this.getNode(resolvedNode.parentNodeId);
+        if (E.isLeft(r)) return r;
+        resolvedNode = r.right;
         continue;
       }
       else if (fragment === ".") {
@@ -172,28 +164,28 @@ export class NodeStore implements INodeStore {
       }
       else if (fragment === "") {
         if (i !== fragments.length - 1) {
-          const error = new Error(`no such file or directory: ${path}`);
-          return Monad.either.left(error);
+          const error = new Error(`no such file or directory: ${params.path}`);
+          return E.left(error);
         }
         break;
       }
       else {
         if (!(utils.isDirectory(resolvedNode))) {
-          const error = new Error(`not a directory: ${path}`);
-          return Monad.either.left(error);
+          const error = new Error(`not a directory: ${params.path}`);
+          return E.left(error);
         }
 
-        const result = this._getChildByName({
+        const r = this._getChildByName({
           id: resolvedNode.id,
           name: fragment,
         });
-        if (Monad.either.isLeft(result)) return result;
-        resolvedNode = result.value;
+        if (E.isLeft(r)) return r;
+        resolvedNode = r.right;
         continue;
       }
     }
 
-    return Monad.either.right(resolvedNode);
+    return E.right(resolvedNode);
   }
 
   private _isRootDirectoryId (id: string) {
@@ -206,21 +198,21 @@ export class NodeStore implements INodeStore {
   }: {
     id: string;
     name: string;
-  }): Either<IFileSystemNode> {
-    const result = this.getNode(id);
-    if (Monad.either.isLeft(result)) return result;
-    if (!utils.isDirectory(result.value)) return result;
-    const directory = result.value;
+  }): E.Either<Error, IFileSystemNode> {
+    const r1 = this.getNode(id);
+    if (E.isLeft(r1)) return r1;
+    if (!utils.isDirectory(r1.right)) return r1;
+    const directory = r1.right;
 
-    const result2 = this.getNodes(directory.children);
-    if (Monad.either.isLeft(result2)) return result2;
-    const child = result2.value.find((c: IFileSystemNode) => c.name === name);
+    const r2 = this.getNodes(directory.children);
+    if (E.isLeft(r2)) return r2;
+    const child = r2.right.find((c: IFileSystemNode) => c.name === name);
 
     if (!child) {
       const error = new Error(`no such file or directory: ${name}`);
-      return Monad.either.left(error);
+      return E.left(error);
     }
 
-    return Monad.either.right(child);
+    return E.right(child);
   }
 }

@@ -1,6 +1,5 @@
 import * as cid from "./cid";
 import * as date from "./date";
-import * as Monad from "./Monad";
 import * as paths from "./paths";
 import * as text from "./text";
 
@@ -10,5 +9,4 @@ export {
   date,
   text,
   paths,
-  Monad,
 };

@@ -1,6 +1,6 @@
 import { ApolloClient } from "apollo-client";
 import { NormalizedCacheObject } from "apollo-cache-inmemory";
-import { Either } from "mash-common";
+import * as E from "fp-ts/lib/Either";
 
 export interface IMash {
   initialize(): void;
@@ -19,5 +19,5 @@ export interface IProxy {
   signup(params: {
     name: string;
     password: string;
-  }): Promise<Either>;
+  }): Promise<E.Either<Error, null>>;
 }

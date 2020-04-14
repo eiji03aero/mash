@@ -1,4 +1,4 @@
-import { Monad } from "mash-common";
+import * as E from "fp-ts/lib/Either";
 import { IFileSystem } from "../types";
 import { fixtureNodes } from "../assets";
 
@@ -6,7 +6,7 @@ export const installFixtureNodes = (fs: IFileSystem) => {
   fs.installNodes(fs.rootDirectory.id, fixtureNodes);
 
   const r = fs.resolveNodeFromPath("/home");
-  if (Monad.either.isLeft(r)) throw r.error;
+  if (E.isLeft(r)) throw r.left;
 
-  fs.changeCurrentDirectory(r.value.id);
+  fs.changeCurrentDirectory(r.right.id);
 };

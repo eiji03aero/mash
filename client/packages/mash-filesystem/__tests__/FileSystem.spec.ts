@@ -1,4 +1,4 @@
-import { Monad } from "mash-common";
+import * as E from "fp-ts/lib/Either";
 import { sharedContext, installFixtureNodes } from "./shared";
 import { IFileSystem, IFile, IDirectory } from "../src/types";
 import { FileSystem } from "../src/FileSystem";
@@ -14,8 +14,8 @@ describe("FileSystem", () => {
     installFixtureNodes(fs);
 
     const r = fs.resolveNodeFromPath("/");
-    if (Monad.either.isLeft(r)) throw r.error;
-    rootDirectory = r.value as IDirectory;
+    if (E.isLeft(r)) throw r.left;
+    rootDirectory = r.right as IDirectory;
 
     const r2 = fs.createDirectory({
       parentNodeId: fs.currentDirectory.id,
@@ -23,8 +23,8 @@ describe("FileSystem", () => {
         name: "app",
       }),
     });
-    if (Monad.either.isLeft(r2)) throw r2.error;
-    appDirectory = r2.value;
+    if (E.isLeft(r2)) throw r2.left;
+    appDirectory = r2.right;
 
     const r3 = fs.createFile({
       parentNodeId: appDirectory.id,
@@ -33,8 +33,8 @@ describe("FileSystem", () => {
         content: "hm hm",
       }),
     });
-    if (Monad.either.isLeft(r3)) throw r3.error;
-    domoFile = r3.value;
+    if (E.isLeft(r3)) throw r3.left;
+    domoFile = r3.right;
   });
 
   describe("#createFile", () => {
@@ -44,7 +44,7 @@ describe("FileSystem", () => {
         parentNodeId: fs.currentDirectory.id,
         params: fileParams,
       });
-      expect(r.isError).toBeFalsy();
+      expect(E.isLeft(r)).toBeFalsy();
     });
   });
 
@@ -52,7 +52,7 @@ describe("FileSystem", () => {
     it("works", () => {
       const size = fs.size;
       const r = fs.deleteFile(domoFile.id);
-      if (r.isError) throw r.error;
+      if (E.isLeft(r)) throw r.left;
       expect(fs.size).toEqual(size - 1);
     });
   });
@@ -64,7 +64,7 @@ describe("FileSystem", () => {
         parentNodeId: fs.currentDirectory.id,
         params: directoryParams,
       });
-      expect(r.isError).toBeFalsy();
+      expect(E.isLeft(r)).toBeFalsy();
     });
   });
 
@@ -72,7 +72,7 @@ describe("FileSystem", () => {
     it("works", () => {
       const size = fs.size;
       const r = fs.deleteDirectory(appDirectory.id);
-      if (r.isError) throw r.error;
+      if (E.isLeft(r)) throw r.left;
       expect(fs.size).toEqual(size - 2);
     });
   });
@@ -80,34 +80,34 @@ describe("FileSystem", () => {
   describe("#changeCurrentDirectory", () => {
     it("works", () => {
       const r = fs.changeCurrentDirectory(appDirectory.id);
-      if (Monad.either.isLeft(r)) throw r.error;
+      if (E.isLeft(r)) throw r.left;
       expect(fs.currentDirectory.name).toEqual("app");
     });
 
     it("returns error when path not existed passed", () => {
       const r = fs.changeCurrentDirectory("unknown id");
-      expect(r.isError).toBeTruthy();
+      expect(E.isLeft(r)).toBeTruthy();
     });
   });
 
   describe("#resolveNodeFromPath", () => {
     it("works", () => {
       const r = fs.resolveNodeFromPath("./app");
-      if (Monad.either.isLeft(r)) throw r.error;
-      expect(r.value.id).toEqual(appDirectory.id);
+      if (E.isLeft(r)) throw r.left;
+      expect(r.right.id).toEqual(appDirectory.id);
 
       const r2 = fs.resolveNodeFromPath("/");
-      if (Monad.either.isLeft(r2)) throw r2.error;
-      expect(r2.value.id).toEqual(rootDirectory.id);
+      if (E.isLeft(r2)) throw r2.left;
+      expect(r2.right.id).toEqual(rootDirectory.id);
     });
   });
 
   describe("#resolveAbsolutePath", () => {
     it("works", () => {
       const r = fs.resolveAbsolutePath(appDirectory.id);
-      if (Monad.either.isLeft(r)) throw r.error;
+      if (E.isLeft(r)) throw r.left;
 
-      expect(r.value).toEqual("/home/app")
+      expect(r.right).toEqual("/home/app")
     });
   });
 
@@ -115,8 +115,8 @@ describe("FileSystem", () => {
     it("works", () => {
       const size = appDirectory.children.length;
       const r = fs.getNodes(appDirectory.children);
-      if (Monad.either.isLeft(r)) throw r.error;
-      expect(r.value.length).toEqual(size);
+      if (E.isLeft(r)) throw r.left;
+      expect(r.right.length).toEqual(size);
     });
   });
 

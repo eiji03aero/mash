@@ -1,17 +1,5 @@
 import _ from "lodash";
 
-export interface IEitherLeft {
-  isError: true;
-  error: Error;
-}
-
-export interface IEitherRight<T = any> {
-  isError: false;
-  value: T;
-}
-
-export type Either<T = any> = IEitherLeft | IEitherRight<T>;
-
 export interface ITextObject {
   text: string;
   color?: string;

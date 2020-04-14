@@ -1,5 +1,5 @@
+import * as E from "fp-ts/lib/Either";
 import { ExitStatus } from "mash";
-import { Monad } from "mash-common";
 
 import { CommandPayload } from "../types";
 
@@ -26,11 +26,11 @@ export default async ({
     name: name,
     password: password,
   });
-  if (Monad.either.isLeft(r1)) {
-    environment.error(ExitStatus.Failure, `signup failed: ${r1.error.message}`);
+  if (E.isLeft(r1)) {
+    environment.error(ExitStatus.Failure, `signup failed: ${r1.left.message}`);
     return;
   }
 
-  console.log(r1.value);
+  console.log(r1.right);
   environment.writeln(`signup success! ${name} ${password}`);
 };

@@ -1,4 +1,4 @@
-import { Monad, Either } from "mash-common";
+import * as E from "fp-ts/lib/Either";
 
 import { CustomApolloClient, IProxy } from "../../types";
 import { tags } from "../../graphql";
@@ -15,7 +15,7 @@ export class Proxy implements IProxy {
   async signup (params: {
     name: string;
     password: string;
-  }): Promise<Either> {
+  }): Promise<E.Either<Error, null>> {
     const result = await this._apolloClient.mutate({
       mutation: tags.mutations.Signup,
       variables: {
@@ -27,9 +27,9 @@ export class Proxy implements IProxy {
     })
       .catch(err => err);
     if (result instanceof Error) {
-      return Monad.either.left(result);
+      return E.left(result);
     }
 
-    return Monad.either.right(null);
+    return E.right(null);
   }
 }

@@ -1,5 +1,5 @@
+import * as E from "fp-ts/lib/Either";
 import { IFileSystemNode, utils } from "mash-filesystem";
-import { Monad } from "mash-common";
 
 import { CommandPayload } from "../types";
 
@@ -12,19 +12,19 @@ export default async ({
 }: CommandPayload) => {
   const path = args[1] || ".";
   const r = filesystem.resolveNodeFromPath(path);
-  if (Monad.either.isLeft(r)) {
-    environment.error(1, r.error.message);
+  if (E.isLeft(r)) {
+    environment.error(1, r.left.message);
     return;
   }
-  const node = r.value;
+  const node = r.right;
 
   if (utils.isDirectory(node)) {
     const r = filesystem.getNodes(node.children);
-    if (Monad.either.isLeft(r)) {
-      environment.error(1, r.error.message);
+    if (E.isLeft(r)) {
+      environment.error(1, r.left.message);
       return;
     }
-    const text = r.value
+    const text = r.right
       .map((c: IFileSystemNode) => c.name)
       .join(" ");
     environment.writeln(text);

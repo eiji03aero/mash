@@ -1,4 +1,4 @@
-import { Either } from "mash-common";
+import * as E from "fp-ts/lib/Either";
 
 export interface IFileSystemNodeBasis {
   id?: string;
@@ -44,35 +44,35 @@ export interface INodeStore {
   addNode(params: {
     parentNodeId: string;
     node: IFileSystemNode;
-  }): Either;
-  deleteNode(id: string): Either;
-  getNode(id: string): Either<IFileSystemNode>;
-  getNodes(ids: string[]): Either<Nodes>;
-  resolveAbsolutePath(id: string): Either<string>;
+  }): E.Either<Error, null>;
+  deleteNode(id: string): E.Either<Error, null>;
+  getNode(id: string): E.Either<Error, IFileSystemNode>;
+  getNodes(ids: string[]): E.Either<Error, Nodes>;
+  resolveAbsolutePath(id: string): E.Either<Error, string>;
   resolveNodeFromPath(params: {
     path: string;
     currentDirectoryId: string;
-  }): Either<IFileSystemNode>;
+  }): E.Either<Error, IFileSystemNode>;
 }
 
 export interface IFileSystem {
   currentDirectory: IDirectory;
   rootDirectory: IDirectory;
   size: number;
-  changeCurrentDirectory(id: string): Either;
+  changeCurrentDirectory(id: string): E.Either<Error, null>;
   createFile(params: {
     parentNodeId: string;
     params: IFileBasis;
-  }): Either<IFile>;
-  deleteFile(id: string): Either;
+  }): E.Either<Error, IFile>;
+  deleteFile(id: string): E.Either<Error, null>;
   createDirectory(params: {
     parentNodeId: string;
     params: IDirectoryBasis;
-  }): Either<IDirectory>;
-  deleteDirectory(id: string): Either;
-  resolveNodeFromPath(path: string): Either<IFileSystemNode>;
-  resolveAbsolutePath(id: string): Either<string>;
-  getNodes(ids: string[]): Either<Nodes>;
+  }): E.Either<Error, IDirectory>;
+  deleteDirectory(id: string): E.Either<Error, null>;
+  resolveNodeFromPath(path: string): E.Either<Error, IFileSystemNode>;
+  resolveAbsolutePath(id: string): E.Either<Error, string>;
+  getNodes(ids: string[]): E.Either<Error, Nodes>;
   installNodes(parentDirectoryId: string, nodes: any[]): void;
 }
 

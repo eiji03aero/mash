@@ -1,4 +1,4 @@
-import { Monad } from "mash-common";
+import * as E from "fp-ts/lib/Either";
 import { sharedContext } from "./shared";
 import { INodeStore, IDirectory } from "../src/types";
 import { NodeStore } from "../src/NodeStore";
@@ -21,7 +21,7 @@ describe("NodeStore", () => {
         node: file,
         parentNodeId: root.id
       });
-      if (Monad.either.isLeft(result)) throw result.error;
+      if (E.isLeft(result)) throw result.left;
 
       expect(nodeStore.size).toEqual(size + 1);
     });
@@ -37,7 +37,7 @@ describe("NodeStore", () => {
       });
 
       const result = nodeStore.deleteNode(file.id);
-      if (Monad.either.isLeft(result)) throw result.error;
+      if (E.isLeft(result)) throw result.left;
 
       expect(nodeStore.size).toEqual(size);
     });
@@ -60,7 +60,7 @@ describe("NodeStore", () => {
       expect(nodeStore.size).toEqual(size + 2);
 
       const result = nodeStore.deleteNode(dir.id);
-      if (Monad.either.isLeft(result)) throw result.error;
+      if (E.isLeft(result)) throw result.left;
 
       expect(root.children.length).toEqual(rootChildrenLength);
       expect(nodeStore.size).toEqual(size);
@@ -76,9 +76,9 @@ describe("NodeStore", () => {
       });
 
       const result = nodeStore.getNode(file.id);
-      if (Monad.either.isLeft(result)) throw result.error;
+      if (E.isLeft(result)) throw result.left;
 
-      expect(result.value).toBe(file);
+      expect(result.right).toBe(file);
     });
   });
 
@@ -96,17 +96,17 @@ describe("NodeStore", () => {
       });
 
       const result = nodeStore.getNodes([file.id, file2.id]);
-      if (Monad.either.isLeft(result)) throw result.error;
+      if (E.isLeft(result)) throw result.left;
 
-      expect(result.value.length).toEqual(2);
-      expect(result.value.includes(file)).toBeTruthy();
-      expect(result.value.includes(file2)).toBeTruthy();
+      expect(result.right.length).toEqual(2);
+      expect(result.right.includes(file)).toBeTruthy();
+      expect(result.right.includes(file2)).toBeTruthy();
 
       const result2 = nodeStore.getNodes(["unknown id", file2.id]);
-      if (Monad.either.isLeft(result2)) throw result2.error;
+      if (E.isLeft(result2)) throw result2.left;
 
-      expect(result2.value.length).toEqual(1);
-      expect(result2.value.includes(file2)).toBeTruthy();
+      expect(result2.right.length).toEqual(1);
+      expect(result2.right.includes(file2)).toBeTruthy();
     });
   });
 
@@ -136,8 +136,8 @@ describe("NodeStore", () => {
 
       for (const t of tests) {
         const result = nodeStore.resolveAbsolutePath(t.id);
-        if (Monad.either.isLeft(result)) throw result.error;
-        expect(result.value).toEqual(t.expected);
+        if (E.isLeft(result)) throw result.left;
+        expect(result.right).toEqual(t.expected);
       }
     });
   });
@@ -180,8 +180,8 @@ describe("NodeStore", () => {
 
       for (const t of tests) {
         const result = nodeStore.resolveNodeFromPath({ currentDirectoryId: t.currentDirectoryId, path: t.path});
-        if (Monad.either.isLeft(result)) throw result.error;
-        expect(result.value).toEqual(t.expected);
+        if (E.isLeft(result)) throw result.left;
+        expect(result.right).toEqual(t.expected);
       }
     });
   });

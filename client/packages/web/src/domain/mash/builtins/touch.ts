@@ -1,4 +1,5 @@
-import { Monad, paths } from "mash-common";
+import * as E from "fp-ts/lib/Either";
+import { paths } from "mash-common";
 
 import { CommandPayload } from "../types";
 
@@ -18,11 +19,11 @@ export default async ({
   const { dirname, basename } = paths.inspect(path);
 
   const r = filesystem.resolveNodeFromPath(dirname);
-  if (Monad.either.isLeft(r)) {
-    environment.error(1, r.error.message);
+  if (E.isLeft(r)) {
+    environment.error(1, r.left.message);
     return;
   }
-  const parentNode = r.value;
+  const parentNode = r.right;
 
   const r2 = filesystem.createFile({
     parentNodeId: parentNode.id,
@@ -30,8 +31,8 @@ export default async ({
       name: basename,
     },
   });
-  if (Monad.either.isLeft(r2)) {
-    environment.error(1, r2.error.message);
+  if (E.isLeft(r2)) {
+    environment.error(1, r2.left.message);
     return;
   }
 };

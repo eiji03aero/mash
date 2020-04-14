@@ -35,6 +35,7 @@
     "typescript": "^3.7.2"
   },
   "dependencies": {
+    "fp-ts": "^2.5.3",
     "fs": "^0.0.1-security",
     "js-yaml": "^3.13.1",
     "lodash": "^4.17.15",

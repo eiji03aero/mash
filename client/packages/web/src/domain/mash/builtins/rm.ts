@@ -1,6 +1,6 @@
+import * as E from "fp-ts/lib/Either";
 import { utils } from "mash";
 import { utils as futils } from "mash-filesystem";
-import { Monad } from "mash-common";
 
 import { CommandPayload } from "../types";
 
@@ -20,24 +20,29 @@ export default async ({
   }
 
   const path = args[1];
-  let r = filesystem.resolveNodeFromPath(path);
-  if (Monad.either.isLeft(r)) {
-    environment.error(1, r.error.message);
+  const r = filesystem.resolveNodeFromPath(path);
+  if (E.isLeft(r)) {
+    environment.error(1, r.left.message);
     return;
   }
-  const node = r.value;
+  const node = r.right;
 
   if (futils.isDirectory(node)) {
     if (!options.r) {
       environment.error(1, `${node.name}: is a directory`);
       return;
     }
-    r = filesystem.deleteDirectory(node.id);
-  } else if (futils.isFile(node)) {
-    r = filesystem.deleteFile(node.id);
-  }
 
-  if (Monad.either.isLeft(r)) {
-    environment.error(1, r.error.message);
+    const r = filesystem.deleteDirectory(node.id);
+    if (E.isLeft(r)) {
+      environment.error(1, r.left.message);
+      return
+    }
+  } else if (futils.isFile(node)) {
+    const r = filesystem.deleteFile(node.id);
+    if (E.isLeft(r)) {
+      environment.error(1, r.left.message);
+      return
+    }
   }
 };

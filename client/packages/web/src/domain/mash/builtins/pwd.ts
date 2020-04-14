@@ -1,4 +1,4 @@
-import { Monad } from "mash-common";
+import * as E from "fp-ts/lib/Either";
 
 import { CommandPayload } from "../types";
 
@@ -10,9 +10,9 @@ export default async ({
 }: CommandPayload) => {
   const currentDirectory = filesystem.currentDirectory;
   const r = filesystem.resolveAbsolutePath(currentDirectory.id);
-  if (Monad.either.isLeft(r)) {
-    environment.error(1, r.error.message);
+  if (E.isLeft(r)) {
+    environment.error(1, r.left.message);
     return;
   }
-  environment.writeln(r.value);
+  environment.writeln(r.right);
 };
