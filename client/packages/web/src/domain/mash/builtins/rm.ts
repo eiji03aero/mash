@@ -22,7 +22,7 @@ export default async ({
   const path = args[1];
   let r = filesystem.resolveNodeFromPath(path);
   if (Monad.either.isLeft(r)) {
-    environment.error(1, r.error.message());
+    environment.error(1, r.error.message);
     return;
   }
   const node = r.value;
@@ -38,6 +38,6 @@ export default async ({
   }
 
   if (Monad.either.isLeft(r)) {
-    environment.error(1, r.error.message());
+    environment.error(1, r.error.message);
   }
 };

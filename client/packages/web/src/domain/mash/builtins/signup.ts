@@ -12,10 +12,10 @@ export default async ({
 }: CommandPayload) => {
   // TODO: should return if already signed in
 
-  environment.writeln("Welcome to mash! Initiating signup process ...");
-  const name = await read("Your name: ");
-  const password = await read("Password: ");
-  const passwordConfirmation = await read("Password again: ");
+  environment.writeln("initiating signup process ...");
+  const name = await read("user name: ");
+  const password = await read("password: ");
+  const passwordConfirmation = await read("password again: ");
 
   if (password !== passwordConfirmation) {
     environment.error(ExitStatus.Failure, "password and confirmation did not match");
@@ -27,7 +27,7 @@ export default async ({
     password: password,
   });
   if (Monad.either.isLeft(r1)) {
-    environment.error(ExitStatus.Failure, `signup failed: ${r1.error.message()}`);
+    environment.error(ExitStatus.Failure, `signup failed: ${r1.error.message}`);
     return;
   }
 

@@ -1,4 +1,4 @@
-import { Either, Errors, Monad, date } from "mash-common";
+import { Either, Monad, date } from "mash-common";
 import uuid from "uuid/v4";
 
 import { Directory } from "./Directory";
@@ -56,13 +56,13 @@ export class FileSystem implements IFileSystem {
 
   get rootDirectory () {
     const r = this.resolveNodeFromPath("/");
-    if (r.isError) throw Errors.Factory.standard("root directory is not properly set");
+    if (r.isError) throw new Error("root directory is not properly set");
     return r.value as IDirectory;
   }
 
   get currentDirectory () {
     const r = this._expectDirectoryById(this._currentDirectoryId);
-    if (r.isError) throw Errors.Factory.standard("current directory is not properly set");
+    if (r.isError) throw new Error("current directory is not properly set");
     return r.value;
   }
 
@@ -145,7 +145,7 @@ export class FileSystem implements IFileSystem {
     const r = this._nodeStore.getNode(id);
     if (Monad.either.isLeft(r)) return r;
     if (!utils.isDirectory(r.value)) {
-      const error = Errors.Factory.notDirectory(r.value.name);
+      const error = new Error(`not a directory ${r.value.name}`);
       return Monad.either.left(error);
     }
     return Monad.either.right(r.value);

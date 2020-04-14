@@ -1,9 +1,8 @@
 import _ from "lodash";
-import * as Errors from "./Errors";
 
 export interface IEitherLeft {
   isError: true;
-  error: Errors.Base;
+  error: Error;
 }
 
 export interface IEitherRight<T = any> {

@@ -1,4 +1,4 @@
-import { Monad, Either, Errors } from "mash-common";
+import { Monad, Either } from "mash-common";
 
 import { CustomApolloClient, IProxy } from "../../types";
 import { tags } from "../../graphql";
@@ -27,7 +27,7 @@ export class Proxy implements IProxy {
     })
       .catch(err => err);
     if (result instanceof Error) {
-      return Monad.either.left(Errors.Factory.standard(Error.toString()));
+      return Monad.either.left(result);
     }
 
     return Monad.either.right(null);

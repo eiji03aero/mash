@@ -1,12 +1,12 @@
-import { Monad, Errors } from "../../src";
+import { Monad } from "../../src";
 import { Either } from "../../src/types";
 
 describe("Monad.either", () => {
   describe(".left", () => {
     it("should return EitherLeft", () => {
-      const result = Monad.either.left(Errors.Factory.standard("error"));
+      const result = Monad.either.left(new Error("error"));
       expect(result.isError).toBeTruthy();
-      expect(result.error).toBeInstanceOf(Errors.Base);
+      expect(result.error).toBeInstanceOf(Error);
     });
   });
 
@@ -22,7 +22,7 @@ describe("Monad.either", () => {
   describe("implementation", () => {
     const subject = (num: number): Either => {
       if (num < 5) {
-        return Monad.either.left(Errors.Factory.standard("too small"));
+        return Monad.either.left(new Error("too small"));
       }
       return Monad.either.right<number>(num);
     };
@@ -31,7 +31,7 @@ describe("Monad.either", () => {
       const result = subject(3);
       expect(result.isError).toBeTruthy();
       if (result.isError) {
-        expect(result.error).toBeInstanceOf(Errors.Base);
+        expect(result.error).toBeInstanceOf(Error);
       }
     });
 

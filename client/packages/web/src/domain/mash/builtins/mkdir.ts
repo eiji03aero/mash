@@ -19,7 +19,7 @@ export default async ({
 
   const r = filesystem.resolveNodeFromPath(dirname);
   if (Monad.either.isLeft(r)) {
-    environment.error(1, r.error.message());
+    environment.error(1, r.error.message);
     return;
   }
   const parentNode = r.value;
@@ -31,6 +31,6 @@ export default async ({
     },
   });
   if (Monad.either.isLeft(r2)) {
-    environment.error(1, r2.error.message());
+    environment.error(1, r2.error.message);
   }
 };

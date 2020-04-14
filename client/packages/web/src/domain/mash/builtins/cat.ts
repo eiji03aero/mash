@@ -18,7 +18,7 @@ export default async ({
   const path = args[1];
   const r = filesystem.resolveNodeFromPath(path);
   if (Monad.either.isLeft(r)) {
-    environment.error(1, r.error.message());
+    environment.error(1, r.error.message);
     return;
   }
   const node = r.value;

@@ -9,7 +9,7 @@ module.exports = merge(baseConfig, {
   devServer: {
     inline: true,
     progress: true,
-    contentBase: `${__dirname}/lib`,
+    contentBase: `${__dirname}/dist`,
     watchContentBase: true,
     host: '0.0.0.0',
     port: 8000,

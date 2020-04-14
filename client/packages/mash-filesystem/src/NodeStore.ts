@@ -1,6 +1,5 @@
 import {
   Monad,
-  Errors,
   Either,
 } from "mash-common";
 import {
@@ -42,7 +41,7 @@ export class NodeStore implements INodeStore {
     const r = this.getNode(parentNodeId);
     if (Monad.either.isLeft(r)) return r;
     if (!utils.isDirectory(r.value)) {
-      const error = Errors.Factory.standard("parent is not a directory");
+      const error = new Error("parent is not a directory");
       return Monad.either.left(error);
     }
     const parentNode = r.value;
@@ -54,7 +53,7 @@ export class NodeStore implements INodeStore {
       .map((c: IFileSystemNode) => c.name)
       .includes(node.name);
     if (sameNameExists) {
-      const error = Errors.Factory.standard(`node name already exists: ${node.name}`);
+      const error = new Error(`node name already exists: ${node.name}`);
       return Monad.either.left(error);
     }
 
@@ -95,7 +94,7 @@ export class NodeStore implements INodeStore {
   getNode (id: string): Either<IFileSystemNode> {
     const node = this._nodes.get(id);
 
-    if (!node) return Monad.either.left(Errors.Factory.standard(`no such node with id: ${id}`));
+    if (!node) return Monad.either.left(new Error(`no such node with id: ${id}`));
 
     return Monad.either.right(node);
   }
@@ -159,7 +158,7 @@ export class NodeStore implements INodeStore {
 
       if (fragment === "..") {
         if (this._isRootDirectoryId(resolvedNode.id)) {
-          const error = Errors.Factory.noSuchFileOrDirectory(path);
+          const error = new Error(`no such file or directory: ${path}`);
           return Monad.either.left(error);
         }
 
@@ -173,14 +172,14 @@ export class NodeStore implements INodeStore {
       }
       else if (fragment === "") {
         if (i !== fragments.length - 1) {
-          const error = Errors.Factory.noSuchFileOrDirectory(path);
+          const error = new Error(`no such file or directory: ${path}`);
           return Monad.either.left(error);
         }
         break;
       }
       else {
         if (!(utils.isDirectory(resolvedNode))) {
-          const error = Errors.Factory.notDirectory(resolvedNode.name);
+          const error = new Error(`not a directory: ${path}`);
           return Monad.either.left(error);
         }
 
@@ -218,7 +217,7 @@ export class NodeStore implements INodeStore {
     const child = result2.value.find((c: IFileSystemNode) => c.name === name);
 
     if (!child) {
-      const error = Errors.Factory.noSuchFileOrDirectory(name);
+      const error = new Error(`no such file or directory: ${name}`);
       return Monad.either.left(error);
     }
 

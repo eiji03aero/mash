@@ -1,8 +1,7 @@
-import * as Errors from "../Errors";
 import { Either, IEitherLeft, IEitherRight } from "../types";
 
 export const either = {
-  left (err: Errors.Base): IEitherLeft {
+  left (err: Error): IEitherLeft {
     return { isError: true, error: err };
   },
   right<T = any> (value: T): IEitherRight<T> {
