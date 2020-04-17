@@ -9,7 +9,7 @@ import { getMainDefinition } from "apollo-utilities";
 
 import { CustomApolloClient } from "../types";
 import { initialState, resolvers } from "./resolvers";
-import { getToken } from "../adapters/sessionStore";
+import * as session from "../adapters/session";
 
 const cache = new InMemoryCache;
 
@@ -36,7 +36,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 });
 
 const authLink = setContext((_, { headers }) => {
-  const token = getToken();
+  const token = session.getToken();
   return {
     headers: {
       ...headers,
@@ -46,6 +46,7 @@ const authLink = setContext((_, { headers }) => {
 });
 
 const link = ApolloLink.from([
+  errorLink,
   authLink,
   split(
     ({ query }: Operation) => {
@@ -58,7 +59,6 @@ const link = ApolloLink.from([
     wsLink,
     httpLink,
   ),
-  errorLink,
 ]);
 
 export const apolloClient: CustomApolloClient = new ApolloClient<NormalizedCacheObject>({

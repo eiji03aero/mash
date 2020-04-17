@@ -19,7 +19,7 @@ func New(c *rabbitmq.Client) frontend.AuthProxy {
 	}
 }
 
-func (p *proxy) CreateUser(input model.Signup) (user *model.User, err error) {
+func (p *proxy) CreateUser(input model.ISignup) (user *model.User, err error) {
 	bodyJson, err := json.Marshal(input)
 	if err != nil {
 		return
@@ -55,6 +55,40 @@ func (p *proxy) CreateUser(input model.Signup) (user *model.User, err error) {
 		ID:   responseBody.User.Id,
 		Name: responseBody.User.Name,
 	}
+
+	return
+}
+
+func (p *proxy) LoginUser(input model.ILogin) (token string, err error) {
+	bodyJson, err := json.Marshal(input)
+	if err != nil {
+		return
+	}
+
+	delivery, err := p.client.NewRPCClient().
+		Configure(
+			rabbitmq.PublishArgs{
+				RoutingKey: "auth.rpc.login-user",
+				Publishing: amqp.Publishing{
+					Body: bodyJson,
+				},
+			},
+		).
+		Exec()
+	if err != nil {
+		return
+	}
+
+	responseBody := struct {
+		Token string `json:"token"`
+	}{}
+
+	err = json.Unmarshal(delivery.Body, &responseBody)
+	if err != nil {
+		return
+	}
+
+	token = responseBody.Token
 
 	return
 }

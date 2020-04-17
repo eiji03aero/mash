@@ -1,0 +1,29 @@
+type Mutation {
+  createTodo(input: INewTodo!): Todo!
+
+  signup(input: ISignup!): RSignup!
+  login(input: ILogin!): RLogin!
+}
+
+input INewTodo {
+  text: String!
+  userId: String!
+}
+
+input ISignup {
+  name: String!
+  password: String!
+}
+
+type RSignup {
+  user: User!
+}
+
+input ILogin {
+  name: String!
+  password: String!
+}
+
+type RLogin {
+  token: String!
+}

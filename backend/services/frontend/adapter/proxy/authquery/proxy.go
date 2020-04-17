@@ -3,6 +3,7 @@ package authquery
 import (
 	"encoding/json"
 	"frontend"
+	"frontend/domain"
 	"frontend/graph/model"
 
 	"github.com/eiji03aero/mskit/eventbus/rabbitmq"
@@ -33,6 +34,41 @@ func (p *proxy) LoadUsers() (users []*model.User, err error) {
 	}
 
 	err = json.Unmarshal(delivery.Body, &users)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func (p *proxy) LoadUserByName(name string) (user *model.User, err error) {
+	bodyJson, err := json.Marshal(map[string]interface{}{
+		"name": name,
+	})
+	if err != nil {
+		return
+	}
+
+	delivery, err := p.client.NewRPCClient().
+		Configure(
+			rabbitmq.PublishArgs{
+				RoutingKey: "authquery.rpc.load-user-by-name",
+				Publishing: amqp.Publishing{
+					Body: bodyJson,
+				},
+			},
+		).
+		Exec()
+	if rabbitmq.IsNotFoundResponse(delivery) {
+		err = domain.ErrDataNotFound
+		return
+	}
+	if err != nil {
+		return
+	}
+
+	user = &model.User{}
+	err = json.Unmarshal(delivery.Body, user)
 	if err != nil {
 		return
 	}

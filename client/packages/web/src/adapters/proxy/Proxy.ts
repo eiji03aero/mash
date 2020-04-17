@@ -32,4 +32,25 @@ export class Proxy implements IProxy {
 
     return E.right(null);
   }
+
+  async login (params: {
+    name: string;
+    password: string;
+  }): Promise<E.Either<Error, string>> {
+    const result = await this._apolloClient.mutate({
+      mutation: tag.mutations.Login,
+      variables: {
+        input: {
+          name: params.name,
+          password: params.password,
+        }
+      }
+    })
+      .catch(err => err);
+    if (result instanceof Error) {
+      return E.left(result);
+    }
+
+    return E.right(result.data.login.token);
+  }
 }

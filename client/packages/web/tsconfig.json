@@ -2,9 +2,9 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist/",
-    "declaration": false,
+    "declaration": true,
     "sourceMap": true,
-    "declarationMap": false,
+    "declarationMap": true,
     "jsx": "react"
   }
 }

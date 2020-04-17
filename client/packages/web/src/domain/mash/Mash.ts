@@ -41,6 +41,7 @@ export class Mash implements IMash {
     // Bind methods
     this.read = this.read.bind(this);
     this._onKeyPressHandler = this._onKeyPressHandler.bind(this);
+    this._onKeyHandler = this._onKeyHandler.bind(this);
 
     this._filesystem
     this._terminal
@@ -88,32 +89,36 @@ export class Mash implements IMash {
     this._terminal.prompt();
 
     const value = await new Promise<string>((res) => {
-      const handler = (e: KeyboardEvent) => {
+      const pressHandler = (e: KeyboardEvent) => {
         const value = (e.target as HTMLInputElement).value;
         switch (e.key) {
           case "Enter":
-            this._terminal.offKeyPress(handler);
+            this._terminal.offKeyPress(pressHandler);
+            this._terminal.offKey(this._onKeyHandler);
 
             e.preventDefault();
             res(value);
         }
       };
 
-      this._terminal.onKeyPress(handler);
+      this._terminal.onKeyPress(pressHandler);
+      this._terminal.onKey(this._onKeyHandler);
     });
 
-    this._terminal.config.prompt = currentPrompt;
     this._attachKeyboardHandlers();
+    this._terminal.config.prompt = currentPrompt;
 
     return value;
   }
 
   private _attachKeyboardHandlers () {
     this._terminal.onKeyPress(this._onKeyPressHandler);
+    this._terminal.onKey(this._onKeyHandler);
   }
 
   private _detachKeyboardHandlers () {
     this._terminal.offKeyPress(this._onKeyPressHandler);
+    this._terminal.offKey(this._onKeyHandler);
   }
 
   private async _onKeyPressHandler (e: KeyboardEvent) {
@@ -125,5 +130,17 @@ export class Mash implements IMash {
         this._terminal.prompt();
         break;
     }
+  }
+
+  private _onKeyHandler (e: KeyboardEvent) {
+    // Do nothing if it's enter, in order to avoid bugs
+    // like read method's prompt gets overriden
+    if (e.keyCode === 13) return;
+
+    const value = (e.target as HTMLInputElement).value;
+    const prompt = this._terminal.config.prompt;
+    const lastIndex = this._terminal.rows.length - 1;
+
+    this._terminal.updateRowByIndex(lastIndex, prompt + value);
   }
 }

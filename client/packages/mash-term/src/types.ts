@@ -80,9 +80,11 @@ export interface IParsedRow {
 export type CachedRows = IParsedRow[];
 
 export interface IInputHandler {
+  onKey: (cb: KeyboardEventHandler) => void;
   onKeyDown: (cb: KeyboardEventHandler) => void;
   onKeyPress: (cb: KeyboardEventHandler) => void;
   onKeyUp: (cb: KeyboardEventHandler) => void;
+  offKey: (cb: KeyboardEventHandler) => void;
   offKeyDown: (cb: KeyboardEventHandler) => void;
   offKeyPress: (cb: KeyboardEventHandler) => void;
   offKeyUp: (cb: KeyboardEventHandler) => void;
@@ -109,10 +111,14 @@ export interface ITerminal {
   config: IConfig;
   rowHeight: number;
   windowStat: IWindowStat;
+  rawRows: string[];
+  rows: CachedRows;
   relativePromptRowPosition: number;
+  onKey: (cb: KeyboardEventHandler) => void;
   onKeyDown: (cb: KeyboardEventHandler) => void;
   onKeyPress: (cb: KeyboardEventHandler) => void;
   onKeyUp: (cb: KeyboardEventHandler) => void;
+  offKey: (cb: KeyboardEventHandler) => void;
   offKeyDown: (cb: KeyboardEventHandler) => void;
   offKeyPress: (cb: KeyboardEventHandler) => void;
   offKeyUp: (cb: KeyboardEventHandler) => void;
@@ -126,7 +132,6 @@ export interface ITerminal {
   writeln(str: string): void;
   appendRow(str: string): void;
   updateRowByIndex(index: number, str: string): void;
-  updateLastRow(str: string): void;
   scroll(numberToScroll: number): void;
   scrollToBottom(): void;
 }

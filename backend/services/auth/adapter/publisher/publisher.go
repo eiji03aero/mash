@@ -30,6 +30,8 @@ func (p *publisher) Publish(event interface{}) (err error) {
 	switch e := event.(type) {
 	case userent.UserCreated:
 		return p.publishUserCreated(ej)
+	case userent.UserLoggedIn:
+		return p.publishUserLoggedIn(ej)
 	default:
 		return errbdr.NewErrUnknownParams(p.Publish, e)
 	}
@@ -41,6 +43,20 @@ func (p *publisher) publishUserCreated(eventJson []byte) (err error) {
 			rabbitmq.TopicPublisherOption{
 				ExchangeName: "topic-auth",
 				RoutingKey:   "auth.event.user-created",
+				Publishing: amqp.Publishing{
+					Body: eventJson,
+				},
+			},
+		).
+		Exec()
+}
+
+func (p *publisher) publishUserLoggedIn(eventJson []byte) (err error) {
+	return p.client.NewPublisher().
+		Configure(
+			rabbitmq.TopicPublisherOption{
+				ExchangeName: "topic-auth",
+				RoutingKey:   "auth.event.user-logged-in",
 				Publishing: amqp.Publishing{
 					Body: eventJson,
 				},

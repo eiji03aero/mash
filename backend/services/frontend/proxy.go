@@ -5,12 +5,11 @@ import (
 )
 
 type AuthProxy interface {
-	CreateUser(input model.Signup) (*model.User, error)
+	CreateUser(input model.ISignup) (*model.User, error)
+	LoginUser(input model.ILogin) (string, error)
 }
 
 type AuthQueryProxy interface {
 	LoadUsers() ([]*model.User, error)
-}
-
-type HogeProxy interface {
+	LoadUserByName(name string) (*model.User, error)
 }

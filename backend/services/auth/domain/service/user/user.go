@@ -10,22 +10,21 @@ import (
 )
 
 type Service struct {
-	authQueryProxy auth.AuthQueryProxy
+	eventRepository *mskit.EventRepository
+	authQueryProxy  auth.AuthQueryProxy
 }
 
 func New(
+	er *mskit.EventRepository,
 	aqpxy auth.AuthQueryProxy,
 ) *Service {
 	return &Service{
-		authQueryProxy: aqpxy,
+		eventRepository: er,
+		authQueryProxy:  aqpxy,
 	}
 }
 
-func (s *Service) Create(cmd userent.CreateUser) (
-	userAgg *userent.UserAggregate,
-	events mskit.Events,
-	err error,
-) {
+func (s *Service) Create(cmd userent.CreateUser) (userAgg *userent.UserAggregate, err error) {
 	if cmd.Name == "" {
 		err = domain.ErrUserNameInvalid
 		return
@@ -47,7 +46,41 @@ func (s *Service) Create(cmd userent.CreateUser) (
 	cmd.Id = id
 	userAgg = userent.NewUserAggregate()
 
-	events, err = userAgg.Process(cmd)
+	err = s.eventRepository.ExecuteCommand(userAgg, cmd)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func (s *Service) Login(cmd userent.LoginUser) (token string, err error) {
+	userAgg, err := s.LoadUserAggregateByName(cmd.Name)
+	if err != nil {
+		return
+	}
+
+	err = s.eventRepository.ExecuteCommand(userAgg, cmd)
+	if err != nil {
+		return
+	}
+
+	token = userAgg.GetUserToken()
+
+	return
+}
+
+func (s *Service) LoadUserAggregateByName(name string) (userAgg *userent.UserAggregate, err error) {
+	userAgg = userent.NewUserAggregate()
+	user, err := s.authQueryProxy.LoadUserByName(name)
+	if err != nil {
+		return
+	}
+
+	err = s.eventRepository.Load(user.Id, userAgg)
+	if err != nil {
+		return
+	}
 
 	return
 }

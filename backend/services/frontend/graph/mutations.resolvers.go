@@ -10,7 +10,7 @@ import (
 	"frontend/graph/model"
 )
 
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
+func (r *mutationResolver) CreateTodo(ctx context.Context, input model.INewTodo) (*model.Todo, error) {
 	todo := &model.Todo{
 		ID:   "domo",
 		Done: true,
@@ -29,13 +29,12 @@ func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) 
 	return todo, nil
 }
 
-func (r *mutationResolver) Signup(ctx context.Context, input model.Signup) (*model.User, error) {
-	user, err := r.authProxy.CreateUser(input)
-	if err != nil {
-		return user, err
-	}
+func (r *mutationResolver) Signup(ctx context.Context, input model.ISignup) (*model.RSignup, error) {
+	return r.service.Signup(input)
+}
 
-	return user, err
+func (r *mutationResolver) Login(ctx context.Context, input model.ILogin) (*model.RLogin, error) {
+	return r.service.Login(input)
 }
 
 // Mutation returns generated.MutationResolver implementation.

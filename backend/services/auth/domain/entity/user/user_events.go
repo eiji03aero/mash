@@ -5,3 +5,7 @@ type UserCreated struct {
 	Name           string `json:"name"`
 	HashedPassword string `json:"hashed_password"`
 }
+
+type UserLoggedIn struct {
+	Token string `json:"token"`
+}

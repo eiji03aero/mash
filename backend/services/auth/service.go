@@ -6,4 +6,5 @@ import (
 
 type Service interface {
 	CreateUser(cmd userent.CreateUser) (*userent.UserAggregate, error)
+	LoginUser(cmd userent.LoginUser) (string, error)
 }

@@ -5,3 +5,8 @@ type CreateUser struct {
 	Name     string `json:"name"`
 	Password string `json:"password"`
 }
+
+type LoginUser struct {
+	Name     string `json:"name"`
+	Password string `json:"password"`
+}

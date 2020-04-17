@@ -49,13 +49,22 @@ export class Terminal implements ITerminal {
     this.focus();
   }
 
+  get onKey () { return this._inputHandler.onKey; }
   get onKeyDown () { return this._inputHandler.onKeyDown; }
   get onKeyPress () { return this._inputHandler.onKeyPress; }
   get onKeyUp () { return this._inputHandler.onKeyDown; }
+  get offKey () { return this._inputHandler.offKey; }
   get offKeyDown () { return this._inputHandler.offKeyDown; }
   get offKeyPress () { return this._inputHandler.offKeyPress; }
   get offKeyUp () { return this._inputHandler.offKeyDown; }
 
+
+  get rows () {
+    return this._buffer.rows;
+  }
+  get rawRows () {
+    return this._buffer.rawRows;
+  }
 
   get relativePromptRowPosition () {
     return this._buffer.rows.length - 1 - this._buffer.rowPosition;
@@ -128,10 +137,6 @@ export class Terminal implements ITerminal {
   updateRowByIndex (idx: number, str: string) {
     this._buffer.updateRowByIndex(idx, str);
     this._render();
-  }
-
-  updateLastRow (str: string) {
-    this.updateRowByIndex(this._buffer.rows.length - 1, str);
   }
 
   scroll (numberToScroll: number) {

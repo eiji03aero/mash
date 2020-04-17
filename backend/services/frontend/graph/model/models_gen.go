@@ -2,14 +2,27 @@
 
 package model
 
-type NewTodo struct {
+type ILogin struct {
+	Name     string `json:"name"`
+	Password string `json:"password"`
+}
+
+type INewTodo struct {
 	Text   string `json:"text"`
 	UserID string `json:"userId"`
 }
 
-type Signup struct {
+type ISignup struct {
 	Name     string `json:"name"`
 	Password string `json:"password"`
+}
+
+type RLogin struct {
+	Token string `json:"token"`
+}
+
+type RSignup struct {
+	User *User `json:"user"`
 }
 
 type Todo struct {

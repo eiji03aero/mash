@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const CreateTodo = gql`
-  mutation CreateTodo($input: NewTodo!) {
+  mutation CreateTodo($input: INewTodo!) {
     createTodo(input: $input) {
       id
       text
@@ -10,10 +10,20 @@ export const CreateTodo = gql`
 `;
 
 export const Signup = gql`
-  mutation Signup($input: Signup!) {
+  mutation Signup($input: ISignup!) {
     signup(input: $input) {
-      id
-      name
+      user {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const Login = gql`
+  mutation Login($input: ILogin!) {
+    login(input: $input) {
+      token
     }
   }
 `;

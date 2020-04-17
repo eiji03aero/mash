@@ -38,10 +38,14 @@ func main() {
 	authProxy := authpxy.New(eb)
 	authQueryProxy := authquerypxy.New(eb)
 
-	_ = frontendsvc.New()
+	svc := frontendsvc.New(
+		authProxy,
+		authQueryProxy,
+	)
 
 	gqlServer := graph.NewServer(
 		redisClient,
+		svc,
 		authProxy,
 		authQueryProxy,
 	)

@@ -12,6 +12,7 @@ import (
 
 type Resolver struct {
 	redisClient    *redis.Client
+	service        frontend.Service
 	authProxy      frontend.AuthProxy
 	authQueryProxy frontend.AuthQueryProxy
 	todoChannels   map[string]chan *model.Todo
@@ -20,11 +21,13 @@ type Resolver struct {
 
 func NewResolver(
 	rc *redis.Client,
+	svc frontend.Service,
 	apxy frontend.AuthProxy,
 	aqpxy frontend.AuthQueryProxy,
 ) *Resolver {
 	return &Resolver{
 		redisClient:    rc,
+		service:        svc,
 		authProxy:      apxy,
 		authQueryProxy: aqpxy,
 		todoChannels:   map[string]chan *model.Todo{},

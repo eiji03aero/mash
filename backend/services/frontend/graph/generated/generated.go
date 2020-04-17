@@ -46,12 +46,21 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
-		CreateTodo func(childComplexity int, input model.NewTodo) int
-		Signup     func(childComplexity int, input model.Signup) int
+		CreateTodo func(childComplexity int, input model.INewTodo) int
+		Login      func(childComplexity int, input model.ILogin) int
+		Signup     func(childComplexity int, input model.ISignup) int
 	}
 
 	Query struct {
 		Users func(childComplexity int) int
+	}
+
+	RLogin struct {
+		Token func(childComplexity int) int
+	}
+
+	RSignup struct {
+		User func(childComplexity int) int
 	}
 
 	Subscription struct {
@@ -72,8 +81,9 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error)
-	Signup(ctx context.Context, input model.Signup) (*model.User, error)
+	CreateTodo(ctx context.Context, input model.INewTodo) (*model.Todo, error)
+	Signup(ctx context.Context, input model.ISignup) (*model.RSignup, error)
+	Login(ctx context.Context, input model.ILogin) (*model.RLogin, error)
 }
 type QueryResolver interface {
 	Users(ctx context.Context) ([]*model.User, error)
@@ -107,7 +117,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateTodo(childComplexity, args["input"].(model.NewTodo)), true
+		return e.complexity.Mutation.CreateTodo(childComplexity, args["input"].(model.INewTodo)), true
+
+	case "Mutation.login":
+		if e.complexity.Mutation.Login == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_login_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.Login(childComplexity, args["input"].(model.ILogin)), true
 
 	case "Mutation.signup":
 		if e.complexity.Mutation.Signup == nil {
@@ -119,7 +141,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.Signup(childComplexity, args["input"].(model.Signup)), true
+		return e.complexity.Mutation.Signup(childComplexity, args["input"].(model.ISignup)), true
 
 	case "Query.users":
 		if e.complexity.Query.Users == nil {
@@ -127,6 +149,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Users(childComplexity), true
+
+	case "RLogin.token":
+		if e.complexity.RLogin.Token == nil {
+			break
+		}
+
+		return e.complexity.RLogin.Token(childComplexity), true
+
+	case "RSignup.user":
+		if e.complexity.RSignup.User == nil {
+			break
+		}
+
+		return e.complexity.RSignup.User(childComplexity), true
 
 	case "Subscription.todoAdded":
 		if e.complexity.Subscription.TodoAdded == nil {
@@ -276,19 +312,33 @@ type User {
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/schema.mutations.graphqls", Input: `type Mutation {
-  createTodo(input: NewTodo!): Todo!
+  createTodo(input: INewTodo!): Todo!
 
-  signup(input: Signup!): User!
+  signup(input: ISignup!): RSignup!
+  login(input: ILogin!): RLogin!
 }
 
-input NewTodo {
+input INewTodo {
   text: String!
   userId: String!
 }
 
-input Signup {
+input ISignup {
   name: String!
   password: String!
+}
+
+type RSignup {
+  user: User!
+}
+
+input ILogin {
+  name: String!
+  password: String!
+}
+
+type RLogin {
+  token: String!
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/schema.queries.graphqls", Input: `type Query {
@@ -309,9 +359,23 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 func (ec *executionContext) field_Mutation_createTodo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.NewTodo
+	var arg0 model.INewTodo
 	if tmp, ok := rawArgs["input"]; ok {
-		arg0, err = ec.unmarshalNNewTodo2frontendᚋgraphᚋmodelᚐNewTodo(ctx, tmp)
+		arg0, err = ec.unmarshalNINewTodo2frontendᚋgraphᚋmodelᚐINewTodo(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.ILogin
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalNILogin2frontendᚋgraphᚋmodelᚐILogin(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -323,9 +387,9 @@ func (ec *executionContext) field_Mutation_createTodo_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_signup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.Signup
+	var arg0 model.ISignup
 	if tmp, ok := rawArgs["input"]; ok {
-		arg0, err = ec.unmarshalNSignup2frontendᚋgraphᚋmodelᚐSignup(ctx, tmp)
+		arg0, err = ec.unmarshalNISignup2frontendᚋgraphᚋmodelᚐISignup(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -422,7 +486,7 @@ func (ec *executionContext) _Mutation_createTodo(ctx context.Context, field grap
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateTodo(rctx, args["input"].(model.NewTodo))
+		return ec.resolvers.Mutation().CreateTodo(rctx, args["input"].(model.INewTodo))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -463,7 +527,7 @@ func (ec *executionContext) _Mutation_signup(ctx context.Context, field graphql.
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().Signup(rctx, args["input"].(model.Signup))
+		return ec.resolvers.Mutation().Signup(rctx, args["input"].(model.ISignup))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -475,9 +539,50 @@ func (ec *executionContext) _Mutation_signup(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.User)
+	res := resTmp.(*model.RSignup)
 	fc.Result = res
-	return ec.marshalNUser2ᚖfrontendᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNRSignup2ᚖfrontendᚋgraphᚋmodelᚐRSignup(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_login_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().Login(rctx, args["input"].(model.ILogin))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.RLogin)
+	fc.Result = res
+	return ec.marshalNRLogin2ᚖfrontendᚋgraphᚋmodelᚐRLogin(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_users(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -581,6 +686,74 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	res := resTmp.(*introspection.Schema)
 	fc.Result = res
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RLogin_token(ctx context.Context, field graphql.CollectedField, obj *model.RLogin) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "RLogin",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Token, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RSignup_user(ctx context.Context, field graphql.CollectedField, obj *model.RSignup) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "RSignup",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖfrontendᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Subscription_todoAdded(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
@@ -1893,8 +2066,32 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputNewTodo(ctx context.Context, obj interface{}) (model.NewTodo, error) {
-	var it model.NewTodo
+func (ec *executionContext) unmarshalInputILogin(ctx context.Context, obj interface{}) (model.ILogin, error) {
+	var it model.ILogin
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "password":
+			var err error
+			it.Password, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputINewTodo(ctx context.Context, obj interface{}) (model.INewTodo, error) {
+	var it model.INewTodo
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -1917,8 +2114,8 @@ func (ec *executionContext) unmarshalInputNewTodo(ctx context.Context, obj inter
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputSignup(ctx context.Context, obj interface{}) (model.Signup, error) {
-	var it model.Signup
+func (ec *executionContext) unmarshalInputISignup(ctx context.Context, obj interface{}) (model.ISignup, error) {
+	var it model.ISignup
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -1974,6 +2171,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "login":
+			out.Values[i] = ec._Mutation_login(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2018,6 +2220,60 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
 			out.Values[i] = ec._Query___schema(ctx, field)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var rLoginImplementors = []string{"RLogin"}
+
+func (ec *executionContext) _RLogin(ctx context.Context, sel ast.SelectionSet, obj *model.RLogin) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, rLoginImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RLogin")
+		case "token":
+			out.Values[i] = ec._RLogin_token(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var rSignupImplementors = []string{"RSignup"}
+
+func (ec *executionContext) _RSignup(ctx context.Context, sel ast.SelectionSet, obj *model.RSignup) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, rSignupImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RSignup")
+		case "user":
+			out.Values[i] = ec._RSignup_user(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2396,12 +2652,44 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) unmarshalNNewTodo2frontendᚋgraphᚋmodelᚐNewTodo(ctx context.Context, v interface{}) (model.NewTodo, error) {
-	return ec.unmarshalInputNewTodo(ctx, v)
+func (ec *executionContext) unmarshalNILogin2frontendᚋgraphᚋmodelᚐILogin(ctx context.Context, v interface{}) (model.ILogin, error) {
+	return ec.unmarshalInputILogin(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNSignup2frontendᚋgraphᚋmodelᚐSignup(ctx context.Context, v interface{}) (model.Signup, error) {
-	return ec.unmarshalInputSignup(ctx, v)
+func (ec *executionContext) unmarshalNINewTodo2frontendᚋgraphᚋmodelᚐINewTodo(ctx context.Context, v interface{}) (model.INewTodo, error) {
+	return ec.unmarshalInputINewTodo(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNISignup2frontendᚋgraphᚋmodelᚐISignup(ctx context.Context, v interface{}) (model.ISignup, error) {
+	return ec.unmarshalInputISignup(ctx, v)
+}
+
+func (ec *executionContext) marshalNRLogin2frontendᚋgraphᚋmodelᚐRLogin(ctx context.Context, sel ast.SelectionSet, v model.RLogin) graphql.Marshaler {
+	return ec._RLogin(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRLogin2ᚖfrontendᚋgraphᚋmodelᚐRLogin(ctx context.Context, sel ast.SelectionSet, v *model.RLogin) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._RLogin(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRSignup2frontendᚋgraphᚋmodelᚐRSignup(ctx context.Context, sel ast.SelectionSet, v model.RSignup) graphql.Marshaler {
+	return ec._RSignup(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRSignup2ᚖfrontendᚋgraphᚋmodelᚐRSignup(ctx context.Context, sel ast.SelectionSet, v *model.RSignup) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._RSignup(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {

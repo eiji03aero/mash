@@ -7,7 +7,7 @@ export interface IMash {
   read(promptStr: string): Promise<string>;
 }
 
-export interface IService {
+export interface IService extends IProxy {
   initialize(params: {
     terminalContainer: HTMLElement;
   }): void;
@@ -20,4 +20,8 @@ export interface IProxy {
     name: string;
     password: string;
   }): Promise<E.Either<Error, null>>;
+  login(params: {
+    name: string;
+    password: string;
+  }): Promise<E.Either<Error, string>>;
 }

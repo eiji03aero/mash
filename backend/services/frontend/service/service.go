@@ -5,8 +5,16 @@ import (
 )
 
 type service struct {
+	authProxy      frontend.AuthProxy
+	authQueryProxy frontend.AuthQueryProxy
 }
 
-func New() frontend.Service {
-	return &service{}
+func New(
+	apxy frontend.AuthProxy,
+	aqpxy frontend.AuthQueryProxy,
+) frontend.Service {
+	return &service{
+		authProxy:      apxy,
+		authQueryProxy: aqpxy,
+	}
 }

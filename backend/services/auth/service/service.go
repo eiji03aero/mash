@@ -20,6 +20,6 @@ func New(
 	return &service{
 		eventRepository: er,
 		authQueryProxy:  aqpxy,
-		userService:     usersvc.New(aqpxy),
+		userService:     usersvc.New(er, aqpxy),
 	}
 }

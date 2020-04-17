@@ -15,11 +15,13 @@ import (
 
 func NewServer(
 	redisClient *redis.Client,
+	svc frontendroot.Service,
 	apxy frontendroot.AuthProxy,
 	aqpxy frontendroot.AuthQueryProxy,
 ) *handler.Server {
 	resolver := NewResolver(
 		redisClient,
+		svc,
 		apxy,
 		aqpxy,
 	)

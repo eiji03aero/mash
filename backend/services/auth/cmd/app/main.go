@@ -26,6 +26,7 @@ func main() {
 
 	er := mskit.NewEventRegistry()
 	er.Set(userent.UserCreated{})
+	er.Set(userent.UserLoggedIn{})
 
 	es, err := eventstore.New(dbOption, er)
 	if err != nil {

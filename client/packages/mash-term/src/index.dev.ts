@@ -33,12 +33,19 @@ document.addEventListener("DOMContentLoaded", (_: Event) => {
 
   (window as any).t = terminal;
 
-  terminal.onKeyUp((e: KeyboardEvent) => {
-    switch (e.key) {
-      case "Enter":
-        e.preventDefault();
-        terminal.prompt();
-        break;
+  terminal.onKeyPress((e: KeyboardEvent) => {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      terminal.prompt();
     }
+  });
+
+  terminal.onKey((e: KeyboardEvent) => {
+    console.log("key", e.type, e.timeStamp)
+    const str = (e.target as HTMLInputElement).value;
+    const prompt = terminal.config.prompt;
+    const lastIndex = terminal.rows.length - 1;
+
+    terminal.updateRowByIndex(lastIndex, prompt + str);
   });
 });

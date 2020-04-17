@@ -35,21 +35,17 @@
 # features
 - user signup
   - todos
-    - add name check on UsersService#Create
-  - flow
-    - run signup command
-  - commands
-    - signup
-      - arguments
-        - none
-      - detail
-        - return error if already signed in
-        - takes name password, password_confirmation
-        - posts to backend
-          - return error if name is taken
-          - put signed value in cookie
-
+    - return error if already signed in
 - user login
+  - todos
+    - return error if already signed in
+    - wip with adding logic to login on auth
+    - somehow second prompt gets overriden, while signup flow does not have this
+  - flow
+    - prompt user to input name and password
+    - sends request
+      - check existence and password
+      - return okay if true
 - user logout
 
 # refactor
@@ -59,6 +55,12 @@
 # fix
 - cursor sometimes vanishes
   - eg after typed like crazy
+  - should restart blinking when:
+    - click the screen
+    - hit keyboard
+- read method is not really working
+  - eg. prompt would be overridden by current after hitting enter
+  - fix: the updating logic should be passed from outside
 
 # packages
 - mash

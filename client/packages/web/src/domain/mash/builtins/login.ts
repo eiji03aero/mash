@@ -2,6 +2,7 @@ import * as E from "fp-ts/lib/Either";
 import { ExitStatus } from "mash";
 
 import { CommandPayload } from "../types";
+import * as session from "../../../adapters/session";
 
 export default async ({
   environment,
@@ -12,17 +13,11 @@ export default async ({
 }: CommandPayload) => {
   // TODO: should return if already signed in
 
-  environment.writeln("initiating signup process ...");
+  environment.writeln("logging you in ...");
   const name = await read("user name: ");
   const password = await read("password: ");
-  const passwordConfirmation = await read("password again: ");
 
-  if (password !== passwordConfirmation) {
-    environment.error(ExitStatus.Failure, "password and confirmation did not match");
-    return;
-  }
-
-  const r1 = await proxy.signup({
+  const r1 = await proxy.login({
     name: name,
     password: password,
   });
@@ -31,5 +26,6 @@ export default async ({
     return;
   }
 
-  environment.writeln(`signup success! ${name} ${password}`);
+  session.setToken(r1.right);
+  environment.writeln(`signup success! ${name} ${password} ${r1.right}`);
 };
