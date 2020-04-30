@@ -29,4 +29,5 @@ export class Service implements IService {
   // -------------------- Proxy --------------------
   get signup () { return this._proxy.signup; }
   get login () { return this._proxy.login; }
+  get logout () { return this._proxy.logout; }
 }

@@ -21,3 +21,12 @@ func (s *service) LoginUser(cmd userent.LoginUser) (token string, err error) {
 
 	return
 }
+
+func (s *service) LogoutUser(cmd userent.LogoutUser) (err error) {
+	err = s.userService.Logout(cmd)
+	if err != nil {
+		return
+	}
+
+	return
+}

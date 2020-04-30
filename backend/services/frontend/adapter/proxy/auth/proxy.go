@@ -92,3 +92,28 @@ func (p *proxy) LoginUser(input model.ILogin) (token string, err error) {
 
 	return
 }
+
+func (p *proxy) LogoutUser(id string) (err error) {
+	bodyJson, err := json.Marshal(map[string]interface{}{
+		"id": id,
+	})
+	if err != nil {
+		return
+	}
+
+	_, err = p.client.NewRPCClient().
+		Configure(
+			rabbitmq.PublishArgs{
+				RoutingKey: "auth.rpc.logout-user",
+				Publishing: amqp.Publishing{
+					Body: bodyJson,
+				},
+			},
+		).
+		Exec()
+	if err != nil {
+		return
+	}
+
+	return
+}

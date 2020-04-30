@@ -20,6 +20,7 @@ func New(c *rabbitmq.Client, svc authquery.Service) *consumer {
 
 func (c *consumer) Run() error {
 	go c.runAuthUserCreated()
+	go c.runAuthUserLoggedIn()
 
 	return nil
 }

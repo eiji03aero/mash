@@ -21,10 +21,25 @@ func (s *service) Login(input model.ILogin) (result *model.RLogin, err error) {
 
 	token, err := s.authProxy.LoginUser(input)
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	result.Token = token
+	return
+}
+
+func (s *service) Logout(token string) (result *bool, err error) {
+	user, err := s.authQueryProxy.LoadUser(map[string]interface{}{
+		"token": token,
+	})
+	if err != nil {
+		return
+	}
+
+	err = s.authProxy.LogoutUser(user.ID)
+	if err != nil {
+		return
+	}
 
 	return
 }

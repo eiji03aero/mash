@@ -36,6 +36,8 @@ func (u *UserAggregate) Process(command interface{}) (mskit.Events, error) {
 		return u.processCreateUser(cmd)
 	case LoginUser:
 		return u.processLoginUser(cmd)
+	case LogoutUser:
+		return u.processLogoutUser(cmd)
 	default:
 		return mskit.Events{}, errbdr.NewErrUnknownParams(u.Process, cmd)
 	}
@@ -74,7 +76,19 @@ func (u *UserAggregate) processLoginUser(cmd LoginUser) (events mskit.Events, er
 		u.Id,
 		UserAggregate{},
 		UserLoggedIn{
+			Id:    u.Id,
 			Token: token,
+		},
+	)
+	return
+}
+
+func (u *UserAggregate) processLogoutUser(cmd LogoutUser) (events mskit.Events, err error) {
+	events = mskit.NewEventsSingle(
+		u.Id,
+		UserAggregate{},
+		UserLoggedOut{
+			Id: u.Id,
 		},
 	)
 	return
@@ -86,12 +100,15 @@ func (u *UserAggregate) Apply(event interface{}) error {
 		return u.applyUserCreated(e)
 	case UserLoggedIn:
 		return u.applyUserLoggedIn(e)
+	case UserLoggedOut:
+		return u.applyUserLoggedOut(e)
 	default:
 		return errbdr.NewErrUnknownParams(u.Apply, e)
 	}
 }
 
 func (u *UserAggregate) applyUserCreated(e UserCreated) (err error) {
+	u.Id = e.Id
 	u.User.Id = e.Id
 	u.User.Name = e.Name
 	u.User.HashedPassword = e.HashedPassword
@@ -100,5 +117,10 @@ func (u *UserAggregate) applyUserCreated(e UserCreated) (err error) {
 
 func (u *UserAggregate) applyUserLoggedIn(e UserLoggedIn) (err error) {
 	u.User.Token = e.Token
+	return
+}
+
+func (u *UserAggregate) applyUserLoggedOut(e UserLoggedOut) (err error) {
+	u.User.Token = ""
 	return
 }

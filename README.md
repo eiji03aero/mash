@@ -32,27 +32,8 @@
 ## Todos
 
 ```
-# features
-- user signup
-  - todos
-    - return error if already signed in
-- user login
-  - todos
-    - return error if already signed in
-    - wip with adding logic to login on auth
-    - somehow second prompt gets overriden, while signup flow does not have this
-  - flow
-    - prompt user to input name and password
-    - sends request
-      - check existence and password
-      - return okay if true
-- user logout
-
-# refactor
-- create template stuff for client package
-  - when adding next package
-
 # fix
+- cursor is not shown, type is not reflected on deployed page
 - cursor sometimes vanishes
   - eg after typed like crazy
   - should restart blinking when:
@@ -61,6 +42,33 @@
 - read method is not really working
   - eg. prompt would be overridden by current after hitting enter
   - fix: the updating logic should be passed from outside
+
+# features
+- user signup
+  - todos
+    - return error if already signed in
+- user login
+  - todos
+    - return error if already signed in
+- user logout
+  - todos
+    - implementation
+      - command on client
+      - imp mutation
+      - imp endpoint on auth service
+
+# refactor
+- mash
+  - move logics (signup login) into service
+  - checking login state before executing the commands
+- frontend service
+  - refactor around authentication with middleware
+- take a look at di libs like wire
+- probably should update mskit to simplify event related registration
+  - when evenrrepository utilize event structs
+  - when publishing event
+- create template stuff for client package
+  - when adding next package
 
 # packages
 - mash

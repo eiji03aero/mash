@@ -7,6 +7,7 @@ import dirname from "./dirname";
 import echo from "./echo";
 import ls from "./ls";
 import login from "./login";
+import logout from "./logout";
 import mkdir from "./mkdir";
 import pwd from "./pwd";
 import rm from "./rm";
@@ -21,6 +22,7 @@ export const builtins: CommandMap = {
   echo,
   ls,
   login,
+  logout,
   mkdir,
   pwd,
   rm,

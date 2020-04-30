@@ -30,7 +30,7 @@ func (s *Service) Create(cmd userent.CreateUser) (userAgg *userent.UserAggregate
 		return
 	}
 
-	_, err = s.authQueryProxy.LoadUserByName(cmd.Name)
+	_, err = s.authQueryProxy.LoadUser(map[string]interface{}{"name": cmd.Name})
 	if err == nil {
 		err = domain.ErrUserNameTaken
 		return
@@ -70,9 +70,21 @@ func (s *Service) Login(cmd userent.LoginUser) (token string, err error) {
 	return
 }
 
+func (s *Service) Logout(cmd userent.LogoutUser) (err error) {
+	userAgg := userent.NewUserAggregate()
+	err = s.eventRepository.Load(cmd.Id, userAgg)
+
+	err = s.eventRepository.ExecuteCommand(userAgg, cmd)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
 func (s *Service) LoadUserAggregateByName(name string) (userAgg *userent.UserAggregate, err error) {
 	userAgg = userent.NewUserAggregate()
-	user, err := s.authQueryProxy.LoadUserByName(name)
+	user, err := s.authQueryProxy.LoadUser(map[string]interface{}{"name": name})
 	if err != nil {
 		return
 	}

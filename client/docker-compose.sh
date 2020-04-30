@@ -1,11 +1,13 @@
 #!/bin/bash
 
-COMMAND=${1:-up}
+project_name="mash-client"
+cmd=${1:-up}
 
 client_cname="mash-client"
 
 execute-docker-compose () {
   docker-compose \
+    -p $project_name \
     -f ./docker-compose.yml \
     -f ./docker-compose.dev.yml \
     $@
@@ -45,32 +47,32 @@ clean () {
   execute-docker-compose down --volumes
 }
 
-if [ $COMMAND = 'up' ] && [ $# -le 1 ]; then
+if [ $cmd = 'up' ] && [ $# -le 1 ]; then
   execute-docker-sync start
   execute-docker-compose up -d
   execute-docker-compose exec $client_cname bash
   stop-docker-compose
 
-elif [ $COMMAND = 'bash' ]; then
+elif [ $cmd = 'bash' ]; then
   execute-docker-compose exec $client_cname bash
-elif [ $COMMAND = 'bash-m' ]; then
+elif [ $cmd = 'bash-m' ]; then
   execute-docker-compose exec -w /projects/client/packages/mash $client_cname bash
-elif [ $COMMAND = 'bash-fs' ]; then
+elif [ $cmd = 'bash-fs' ]; then
   execute-docker-compose exec -w /projects/client/packages/mash-filesystem $client_cname bash
-elif [ $COMMAND = 'bash-c' ]; then
+elif [ $cmd = 'bash-c' ]; then
   execute-docker-compose exec -w /projects/client/packages/mash-common $client_cname bash
-elif [ $COMMAND = 'bash-t' ]; then
+elif [ $cmd = 'bash-t' ]; then
   execute-docker-compose exec -w /projects/client/packages/mash-term $client_cname bash
-elif [ $COMMAND = 'bash-w' ]; then
+elif [ $cmd = 'bash-w' ]; then
   execute-docker-compose exec -w /projects/client/packages/web $client_cname bash
 
-elif [ $COMMAND = 'bootstrap' ]; then
+elif [ $cmd = 'bootstrap' ]; then
   bootstrap
 
-elif [ $COMMAND = 'clean' ]; then
+elif [ $cmd = 'clean' ]; then
   clean
 
-elif [ $COMMAND = 'sync-reset' ]; then
+elif [ $cmd = 'sync-reset' ]; then
   execute-docker-sync stop
   execute-docker-sync clean
   execute-docker-sync start

@@ -24,4 +24,5 @@ export interface IProxy {
     name: string;
     password: string;
   }): Promise<E.Either<Error, string>>;
+  logout(): Promise<E.Either<Error, null>>;
 }

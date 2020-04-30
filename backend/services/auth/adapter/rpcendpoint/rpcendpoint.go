@@ -25,6 +25,7 @@ func New(c *rabbitmq.Client, svc auth.Service) *rpcEndpoint {
 func (re *rpcEndpoint) Run() (err error) {
 	go re.runCreateUser()
 	go re.runLoginUser()
+	go re.runLogoutUser()
 	return
 }
 
@@ -86,6 +87,30 @@ func (re *rpcEndpoint) runLoginUser() {
 			}
 
 			p.Body = responseJson
+
+			return rabbitmq.MakeSuccessResponse(p)
+		}).
+		Exec()
+}
+
+func (re *rpcEndpoint) runLogoutUser() {
+	re.client.NewRPCEndpoint().
+		Configure(
+			rabbitmq.QueueOption{
+				Name: "auth.rpc.logout-user",
+			},
+		).
+		OnDelivery(func(d amqp.Delivery) (p amqp.Publishing) {
+			cmd := userent.LogoutUser{}
+			err := json.Unmarshal(d.Body, &cmd)
+			if err != nil {
+				return rabbitmq.MakeFailResponse(p, err)
+			}
+
+			err = re.service.LogoutUser(cmd)
+			if err != nil {
+				return rabbitmq.MakeFailResponse(p, err)
+			}
 
 			return rabbitmq.MakeSuccessResponse(p)
 		}).

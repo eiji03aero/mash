@@ -24,7 +24,7 @@ func New(c *rabbitmq.Client, svc authquery.Service) *rpcEndpoint {
 
 func (re *rpcEndpoint) Run() (err error) {
 	go re.runLoadUsers()
-	go re.runLoadUserByName()
+	go re.runLoadUser()
 	return
 }
 
@@ -53,24 +53,22 @@ func (re *rpcEndpoint) runLoadUsers() {
 		Exec()
 }
 
-func (re *rpcEndpoint) runLoadUserByName() {
+func (re *rpcEndpoint) runLoadUser() {
 	re.client.NewRPCEndpoint().
 		Configure(
 			rabbitmq.QueueOption{
-				Name: "authquery.rpc.load-user-by-name",
+				Name: "authquery.rpc.load-user",
 			},
 		).
 		OnDelivery(func(d amqp.Delivery) (p amqp.Publishing) {
-			requestBody := struct {
-				Name string `json:"name"`
-			}{}
+			requestBody := map[string]interface{}{}
 
 			err := json.Unmarshal(d.Body, &requestBody)
 			if err != nil {
 				return rabbitmq.MakeFailResponse(p, err)
 			}
 
-			user, err := re.service.LoadUserByName(requestBody.Name)
+			user, err := re.service.LoadUser(requestBody)
 			if err == domain.ErrDataNotFound {
 				return rabbitmq.MakeNotFoundResponse(p, err)
 			} else if err != nil {

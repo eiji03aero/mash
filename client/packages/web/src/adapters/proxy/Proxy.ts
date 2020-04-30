@@ -53,4 +53,16 @@ export class Proxy implements IProxy {
 
     return E.right(result.data.login.token);
   }
+
+  async logout (): Promise<E.Either<Error, null>> {
+    const result = await this._apolloClient.mutate({
+      mutation: tag.mutations.Logout,
+    })
+      .catch(err => err);
+    if (result instanceof Error) {
+      return E.left(result);
+    }
+
+    return E.right(null);
+  }
 }

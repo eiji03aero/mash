@@ -7,5 +7,10 @@ type UserCreated struct {
 }
 
 type UserLoggedIn struct {
+	Id    string `json:"id"`
 	Token string `json:"token"`
+}
+
+type UserLoggedOut struct {
+	Id string `json:"id"`
 }

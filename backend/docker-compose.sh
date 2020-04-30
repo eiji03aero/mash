@@ -1,6 +1,7 @@
 #!/bin/bash
 
-COMMAND=${1:-up}
+project_name="mash-backend"
+cmd=${1:-up}
 
 frontend_cname="mash-s-frontend"
 auth_cname="mash-s-auth"
@@ -16,6 +17,7 @@ EOF
 
 execute-docker-compose () {
   docker-compose \
+    -p $project_name \
     -f ./docker-compose.yml \
     $@
 }
@@ -30,26 +32,31 @@ execute-all-services () {
   done
 }
 
-if [ $COMMAND = 'up' ] && [ $# -le 1 ]; then
+if [ $cmd = 'up' ] && [ $# -le 1 ]; then
   execute-docker-compose up
   stop-docker-compose
 
-elif [ $COMMAND = 'bash-f' ]; then
+elif [ $cmd = 'bash-f' ]; then
   execute-docker-compose exec $frontend_cname bash
-elif [ $COMMAND = 'bash-a' ]; then
+
+elif [ $cmd = 'bash-a' ]; then
   execute-docker-compose exec $auth_cname bash
-elif [ $COMMAND = 'bash-aq' ]; then
+
+elif [ $cmd = 'bash-aq' ]; then
   execute-docker-compose exec $authquery_cname bash
-elif [ $COMMAND = 'bash-rm' ]; then
+elif [ $cmd = 'bash-aq-m' ]; then
+  execute-docker-compose exec mash-s-authquery-mongo bash
+
+elif [ $cmd = 'bash-rm' ]; then
   execute-docker-compose exec $rabbitmq_cname bash
 
-elif [ $COMMAND = 'clean-db' ]; then
+elif [ $cmd = 'clean-db' ]; then
   execute-docker-compose exec mash-s-auth-mongo mongo --eval \
     'db.getSiblingDB("mskit").events.remove({});'
   execute-docker-compose exec mash-s-authquery-mongo mongo --eval \
     'db.getSiblingDB("repository").users.remove({});'
 
-elif [ $COMMAND = 'update-mskit' ]; then
+elif [ $cmd = 'update-mskit' ]; then
   execute-all-services go get -u github.com/eiji03aero/mskit
   execute-all-services go install github.com/eiji03aero/mskit/cmd/mskit
 

@@ -32,6 +32,8 @@ func (p *publisher) Publish(event interface{}) (err error) {
 		return p.publishUserCreated(ej)
 	case userent.UserLoggedIn:
 		return p.publishUserLoggedIn(ej)
+	case userent.UserLoggedOut:
+		return p.publishUserLoggedOut(ej)
 	default:
 		return errbdr.NewErrUnknownParams(p.Publish, e)
 	}
@@ -57,6 +59,20 @@ func (p *publisher) publishUserLoggedIn(eventJson []byte) (err error) {
 			rabbitmq.TopicPublisherOption{
 				ExchangeName: "topic-auth",
 				RoutingKey:   "auth.event.user-logged-in",
+				Publishing: amqp.Publishing{
+					Body: eventJson,
+				},
+			},
+		).
+		Exec()
+}
+
+func (p *publisher) publishUserLoggedOut(eventJson []byte) (err error) {
+	return p.client.NewPublisher().
+		Configure(
+			rabbitmq.TopicPublisherOption{
+				ExchangeName: "topic-auth",
+				RoutingKey:   "auth.event.user-logged-out",
 				Publishing: amqp.Publishing{
 					Body: eventJson,
 				},

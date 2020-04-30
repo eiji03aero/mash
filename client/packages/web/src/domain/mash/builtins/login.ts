@@ -11,7 +11,11 @@ export default async ({
     read,
   }
 }: CommandPayload) => {
-  // TODO: should return if already signed in
+  const token = session.getToken();
+  if (token) {
+    environment.error(ExitStatus.Failure, "already logged in");
+    return
+  }
 
   environment.writeln("logging you in ...");
   const name = await read("user name: ");
@@ -22,10 +26,10 @@ export default async ({
     password: password,
   });
   if (E.isLeft(r1)) {
-    environment.error(ExitStatus.Failure, `signup failed: ${r1.left.message}`);
+    environment.error(ExitStatus.Failure, `login failed: ${r1.left.message}`);
     return;
   }
 
   session.setToken(r1.right);
-  environment.writeln(`signup success! ${name} ${password} ${r1.right}`);
+  environment.writeln(`login success! ${name} ${password} ${r1.right}`);
 };

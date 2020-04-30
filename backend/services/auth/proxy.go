@@ -6,5 +6,5 @@ import (
 
 type AuthQueryProxy interface {
 	LoadUsers() ([]*userent.User, error)
-	LoadUserByName(name string) (*userent.User, error)
+	LoadUser(map[string]interface{}) (*userent.User, error)
 }

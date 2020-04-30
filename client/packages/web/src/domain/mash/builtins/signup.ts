@@ -2,6 +2,7 @@ import * as E from "fp-ts/lib/Either";
 import { ExitStatus } from "mash";
 
 import { CommandPayload } from "../types";
+import { getToken } from "../../../adapters/session";
 
 export default async ({
   environment,
@@ -10,7 +11,11 @@ export default async ({
     read,
   }
 }: CommandPayload) => {
-  // TODO: should return if already signed in
+  const token = getToken();
+  if (token) {
+    environment.error(ExitStatus.Failure, "already logged in");
+    return
+  }
 
   environment.writeln("initiating signup process ...");
   const name = await read("user name: ");

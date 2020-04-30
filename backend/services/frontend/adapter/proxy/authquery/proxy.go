@@ -41,10 +41,8 @@ func (p *proxy) LoadUsers() (users []*model.User, err error) {
 	return
 }
 
-func (p *proxy) LoadUserByName(name string) (user *model.User, err error) {
-	bodyJson, err := json.Marshal(map[string]interface{}{
-		"name": name,
-	})
+func (p *proxy) LoadUser(params map[string]interface{}) (user *model.User, err error) {
+	bodyJson, err := json.Marshal(params)
 	if err != nil {
 		return
 	}
@@ -52,7 +50,7 @@ func (p *proxy) LoadUserByName(name string) (user *model.User, err error) {
 	delivery, err := p.client.NewRPCClient().
 		Configure(
 			rabbitmq.PublishArgs{
-				RoutingKey: "authquery.rpc.load-user-by-name",
+				RoutingKey: "authquery.rpc.load-user",
 				Publishing: amqp.Publishing{
 					Body: bodyJson,
 				},
