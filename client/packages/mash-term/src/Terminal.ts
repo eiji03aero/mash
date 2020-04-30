@@ -43,8 +43,14 @@ export class Terminal implements ITerminal {
     this._buffer = new Buffer(this, this._calculateService);
 
     window.addEventListener("resize", this._onResize);
-    document.addEventListener("click", this._onDocumentClick);
+    this.container.addEventListener("click", this._onContainerClick);
     this.container.addEventListener("wheel", this._onContainerWheel);
+    this.textarea.addEventListener("focus", (_: Event) => {
+      this.showCursor();
+    });
+    this.textarea.addEventListener("blur", (_: Event) => {
+      this.hideCursor();
+    });
 
     this.focus();
   }
@@ -177,7 +183,7 @@ export class Terminal implements ITerminal {
     this.scroll(direction * modifier);
   }, 50);
 
-  private _onDocumentClick = (e: Event) => {
+  private _onContainerClick = (e: Event) => {
     if (this.container.contains(e.target as HTMLElement)) {
       this.focus();
     } else {

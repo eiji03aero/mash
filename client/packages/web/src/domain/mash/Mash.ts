@@ -142,5 +142,6 @@ export class Mash implements IMash {
     const lastIndex = this._terminal.rows.length - 1;
 
     this._terminal.updateRowByIndex(lastIndex, prompt + value);
+    this._terminal.showCursor();
   }
 }

@@ -33,29 +33,10 @@
 
 ```
 # fix
-- cursor is not shown, type is not reflected on deployed page
-- cursor sometimes vanishes
-  - eg after typed like crazy
-  - should restart blinking when:
-    - click the screen
-    - hit keyboard
-- read method is not really working
-  - eg. prompt would be overridden by current after hitting enter
-  - fix: the updating logic should be passed from outside
+- none for now
 
 # features
-- user signup
-  - todos
-    - return error if already signed in
-- user login
-  - todos
-    - return error if already signed in
-- user logout
-  - todos
-    - implementation
-      - command on client
-      - imp mutation
-      - imp endpoint on auth service
+- none for now
 
 # refactor
 - mash

@@ -67,7 +67,9 @@ export class InputHandler implements IInputHandler {
   }
 
   private _shouldThinOutByTimeStamp (t1: number, t2: number) {
-    const difference = Math.abs(t1 - t2);
-    return difference < 100;
+    // call it fix for now
+    return false
+    // const difference = Math.abs(t1 - t2);
+    // return difference < 100;
   }
 }
