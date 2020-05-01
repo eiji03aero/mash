@@ -7,7 +7,7 @@ import * as session from "../../../adapters/session";
 export default async ({
   environment,
   context: {
-    proxy,
+    service,
     read,
   }
 }: CommandPayload) => {
@@ -21,7 +21,7 @@ export default async ({
   const name = await read("user name: ");
   const password = await read("password: ");
 
-  const r1 = await proxy.login({
+  const r1 = await service.login({
     name: name,
     password: password,
   });
@@ -30,6 +30,5 @@ export default async ({
     return;
   }
 
-  session.setToken(r1.right);
   environment.writeln(`login success! ${name} ${password} ${r1.right}`);
 };

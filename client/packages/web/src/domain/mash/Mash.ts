@@ -2,7 +2,7 @@ import { MashClient, Environment, IMashClient, IEnvironment } from "mash";
 import { Terminal, ITerminal } from "mash-term";
 import { FileSystem, IFileSystem } from "mash-filesystem";
 
-import { IMash, IProxy } from "../../types";
+import { IMash, IService } from "../../types";
 import { IContext } from "./types";
 import { builtins } from "./builtins";
 import { fixtureNodes } from "./fixtureNodes";
@@ -12,11 +12,11 @@ export class Mash implements IMash {
   private _terminal: ITerminal;
   private _environment: IEnvironment;
   private _client: IMashClient<IContext>;
-  private _proxy: IProxy;
+  private _service: IService;
 
   constructor (params: {
-    proxy: IProxy;
     terminalContainer: HTMLElement;
+    service: IService;
   }) {
     const filesystem = FileSystem.bootstrap();
     const terminal = new Terminal(params.terminalContainer, {
@@ -36,7 +36,7 @@ export class Mash implements IMash {
     this._terminal = terminal;
     this._environment = environment;
     this._client = client;
-    this._proxy = params.proxy;
+    this._service = params.service;
 
     // Bind methods
     this.read = this.read.bind(this);
@@ -53,7 +53,7 @@ export class Mash implements IMash {
     return {
       filesystem: this._filesystem,
       terminal: this._terminal,
-      proxy: this._proxy,
+      service: this._service,
       read: this.read,
     };
   }

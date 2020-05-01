@@ -7,10 +7,19 @@ export interface IMash {
   read(promptStr: string): Promise<string>;
 }
 
-export interface IService extends IProxy {
+export interface IService {
   initialize(params: {
     terminalContainer: HTMLElement;
   }): void;
+  signup(params: {
+    name: string;
+    password: string;
+  }): Promise<E.Either<Error, null>>;
+  login(params: {
+    name: string;
+    password: string;
+  }): Promise<E.Either<Error, string>>;
+  logout(): Promise<E.Either<Error, null>>;
 }
 
 export type CustomApolloClient = ApolloClient<NormalizedCacheObject>;

@@ -33,7 +33,8 @@
 
 ```
 # fix
-- none for now
+- mash
+  - error message missing colon after mash
 
 # features
 - none for now
@@ -42,12 +43,16 @@
 - mash
   - move logics (signup login) into service
     - loggedin getter on service
+    - create session token class
 - frontend service
   - refactor around authentication with middleware
 - take a look at di libs like wire
 - probably should update mskit to simplify event related registration
   - when evenrrepository utilize event structs
   - when publishing event
+- rabbitmq
+  - queuing might not be really working
+    - service launched after queueing message does not receive them when ready
 - create template stuff for client package
   - when adding next package
 

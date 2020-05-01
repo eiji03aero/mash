@@ -7,7 +7,7 @@ import * as session from "../../../adapters/session";
 export default async ({
   environment,
   context: {
-    proxy,
+    service,
   }
 }: CommandPayload) => {
   const token = session.getToken();
@@ -18,12 +18,11 @@ export default async ({
 
   environment.writeln("logging out ...");
 
-  const r1 = await proxy.logout();
+  const r1 = await service.logout();
   if (E.isLeft(r1)) {
     environment.error(ExitStatus.Failure, `logout failed: ${r1.left.message}`);
     return;
   }
 
-  session.clearToken();
   environment.writeln("logout success!");
 };

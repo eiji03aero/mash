@@ -6,12 +6,12 @@ import {
 import { IFileSystem } from "mash-filesystem";
 import { ITerminal } from "mash-term";
 
-import { IProxy } from "../../types";
+import { IService } from "../../types";
 
 export interface IContext extends MIContext {
   filesystem: IFileSystem;
   terminal: ITerminal;
-  proxy: IProxy;
+  service: IService;
   read(promptStr: string): Promise<string>;
 }
 

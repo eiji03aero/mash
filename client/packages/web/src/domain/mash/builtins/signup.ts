@@ -7,7 +7,7 @@ import { getToken } from "../../../adapters/session";
 export default async ({
   environment,
   context: {
-    proxy,
+    service,
     read,
   }
 }: CommandPayload) => {
@@ -27,7 +27,7 @@ export default async ({
     return;
   }
 
-  const r1 = await proxy.signup({
+  const r1 = await service.signup({
     name: name,
     password: password,
   });
