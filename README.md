@@ -41,7 +41,7 @@
 # refactor
 - mash
   - move logics (signup login) into service
-  - checking login state before executing the commands
+    - loggedin getter on service
 - frontend service
   - refactor around authentication with middleware
 - take a look at di libs like wire
