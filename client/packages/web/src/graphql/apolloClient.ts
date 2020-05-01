@@ -9,68 +9,74 @@ import { getMainDefinition } from "apollo-utilities";
 
 import { CustomApolloClient } from "../types";
 import { initialState, resolvers } from "./resolvers";
-import * as session from "../adapters/session";
+import { ILocalStore } from "../types";
 
-const cache = new InMemoryCache;
+export const createApolloClient = (params: {
+  localStore: ILocalStore;
+}) => {
+  const cache = new InMemoryCache;
 
-const httpLink = new HttpLink({
-  uri: `${process.env.GRAPHQL_SERVER_HTTP_URL}`,
-});
+  const httpLink = new HttpLink({
+    uri: `${process.env.GRAPHQL_SERVER_HTTP_URL}`,
+  });
 
-const wsLink = new WebSocketLink({
-  uri: `${process.env.GRAPHQL_SERVER_WS_URL}`,
-  options: {
-    reconnect: true,
-  },
-});
-
-const errorLink = onError(({ graphQLErrors, networkError }) => {
-  if (graphQLErrors) {
-    graphQLErrors.forEach(({ message, locations, path }) => {
-      console.log("[GraphQL error]:", { message, locations, path });
-    });
-  }
-  if (networkError) {
-    console.log("[Network error]: ", networkError);
-  }
-});
-
-const authLink = setContext((_, { headers }) => {
-  const token = session.getToken();
-  return {
-    headers: {
-      ...headers,
-      Authentication: token ? `Bearer ${token}` : "",
-    }
-  }
-});
-
-const link = ApolloLink.from([
-  errorLink,
-  authLink,
-  split(
-    ({ query }: Operation) => {
-      const definition = getMainDefinition(query);
-      return (
-        definition.kind === "OperationDefinition"
-        && definition.operation === "subscription"
-      );
+  const wsLink = new WebSocketLink({
+    uri: `${process.env.GRAPHQL_SERVER_WS_URL}`,
+    options: {
+      reconnect: true,
     },
-    wsLink,
-    httpLink,
-  ),
-]);
+  });
 
-export const apolloClient: CustomApolloClient = new ApolloClient<NormalizedCacheObject>({
-  cache,
-  link,
-  resolvers,
-});
+  const errorLink = onError(({ graphQLErrors, networkError }) => {
+    if (graphQLErrors) {
+      graphQLErrors.forEach(({ message, locations, path }) => {
+        console.log("[GraphQL error]:", { message, locations, path });
+      });
+    }
+    if (networkError) {
+      console.log("[Network error]: ", networkError);
+    }
+  });
 
-cache.writeData({ data: initialState });
+  const authLink = setContext((_, { headers }) => {
+    const token = params.localStore.getToken();
+    return {
+      headers: {
+        ...headers,
+        Authentication: token ? `Bearer ${token}` : "",
+      }
+    }
+  });
 
-apolloClient.onResetStore(() => {
+  const link = ApolloLink.from([
+    errorLink,
+    authLink,
+    split(
+      ({ query }: Operation) => {
+        const definition = getMainDefinition(query);
+        return (
+          definition.kind === "OperationDefinition"
+          && definition.operation === "subscription"
+        );
+      },
+      wsLink,
+      httpLink,
+    ),
+  ]);
+
+  const apolloClient: CustomApolloClient = new ApolloClient<NormalizedCacheObject>({
+    cache,
+    link,
+    resolvers,
+  });
+
   cache.writeData({ data: initialState });
-  // returning promise in favor of onResetStore's signature
-  return Promise.resolve();
-});
+
+  apolloClient.onResetStore(() => {
+    cache.writeData({ data: initialState });
+    // returning promise in favor of onResetStore's signature
+    return Promise.resolve();
+  });
+
+  return apolloClient;
+};

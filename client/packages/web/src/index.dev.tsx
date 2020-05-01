@@ -1,10 +1,17 @@
 import { Service } from "./service";
 import { Proxy } from "./adapters/proxy";
+import { LocalStore } from "./adapters/localStore";
 
-import { apolloClient } from "./graphql";
+import { createApolloClient } from "./graphql";
 import { render } from "./adapters/ui";
 
 document.addEventListener("DOMContentLoaded", () => {
+  const localStore = new LocalStore();
+
+  const apolloClient = createApolloClient({
+    localStore,
+  });
+
   const proxy = new Proxy({
     apolloClient,
   });

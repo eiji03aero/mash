@@ -1,6 +1,6 @@
 import { ApolloClient } from "apollo-client";
 import { NormalizedCacheObject } from "apollo-cache-inmemory";
-import * as E from "fp-ts/lib/Either";
+import * as E from "fp-ts/es6/Either";
 
 export interface IMash {
   initialize(): void;
@@ -8,6 +8,7 @@ export interface IMash {
 }
 
 export interface IService {
+  isLoggedIn: boolean;
   initialize(params: {
     terminalContainer: HTMLElement;
   }): void;
@@ -34,4 +35,10 @@ export interface IProxy {
     password: string;
   }): Promise<E.Either<Error, string>>;
   logout(): Promise<E.Either<Error, null>>;
+}
+
+export interface ILocalStore {
+  getToken(): E.Either<null, string>;
+  saveToken(token: string): void;
+  clearToken(): void;
 }

@@ -34,16 +34,12 @@
 ```
 # fix
 - mash
-  - error message missing colon after mash
 
 # features
 - none for now
 
 # refactor
-- mash
-  - move logics (signup login) into service
-    - loggedin getter on service
-    - create session token class
+- web
 - frontend service
   - refactor around authentication with middleware
 - take a look at di libs like wire

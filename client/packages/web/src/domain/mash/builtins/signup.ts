@@ -1,8 +1,7 @@
-import * as E from "fp-ts/lib/Either";
+import * as E from "fp-ts/es6/Either";
 import { ExitStatus } from "mash";
 
 import { CommandPayload } from "../types";
-import { getToken } from "../../../adapters/session";
 
 export default async ({
   environment,
@@ -11,8 +10,7 @@ export default async ({
     read,
   }
 }: CommandPayload) => {
-  const token = getToken();
-  if (token) {
+  if (service.isLoggedIn) {
     environment.error(ExitStatus.Failure, "already logged in");
     return
   }

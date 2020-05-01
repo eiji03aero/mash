@@ -35,7 +35,7 @@ export class Environment implements IEnvironment {
 
   error (code: ExitStatus, message?: string) {
     if (message) {
-      const msg = `mash ${message}`;
+      const msg = `mash: ${message}`;
       this.writeln(msg);
     }
 

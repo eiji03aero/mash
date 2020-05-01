@@ -1,4 +1,4 @@
-import * as E from "fp-ts/lib/Either";
+import * as E from "fp-ts/es6/Either";
 
 import { CustomApolloClient, IProxy } from "../../types";
 import { tag } from "../../graphql";

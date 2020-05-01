@@ -1,22 +1,25 @@
-import * as E from "fp-ts/lib/Either";
+import * as E from "fp-ts/es6/Either";
 
 import {
   IService,
   IMash,
   IProxy,
+  ILocalStore,
 } from "../types";
 import { Mash } from "../domain/mash";
-import * as session from "../adapters/session";
+import { LocalStore } from "../adapters/localStore";
 
 export class Service implements IService {
   private _mash: IMash;
   private _proxy: IProxy;
+  private _localStore: ILocalStore;
 
   constructor (params: {
     proxy: IProxy;
   }) {
     this._proxy = params.proxy;
     this._mash = null as any;
+    this._localStore = new LocalStore();
   }
 
   initialize (params: {
@@ -27,6 +30,12 @@ export class Service implements IService {
       service: this,
     });
     this._mash.initialize();
+  }
+
+  // -------------------- auth --------------------
+  get isLoggedIn () {
+    const r = this._localStore.getToken()
+    return E.isRight(r);
   }
 
   // -------------------- Proxy --------------------
@@ -46,7 +55,7 @@ export class Service implements IService {
       return r1;
     }
 
-    session.setToken(r1.right);
+    this._localStore.saveToken(r1.right);
     return r1;
   }
 
@@ -56,7 +65,7 @@ export class Service implements IService {
       return r1;
     }
 
-    session.clearToken();
+    this._localStore.clearToken();
     return r1;
   }
 }
