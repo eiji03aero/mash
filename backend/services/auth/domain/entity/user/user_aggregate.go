@@ -30,97 +30,79 @@ func (u *UserAggregate) Validate() (errs []error) {
 	return
 }
 
-func (u *UserAggregate) Process(command interface{}) (mskit.Events, error) {
+func (u *UserAggregate) Process(command interface{}) (events mskit.Events, err error) {
 	switch cmd := command.(type) {
 	case CreateUser:
-		return u.processCreateUser(cmd)
+		var hashedPassword []byte
+		hashedPassword, err = bcrypt.GenerateFromPassword([]byte(cmd.Password), HashCost)
+		if err != nil {
+			return
+		}
+
+		events = mskit.NewEventsSingle(
+			cmd.Id,
+			UserAggregate{},
+			UserCreated{
+				Id:             cmd.Id,
+				Name:           cmd.Name,
+				HashedPassword: string(hashedPassword),
+			},
+		)
+
 	case LoginUser:
-		return u.processLoginUser(cmd)
+		err = bcrypt.CompareHashAndPassword([]byte(u.User.HashedPassword), []byte(cmd.Password))
+		if err != nil {
+			return
+		}
+
+		var token string
+		token, err = utils.UUID()
+		if err != nil {
+			return
+		}
+
+		events = mskit.NewEventsSingle(
+			u.Id,
+			UserAggregate{},
+			UserLoggedIn{
+				Id:    u.Id,
+				Token: token,
+			},
+		)
+
 	case LogoutUser:
-		return u.processLogoutUser(cmd)
+		events = mskit.NewEventsSingle(
+			u.Id,
+			UserAggregate{},
+			UserLoggedOut{
+				Id: u.Id,
+			},
+		)
+
 	default:
-		return mskit.Events{}, errbdr.NewErrUnknownParams(u.Process, cmd)
-	}
-}
-
-func (u *UserAggregate) processCreateUser(cmd CreateUser) (events mskit.Events, err error) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(cmd.Password), HashCost)
-	if err != nil {
-		return
+		return nil, errbdr.NewErrUnknownParams(u.Process, cmd)
 	}
 
-	events = mskit.NewEventsSingle(
-		cmd.Id,
-		UserAggregate{},
-		UserCreated{
-			Id:             cmd.Id,
-			Name:           cmd.Name,
-			HashedPassword: string(hashedPassword),
-		},
-	)
 	return
 }
 
-func (u *UserAggregate) processLoginUser(cmd LoginUser) (events mskit.Events, err error) {
-	err = bcrypt.CompareHashAndPassword([]byte(u.User.HashedPassword), []byte(cmd.Password))
-	if err != nil {
-		return
-	}
-
-	token, err := utils.UUID()
-	if err != nil {
-		return
-	}
-
-	events = mskit.NewEventsSingle(
-		u.Id,
-		UserAggregate{},
-		UserLoggedIn{
-			Id:    u.Id,
-			Token: token,
-		},
-	)
-	return
-}
-
-func (u *UserAggregate) processLogoutUser(cmd LogoutUser) (events mskit.Events, err error) {
-	events = mskit.NewEventsSingle(
-		u.Id,
-		UserAggregate{},
-		UserLoggedOut{
-			Id: u.Id,
-		},
-	)
-	return
-}
-
-func (u *UserAggregate) Apply(event interface{}) error {
+func (u *UserAggregate) Apply(event interface{}) (err error) {
 	switch e := event.(type) {
 	case UserCreated:
-		return u.applyUserCreated(e)
+		u.Id = e.Id
+		u.User.Id = e.Id
+		u.User.Name = e.Name
+		u.User.HashedPassword = e.HashedPassword
+
 	case UserLoggedIn:
-		return u.applyUserLoggedIn(e)
+		u.User.Token = e.Token
+
 	case UserLoggedOut:
-		return u.applyUserLoggedOut(e)
+		u.User.Token = ""
+
 	default:
 		return errbdr.NewErrUnknownParams(u.Apply, e)
 	}
-}
 
-func (u *UserAggregate) applyUserCreated(e UserCreated) (err error) {
-	u.Id = e.Id
-	u.User.Id = e.Id
-	u.User.Name = e.Name
-	u.User.HashedPassword = e.HashedPassword
-	return
-}
-
-func (u *UserAggregate) applyUserLoggedIn(e UserLoggedIn) (err error) {
-	u.User.Token = e.Token
-	return
-}
-
-func (u *UserAggregate) applyUserLoggedOut(e UserLoggedOut) (err error) {
-	u.User.Token = ""
 	return
 }

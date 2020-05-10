@@ -12,6 +12,10 @@ type INewTodo struct {
 	UserID string `json:"userId"`
 }
 
+type INone struct {
+	None *bool `json:"none"`
+}
+
 type ISignup struct {
 	Name     string `json:"name"`
 	Password string `json:"password"`
@@ -19,6 +23,10 @@ type ISignup struct {
 
 type RLogin struct {
 	Token string `json:"token"`
+}
+
+type RNone struct {
+	None *bool `json:"none"`
 }
 
 type RSignup struct {
@@ -33,6 +41,7 @@ type Todo struct {
 }
 
 type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Token string `json:"token"`
 }

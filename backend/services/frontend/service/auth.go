@@ -28,7 +28,7 @@ func (s *service) Login(input model.ILogin) (result *model.RLogin, err error) {
 	return
 }
 
-func (s *service) Logout(token string) (result *bool, err error) {
+func (s *service) Logout(token string) (result *model.RNone, err error) {
 	user, err := s.authQueryProxy.LoadUser(map[string]interface{}{
 		"token": token,
 	})
@@ -41,5 +41,10 @@ func (s *service) Logout(token string) (result *bool, err error) {
 		return
 	}
 
+	return
+}
+
+func (s *service) LoadUser(params map[string]interface{}) (user *model.User, err error) {
+	user, err = s.authQueryProxy.LoadUser(params)
 	return
 }

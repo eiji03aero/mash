@@ -3,7 +3,7 @@ type Mutation {
 
   signup(input: ISignup!): RSignup!
   login(input: ILogin!): RLogin!
-  logout(_: Boolean): Boolean
+  logout(_: INone): RNone @auth
 }
 
 input INewTodo {
@@ -27,4 +27,13 @@ input ILogin {
 
 type RLogin {
   token: String!
+}
+
+# -------------------- utils --------------------
+input INone {
+  none: Boolean
+}
+
+type RNone {
+  none: Boolean
 }

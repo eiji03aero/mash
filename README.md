@@ -40,15 +40,33 @@
 
 # refactor
 - web
+- mash-term
+  - scroll and display kind of broken if command output is long enough to break into multiple lines
+
 - frontend service
   - refactor around authentication with middleware
-- take a look at di libs like wire
-- probably should update mskit to simplify event related registration
-  - when evenrrepository utilize event structs
-  - when publishing event
+    - WIP
+    - authenticate token, and fetch user data and set it on context
+    - create authenticated directive on graphql schema
+
+  - add test
+    - look up examples on gql-gen
+
+- backend
+  - refactor mskit
+    - general description
+      - there are tons of tedious work when using mskit. they should be simplified
+    - pains
+      - consuming events to replicate data
+        - with current feature, consumers will have to keep track of every single events in order to
+          have complete data
+        - more concrete examples are required to plan how it can be extracted
+
 - rabbitmq
-  - queuing might not be really working
+  - queuing might be not really working
     - service launched after queueing message does not receive them when ready
+    - have to read more about it on documents
+
 - create template stuff for client package
   - when adding next package
 

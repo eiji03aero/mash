@@ -4,6 +4,8 @@ import (
 	"context"
 	"net/http"
 
+	"frontend"
+	"frontend/graph"
 	"frontend/utils"
 )
 
@@ -11,7 +13,7 @@ const (
 	bearerPrefix = "Bearer "
 )
 
-func injectHTTPMiddleware() func(http.Handler) http.Handler {
+func injectHTTPMiddleware(svc frontend.Service) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			httpContext := utils.HttpContext{
@@ -24,7 +26,16 @@ func injectHTTPMiddleware() func(http.Handler) http.Handler {
 			auth := r.Header.Get("Authentication")
 			if len(auth) > len(bearerPrefix) {
 				token := auth[len(bearerPrefix):]
-				ctx = context.WithValue(ctx, "token", token)
+
+				user, err := svc.LoadUser(map[string]interface{}{
+					"token": token,
+				})
+				if err != nil {
+					http.Error(w, "invalid token", http.StatusForbidden)
+					return
+				}
+
+				ctx = graph.WithContextUser(ctx, user)
 			}
 
 			r = r.WithContext(ctx)

@@ -30,6 +30,8 @@ export const Login = gql`
 
 export const Logout = gql`
   mutation Logout {
-    logout
+    logout {
+      none
+    }
   }
 `;

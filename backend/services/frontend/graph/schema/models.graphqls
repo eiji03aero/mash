@@ -8,4 +8,5 @@ type Todo {
 type User {
   id: ID!
   name: String!
+  token: String!
 }

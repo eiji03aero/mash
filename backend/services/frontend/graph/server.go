@@ -27,9 +27,13 @@ func NewServer(
 	)
 	go resolver.StartSubscribingRedis()
 
-	schema := generated.NewExecutableSchema(generated.Config{
+	config := generated.Config{
 		Resolvers: resolver,
-	})
+	}
+
+	installDirectives(&config, svc)
+
+	schema := generated.NewExecutableSchema(config)
 
 	srv := handler.New(schema)
 	srv.AddTransport(transport.Options{})

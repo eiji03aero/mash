@@ -1,6 +1,8 @@
 package http
 
 import (
+	"frontend"
+
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi"
@@ -8,6 +10,7 @@ import (
 )
 
 func NewRouter(
+	service frontend.Service,
 	corsOrigins []string,
 	corsAllowedHeaders []string,
 	gqlServer *handler.Server,
@@ -21,7 +24,7 @@ func NewRouter(
 		Debug:            true,
 	}).Handler)
 
-	router.Use(injectHTTPMiddleware())
+	router.Use(injectHTTPMiddleware(service))
 
 	router.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
 	router.Handle("/graphql", gqlServer)

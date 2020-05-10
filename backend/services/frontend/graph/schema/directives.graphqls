@@ -1,0 +1,1 @@
+directive @auth on MUTATION

@@ -6,8 +6,6 @@ package graph
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-
 	"frontend/graph/generated"
 	"frontend/graph/model"
 )
@@ -39,13 +37,13 @@ func (r *mutationResolver) Login(ctx context.Context, input model.ILogin) (*mode
 	return r.service.Login(input)
 }
 
-func (r *mutationResolver) Logout(ctx context.Context, _ *bool) (*bool, error) {
-	token, ok := ctx.Value("token").(string)
-	if !ok {
-		return nil, fmt.Errorf("invalid token %s", token)
+func (r *mutationResolver) Logout(ctx context.Context, _ *model.INone) (*model.RNone, error) {
+	user, err := GetContextUser(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	return r.service.Logout(token)
+	return r.service.Logout(user.Token)
 }
 
 // Mutation returns generated.MutationResolver implementation.

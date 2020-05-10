@@ -42,13 +42,14 @@ type ResolverRoot interface {
 }
 
 type DirectiveRoot struct {
+	Auth func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
 }
 
 type ComplexityRoot struct {
 	Mutation struct {
 		CreateTodo func(childComplexity int, input model.INewTodo) int
 		Login      func(childComplexity int, input model.ILogin) int
-		Logout     func(childComplexity int, _ *bool) int
+		Logout     func(childComplexity int, _ *model.INone) int
 		Signup     func(childComplexity int, input model.ISignup) int
 	}
 
@@ -58,6 +59,10 @@ type ComplexityRoot struct {
 
 	RLogin struct {
 		Token func(childComplexity int) int
+	}
+
+	RNone struct {
+		None func(childComplexity int) int
 	}
 
 	RSignup struct {
@@ -76,8 +81,9 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		ID   func(childComplexity int) int
-		Name func(childComplexity int) int
+		ID    func(childComplexity int) int
+		Name  func(childComplexity int) int
+		Token func(childComplexity int) int
 	}
 }
 
@@ -85,7 +91,7 @@ type MutationResolver interface {
 	CreateTodo(ctx context.Context, input model.INewTodo) (*model.Todo, error)
 	Signup(ctx context.Context, input model.ISignup) (*model.RSignup, error)
 	Login(ctx context.Context, input model.ILogin) (*model.RLogin, error)
-	Logout(ctx context.Context, _ *bool) (*bool, error)
+	Logout(ctx context.Context, _ *model.INone) (*model.RNone, error)
 }
 type QueryResolver interface {
 	Users(ctx context.Context) ([]*model.User, error)
@@ -143,7 +149,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.Logout(childComplexity, args["_"].(*bool)), true
+		return e.complexity.Mutation.Logout(childComplexity, args["_"].(*model.INone)), true
 
 	case "Mutation.signup":
 		if e.complexity.Mutation.Signup == nil {
@@ -170,6 +176,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.RLogin.Token(childComplexity), true
+
+	case "RNone.none":
+		if e.complexity.RNone.None == nil {
+			break
+		}
+
+		return e.complexity.RNone.None(childComplexity), true
 
 	case "RSignup.user":
 		if e.complexity.RSignup.User == nil {
@@ -232,6 +245,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Name(childComplexity), true
 
+	case "User.token":
+		if e.complexity.User.Token == nil {
+			break
+		}
+
+		return e.complexity.User.Token(childComplexity), true
+
 	}
 	return 0, false
 }
@@ -262,7 +282,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 				return nil
 			}
 			first = false
-			data := ec._Mutation(ctx, rc.Operation.SelectionSet)
+			data := ec._mutationMiddleware(ctx, rc.Operation, func(ctx context.Context) (interface{}, error) {
+				return ec._Mutation(ctx, rc.Operation.SelectionSet), nil
+			})
 			var buf bytes.Buffer
 			data.MarshalGQL(&buf)
 
@@ -313,6 +335,8 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
+	&ast.Source{Name: "graph/schema/directives.graphqls", Input: `directive @auth on MUTATION
+`, BuiltIn: false},
 	&ast.Source{Name: "graph/schema/models.graphqls", Input: `type Todo {
   id: ID!
   text: String!
@@ -323,6 +347,7 @@ var sources = []*ast.Source{
 type User {
   id: ID!
   name: String!
+  token: String!
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/schema/mutations.graphqls", Input: `type Mutation {
@@ -330,7 +355,7 @@ type User {
 
   signup(input: ISignup!): RSignup!
   login(input: ILogin!): RLogin!
-  logout(_: Boolean): Boolean
+  logout(_: INone): RNone @auth
 }
 
 input INewTodo {
@@ -354,6 +379,15 @@ input ILogin {
 
 type RLogin {
   token: String!
+}
+
+# -------------------- utils --------------------
+input INone {
+  none: Boolean
+}
+
+type RNone {
+  none: Boolean
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/schema/queries.graphqls", Input: `type Query {
@@ -402,9 +436,9 @@ func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawAr
 func (ec *executionContext) field_Mutation_logout_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *bool
+	var arg0 *model.INone
 	if tmp, ok := rawArgs["_"]; ok {
-		arg0, err = ec.unmarshalOBoolean2ᚖbool(ctx, tmp)
+		arg0, err = ec.unmarshalOINone2ᚖfrontendᚋgraphᚋmodelᚐINone(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -486,6 +520,33 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ***************************** args.gotpl *****************************
 
 // region    ************************** directives.gotpl **************************
+
+func (ec *executionContext) _mutationMiddleware(ctx context.Context, obj *ast.OperationDefinition, next func(ctx context.Context) (interface{}, error)) graphql.Marshaler {
+
+	for _, d := range obj.Directives {
+		switch d.Name {
+		case "auth":
+			n := next
+			next = func(ctx context.Context) (interface{}, error) {
+				if ec.directives.Auth == nil {
+					return nil, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, obj, n)
+			}
+		}
+	}
+	tmp, err := next(ctx)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if data, ok := tmp.(graphql.Marshaler); ok {
+		return data
+	}
+	ec.Errorf(ctx, `unexpected type %T from directive, should be graphql.Marshaler`, tmp)
+	return graphql.Null
+
+}
 
 // endregion ************************** directives.gotpl **************************
 
@@ -638,7 +699,7 @@ func (ec *executionContext) _Mutation_logout(ctx context.Context, field graphql.
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().Logout(rctx, args["_"].(*bool))
+		return ec.resolvers.Mutation().Logout(rctx, args["_"].(*model.INone))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -647,9 +708,9 @@ func (ec *executionContext) _Mutation_logout(ctx context.Context, field graphql.
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*bool)
+	res := resTmp.(*model.RNone)
 	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+	return ec.marshalORNone2ᚖfrontendᚋgraphᚋmodelᚐRNone(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_users(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -787,6 +848,37 @@ func (ec *executionContext) _RLogin_token(ctx context.Context, field graphql.Col
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RNone_none(ctx context.Context, field graphql.CollectedField, obj *model.RNone) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "RNone",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.None, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _RSignup_user(ctx context.Context, field graphql.CollectedField, obj *model.RSignup) (ret graphql.Marshaler) {
@@ -1062,6 +1154,40 @@ func (ec *executionContext) _User_name(ctx context.Context, field graphql.Collec
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_token(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "User",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Token, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2181,6 +2307,24 @@ func (ec *executionContext) unmarshalInputINewTodo(ctx context.Context, obj inte
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputINone(ctx context.Context, obj interface{}) (model.INone, error) {
+	var it model.INone
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "none":
+			var err error
+			it.None, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputISignup(ctx context.Context, obj interface{}) (model.ISignup, error) {
 	var it model.ISignup
 	var asMap = obj.(map[string]interface{})
@@ -2327,6 +2471,30 @@ func (ec *executionContext) _RLogin(ctx context.Context, sel ast.SelectionSet, o
 	return out
 }
 
+var rNoneImplementors = []string{"RNone"}
+
+func (ec *executionContext) _RNone(ctx context.Context, sel ast.SelectionSet, obj *model.RNone) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, rNoneImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RNone")
+		case "none":
+			out.Values[i] = ec._RNone_none(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var rSignupImplementors = []string{"RSignup"}
 
 func (ec *executionContext) _RSignup(ctx context.Context, sel ast.SelectionSet, obj *model.RSignup) graphql.Marshaler {
@@ -2434,6 +2602,11 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "name":
 			out.Values[i] = ec._User_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "token":
+			out.Values[i] = ec._User_token(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -3087,6 +3260,29 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	return ec.marshalOBoolean2bool(ctx, sel, *v)
+}
+
+func (ec *executionContext) unmarshalOINone2frontendᚋgraphᚋmodelᚐINone(ctx context.Context, v interface{}) (model.INone, error) {
+	return ec.unmarshalInputINone(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOINone2ᚖfrontendᚋgraphᚋmodelᚐINone(ctx context.Context, v interface{}) (*model.INone, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOINone2frontendᚋgraphᚋmodelᚐINone(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalORNone2frontendᚋgraphᚋmodelᚐRNone(ctx context.Context, sel ast.SelectionSet, v model.RNone) graphql.Marshaler {
+	return ec._RNone(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalORNone2ᚖfrontendᚋgraphᚋmodelᚐRNone(ctx context.Context, sel ast.SelectionSet, v *model.RNone) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._RNone(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

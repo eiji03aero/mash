@@ -27,56 +27,29 @@ func (p *publisher) Publish(event interface{}) (err error) {
 		return
 	}
 
+	option := rabbitmq.TopicPublisherOption{
+		ExchangeName: "topic-auth",
+		RoutingKey:   "",
+		Publishing: amqp.Publishing{
+			Body: ej,
+		},
+	}
+
 	switch e := event.(type) {
 	case userent.UserCreated:
-		return p.publishUserCreated(ej)
+		option.RoutingKey = "auth.event.user-created"
+
 	case userent.UserLoggedIn:
-		return p.publishUserLoggedIn(ej)
+		option.RoutingKey = "auth.event.user-logged-in"
+
 	case userent.UserLoggedOut:
-		return p.publishUserLoggedOut(ej)
+		option.RoutingKey = "auth.event.user-logged-out"
+
 	default:
 		return errbdr.NewErrUnknownParams(p.Publish, e)
 	}
-}
 
-func (p *publisher) publishUserCreated(eventJson []byte) (err error) {
 	return p.client.NewPublisher().
-		Configure(
-			rabbitmq.TopicPublisherOption{
-				ExchangeName: "topic-auth",
-				RoutingKey:   "auth.event.user-created",
-				Publishing: amqp.Publishing{
-					Body: eventJson,
-				},
-			},
-		).
-		Exec()
-}
-
-func (p *publisher) publishUserLoggedIn(eventJson []byte) (err error) {
-	return p.client.NewPublisher().
-		Configure(
-			rabbitmq.TopicPublisherOption{
-				ExchangeName: "topic-auth",
-				RoutingKey:   "auth.event.user-logged-in",
-				Publishing: amqp.Publishing{
-					Body: eventJson,
-				},
-			},
-		).
-		Exec()
-}
-
-func (p *publisher) publishUserLoggedOut(eventJson []byte) (err error) {
-	return p.client.NewPublisher().
-		Configure(
-			rabbitmq.TopicPublisherOption{
-				ExchangeName: "topic-auth",
-				RoutingKey:   "auth.event.user-logged-out",
-				Publishing: amqp.Publishing{
-					Body: eventJson,
-				},
-			},
-		).
+		Configure(option).
 		Exec()
 }

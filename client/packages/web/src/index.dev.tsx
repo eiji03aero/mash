@@ -9,6 +9,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const localStore = new LocalStore();
 
   const apolloClient = createApolloClient({
+    // enforce the value to be string by concatenating string
+    httpURL: "" + process.env.GRAPHQL_SERVER_HTTP_URL,
+    websocketURL: "" + process.env.GRAPHQL_SERVER_WS_URL,
     localStore,
   });
 
