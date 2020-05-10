@@ -21,13 +21,11 @@ export class Buffer implements IBuffer {
     this.rowPosition = 0;
     this.rawRows = [] as string[];
     this.rows = [] as CachedRows;
-
-    this._splitRowWithLimit;
   }
 
   get isOnBottom () {
     if (this.rows.length < this.numberOfDisplayedRows) return false;
-    return this.rowPosition === this.rows.length - this.numberOfDisplayedRows;
+    return this.rowPosition <= this.rows.length - this.numberOfDisplayedRows;
   }
 
   get bottomPosition () {
@@ -50,6 +48,8 @@ export class Buffer implements IBuffer {
   }
 
   updateRowByIndex (idx: number, str: string) {
+    const prerrows = this.rawRows.slice();
+    const prerows = this.rows.slice();
     this.rawRows = this.rawRows.map((s: string, i: number) => {
       return i === idx
         ? str
@@ -72,11 +72,23 @@ export class Buffer implements IBuffer {
       ...splitted,
       ...latter
     ] as CachedRows;
+
+    console.warn({
+      former, latter, splitted,
+      clIdx, cfIdx
+    })
+    console.warn({
+      str, idx, lastidx: this.rawRows.length - 1,
+      prerows, rawRows: this.rawRows, prerrows, rows: this.rows,
+    })
   }
 
   updateRows () {
+    let rowIdx = 0;
     this.rows = this.rawRows.reduce((accum: CachedRows, cur: string) => {
-      const splitRows = this._splitRowWithLimit(cur, accum.length);
+      const splitRows = this._splitRowWithLimit(cur, rowIdx);
+      rowIdx++;
+
       return accum.concat(splitRows);
     }, [] as CachedRows);
   }
@@ -97,13 +109,13 @@ export class Buffer implements IBuffer {
     this.rowPosition = this.bottomPosition;
   }
 
-  private _splitRowWithLimit (str: string, idx: number) {
+  private _splitRowWithLimit (str: string, rowIdx: number) {
     const row = text.parseColorString(str);
     const { availableWidth } = this._terminal.windowStat;
     const rs = [] as CachedRows;
     let tmpWidth = 0;
 
-    const getNewRow = () => ({ rowIndex: idx, row: [] as Row });
+    const getNewRow = () => ({ rowIndex: rowIdx, row: [] as Row });
 
     rs.push(getNewRow());
 

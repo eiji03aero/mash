@@ -39,18 +39,10 @@
 - none for now
 
 # refactor
-- web
-- mash-term
-  - scroll and display kind of broken if command output is long enough to break into multiple lines
-
-- frontend service
-  - refactor around authentication with middleware
-    - WIP
-    - authenticate token, and fetch user data and set it on context
-    - create authenticated directive on graphql schema
-
-  - add test
-    - look up examples on gql-gen
+- client
+  - mash-term
+    - scroll and display kind of broken if command output is long enough to break into multiple lines
+    - should refactor and make use of scrolltobottom
 
 - backend
   - refactor mskit
@@ -60,6 +52,9 @@
         - with current feature, consumers will have to keep track of every single events in order to
           have complete data
         - more concrete examples are required to plan how it can be extracted
+  - frontend service
+    - add test
+      - look up examples on gql-gen
 
 - rabbitmq
   - queuing might be not really working

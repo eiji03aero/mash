@@ -41,11 +41,9 @@ document.addEventListener("DOMContentLoaded", (_: Event) => {
   });
 
   terminal.onKey((e: KeyboardEvent) => {
-    console.log("key", e.type, e.timeStamp)
     const str = (e.target as HTMLInputElement).value;
     const prompt = terminal.config.prompt;
-    const lastIndex = terminal.rows.length - 1;
-
+    const lastIndex = terminal.rawRows.length - 1;
     terminal.updateRowByIndex(lastIndex, prompt + str);
   });
 });

@@ -36,7 +36,7 @@ export class InputHandler implements IInputHandler {
     // if (!this._shouldThinOut(this._downEt, this._pressEt, this._upEt)) {
     //   this._updateByUserInput(e);
     // }
-    // this._emitter.emit("keydown", e);
+    this._emitter.emit("keydown", e);
   }
 
   private _onKeyPress (e: KeyboardEvent) {
@@ -66,10 +66,7 @@ export class InputHandler implements IInputHandler {
     );
   }
 
-  private _shouldThinOutByTimeStamp (_: number, _2: number) {
-    // call it fix for now
-    return false
-    // const difference = Math.abs(t1 - t2);
-    // return difference < 100;
+  private _shouldThinOutByTimeStamp (e1: number, e2: number) {
+    return e1 === e2;
   }
 }

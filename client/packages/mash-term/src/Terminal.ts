@@ -104,12 +104,10 @@ export class Terminal implements ITerminal {
   }
 
   prompt () {
-    if (this._buffer.isOnBottom) {
-      this._buffer.rowPosition += 1;
-    }
-
     this.textarea.value = "";
     this.appendRow(this.config.prompt);
+    this._scrollToBottomIfNecessary();
+
     this.showCursor();
     this._render();
   }
@@ -128,11 +126,9 @@ export class Terminal implements ITerminal {
   }
 
   writeln (str: string) {
-    if (this._buffer.isOnBottom) {
-      this._buffer.rowPosition += 1;
-    }
-
     this.appendRow(str);
+    this._scrollToBottomIfNecessary();
+
     this._render();
   }
 
@@ -169,6 +165,12 @@ export class Terminal implements ITerminal {
 
   private _render () {
     this._renderer.render(this._renderPayload);
+  }
+
+  private _scrollToBottomIfNecessary () {
+    if (this._buffer.isOnBottom) {
+      this.scrollToBottom();
+    }
   }
 
   private _onContainerWheel = _.throttle((e: WheelEvent) => {

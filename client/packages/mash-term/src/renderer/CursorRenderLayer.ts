@@ -1,4 +1,5 @@
 import { text } from "mash-common";
+
 import { IRenderPayload, ITerminal } from "../types";
 import { BaseRenderLayer } from "./BaseRenderLayer";
 
@@ -93,7 +94,7 @@ export class CursorRenderLayer extends BaseRenderLayer {
     const isAtEnd = selectionStart === value.length;
     return isEmpty || isAtEnd
       ? " "
-      : this.terminal.textarea.value.slice(selectionStart, selectionStart + 1);
+      : this.terminal.textarea.value[selectionStart];
   }
 
   private get _cursorX () {
