@@ -54,8 +54,7 @@
 
 - backend
   - refactor mskit
-    - general description
-      - there are tons of tedious work when using mskit. they should be simplified
+    - there are tons of tedious work when using mskit. they should be simplified
     - pains
       - consuming events to replicate data
         - with current feature, consumers will have to keep track of every single events in order to

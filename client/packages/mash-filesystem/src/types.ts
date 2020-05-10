@@ -1,4 +1,4 @@
-import * as E from "fp-ts/es6/Either";
+import * as E from "fp-ts/lib/Either";
 
 export interface IFileSystemNodeBasis {
   id?: string;

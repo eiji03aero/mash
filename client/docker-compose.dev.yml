@@ -4,9 +4,9 @@ services:
   mash-client:
     volumes:
       - v-mash-yarn:/usr/local/share/.cache/yarn
-      - v-sync-mash-node_modules:/projects/client/node_modules
+      - v-sync-mash:/projects/client
 
 volumes:
   v-mash-yarn:
-  v-sync-mash-node_modules:
+  v-sync-mash:
     external: true

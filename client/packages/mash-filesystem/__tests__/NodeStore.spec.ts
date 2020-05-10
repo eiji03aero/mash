@@ -1,4 +1,4 @@
-import * as E from "fp-ts/es6/Either";
+import * as E from "fp-ts/lib/Either";
 import { sharedContext } from "./shared";
 import { INodeStore, IDirectory } from "../src/types";
 import { NodeStore } from "../src/NodeStore";

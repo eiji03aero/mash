@@ -36,7 +36,7 @@ describe("Environment", () => {
       const errCode = ExitStatus.Failure;
       const errMsg = "error desu";
       env.error(errCode, errMsg);
-      expect(onWritelnMock).toBeCalledWith(`mash ${errMsg}`);
+      expect(onWritelnMock).toBeCalledWith(`mash: ${errMsg}`);
       expect(env.exitStatus).toEqual(errCode);
     });
   });

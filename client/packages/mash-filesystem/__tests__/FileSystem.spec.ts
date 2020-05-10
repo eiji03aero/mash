@@ -1,4 +1,4 @@
-import * as E from "fp-ts/es6/Either";
+import * as E from "fp-ts/lib/Either";
 import { sharedContext, installFixtureNodes } from "./shared";
 import { IFileSystem, IFile, IDirectory } from "../src/types";
 import { FileSystem } from "../src/FileSystem";

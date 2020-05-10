@@ -1,4 +1,4 @@
-import * as E from "fp-ts/es6/Either";
+import * as E from "fp-ts/lib/Either";
 import { IFileSystemNode, utils } from "mash-filesystem";
 
 import { CommandPayload } from "../types";

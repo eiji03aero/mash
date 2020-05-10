@@ -6,7 +6,7 @@ options:
   verbose: true
 
 syncs:
-  v-sync-mash-node_modules:
+  v-sync-mash:
     # Seems to be the path needs to be relative from current working directory
-    src: './node_modules'
+    src: '.'
     notify_terminal: true
