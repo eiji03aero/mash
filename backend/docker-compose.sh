@@ -60,6 +60,9 @@ elif [ $cmd = 'update-mskit' ]; then
   execute-all-services go get -u github.com/eiji03aero/mskit
   execute-all-services go install github.com/eiji03aero/mskit/cmd/mskit
 
+elif [ $cmd = 'all' ]; then
+  execute-all-services ${@:2}
+
 else
   execute-docker-compose $@
 fi

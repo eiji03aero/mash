@@ -49,7 +49,7 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreateTodo func(childComplexity int, input model.INewTodo) int
 		Login      func(childComplexity int, input model.ILogin) int
-		Logout     func(childComplexity int, _ *model.INone) int
+		Logout     func(childComplexity int) int
 		Signup     func(childComplexity int, input model.ISignup) int
 	}
 
@@ -91,7 +91,7 @@ type MutationResolver interface {
 	CreateTodo(ctx context.Context, input model.INewTodo) (*model.Todo, error)
 	Signup(ctx context.Context, input model.ISignup) (*model.RSignup, error)
 	Login(ctx context.Context, input model.ILogin) (*model.RLogin, error)
-	Logout(ctx context.Context, _ *model.INone) (*model.RNone, error)
+	Logout(ctx context.Context) (*model.RNone, error)
 }
 type QueryResolver interface {
 	Users(ctx context.Context) ([]*model.User, error)
@@ -144,12 +144,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_logout_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.Logout(childComplexity, args["_"].(*model.INone)), true
+		return e.complexity.Mutation.Logout(childComplexity), true
 
 	case "Mutation.signup":
 		if e.complexity.Mutation.Signup == nil {
@@ -355,7 +350,7 @@ type User {
 
   signup(input: ISignup!): RSignup!
   login(input: ILogin!): RLogin!
-  logout(_: INone): RNone @auth
+  logout: RNone @auth
 }
 
 input INewTodo {
@@ -430,20 +425,6 @@ func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawAr
 		}
 	}
 	args["input"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_logout_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *model.INone
-	if tmp, ok := rawArgs["_"]; ok {
-		arg0, err = ec.unmarshalOINone2ᚖfrontendᚋgraphᚋmodelᚐINone(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["_"] = arg0
 	return args, nil
 }
 
@@ -690,16 +671,9 @@ func (ec *executionContext) _Mutation_logout(ctx context.Context, field graphql.
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_logout_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().Logout(rctx, args["_"].(*model.INone))
+		return ec.resolvers.Mutation().Logout(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3260,18 +3234,6 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	return ec.marshalOBoolean2bool(ctx, sel, *v)
-}
-
-func (ec *executionContext) unmarshalOINone2frontendᚋgraphᚋmodelᚐINone(ctx context.Context, v interface{}) (model.INone, error) {
-	return ec.unmarshalInputINone(ctx, v)
-}
-
-func (ec *executionContext) unmarshalOINone2ᚖfrontendᚋgraphᚋmodelᚐINone(ctx context.Context, v interface{}) (*model.INone, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalOINone2frontendᚋgraphᚋmodelᚐINone(ctx, v)
-	return &res, err
 }
 
 func (ec *executionContext) marshalORNone2frontendᚋgraphᚋmodelᚐRNone(ctx context.Context, sel ast.SelectionSet, v model.RNone) graphql.Marshaler {

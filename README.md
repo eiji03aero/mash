@@ -41,8 +41,6 @@
 # refactor
 - client
   - mash-term
-    - scroll and display kind of broken if command output is long enough to break into multiple lines
-    - should refactor and make use of scrolltobottom
 
 - backend
   - refactor mskit
@@ -52,9 +50,12 @@
         - with current feature, consumers will have to keep track of every single events in order to
           have complete data
         - more concrete examples are required to plan how it can be extracted
+  - deploy
+    - gcp, kubernetes
   - frontend service
     - add test
       - look up examples on gql-gen
+      - done on basis
 
 - rabbitmq
   - queuing might be not really working

@@ -16,7 +16,7 @@ const (
 func injectHTTPMiddleware(svc frontend.Service) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			httpContext := utils.HttpContext{
+			httpContext := utils.HTTPContext{
 				W: &w,
 				R: r,
 			}

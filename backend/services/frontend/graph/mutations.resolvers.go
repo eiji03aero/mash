@@ -37,7 +37,7 @@ func (r *mutationResolver) Login(ctx context.Context, input model.ILogin) (*mode
 	return r.service.Login(input)
 }
 
-func (r *mutationResolver) Logout(ctx context.Context, _ *model.INone) (*model.RNone, error) {
+func (r *mutationResolver) Logout(ctx context.Context) (*model.RNone, error) {
 	user, err := GetContextUser(ctx)
 	if err != nil {
 		return nil, err

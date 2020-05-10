@@ -8,6 +8,7 @@ require (
 	github.com/mattn/go-colorable v0.1.6 // indirect
 	github.com/spf13/cobra v1.0.0 // indirect
 	github.com/streadway/amqp v0.0.0-20200108173154-1c71cc93ed71
+	github.com/vektra/mockery v1.0.0 // indirect
 	go.mongodb.org/mongo-driver v1.3.0
 	golang.org/x/sys v0.0.0-20200409092240-59c9f1ba88fa // indirect
 )
