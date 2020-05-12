@@ -1,0 +1,19 @@
+name: backend-e2e
+
+on:
+  push:
+    branches:
+    - master
+    paths:
+    - "backend/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      wd: ./backend
+    steps:
+    - uses: actions/checkout@v1
+
+    - run: ./scripts/run-e2e.sh
+      working-directory: ${{ env.wd }}

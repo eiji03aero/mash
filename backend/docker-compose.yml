@@ -19,7 +19,7 @@ x-go-service-default: &go-service-default
     - -c
     - |
       echo wait for rabbitmq to get ready
-      /backend/scripts/utils.sh await-address mash-rabbitmq 5672
+      /backend/scripts/utils.sh await-nc mash-rabbitmq 5672
       echo Connected to rabbitmq
       make run
 
