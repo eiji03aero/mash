@@ -33,7 +33,14 @@
 
 ```
 # issues
+- github action
+  - cache for go mod, docker
+    - https://github.com/features/packages
+    - https://github.com/dtinth/github-actions-docker-layer-caching-poc/blob/master/.github/workflows/dockerimage.yml
+
 - client
+  - create template stuff for client package
+    - when adding next package
   - mash-term
 
 - backend
@@ -48,30 +55,24 @@
     - gcp, kubernetes
   - add test
     - integration tests
-      - example
-          - https://github.com/george-e-shaw-iv/integration-tests-example
-      - todo
-        - script to teardown and setup test environment
-        - create e2e package
-          - add test
-      - concern
-        - services' awaiting time for rabbitmq
+      - [ ] await-http is not working
+      - [x] take exit code for action's final status
+      - add test on current endpoints
+        - signup
+        - login
+        - logout
     - unit tests
       - look up examples on gql-gen
       - should setup github action when all done
       - to cover
         - domain
         - service
-
   - frontend service
 
 - rabbitmq
   - queuing might be not really working
     - service launched after queueing message does not receive them when ready
     - have to read more about it on documents
-
-- create template stuff for client package
-  - when adding next package
 
 # packages
 - mash

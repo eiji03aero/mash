@@ -2,7 +2,6 @@ package request
 
 import (
 	"context"
-	"log"
 	"testing"
 
 	"github.com/machinebox/graphql"
@@ -26,10 +25,8 @@ func TestMutation(t *testing.T) {
 				Id string `json:"id"`
 			} `json:"users"`
 		}
-		log.Println("client: ", client)
 		err := client.Run(ctx, req, &res)
 
-		log.Println(err)
 		assert.GreaterOrEqual(t, len(res.Users), 0)
 		assert.NoError(t, err)
 	})
