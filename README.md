@@ -32,13 +32,7 @@
 ## Todos
 
 ```
-# fix
-- mash
-
-# features
-- none for now
-
-# refactor
+# issues
 - client
   - mash-term
 
@@ -52,10 +46,24 @@
         - more concrete examples are required to plan how it can be extracted
   - deploy
     - gcp, kubernetes
-  - frontend service
-    - add test
+  - add test
+    - integration tests
+      - example
+          - https://github.com/george-e-shaw-iv/integration-tests-example
+      - todo
+        - script to teardown and setup test environment
+        - create e2e package
+          - add test
+      - concern
+        - services' awaiting time for rabbitmq
+    - unit tests
       - look up examples on gql-gen
-      - done on basis
+      - should setup github action when all done
+      - to cover
+        - domain
+        - service
+
+  - frontend service
 
 - rabbitmq
   - queuing might be not really working

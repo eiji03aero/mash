@@ -10,14 +10,14 @@ run:
 test:
 	go test -v --cover ./...
 
-.PHONY: test-watch
+.PHONY: test-w
 test-watch:
 	reflex -r '(\.go|go\.mod)' -s make test
 
-.PHONY: mockery
-mockery:
-	mockery -all
+.PHONY: g-mock
+g-mock:
+	mockery -all -output ./testutils/mocks
 
-.PHONY: gql-gen
-gql-gen:
+.PHONY: g-gql
+gql-g:
 	go run github.com/99designs/gqlgen generate

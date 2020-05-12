@@ -1,11 +1,11 @@
-name: mash
+name: client-deploy-web
 
 on:
   push:
     branches:
     - master
-    # paths:
-    # - "client/packages/**"
+    paths:
+    - "client/packages/**"
 
 jobs:
   build:

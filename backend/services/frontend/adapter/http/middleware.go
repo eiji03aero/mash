@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"frontend"
+	"frontend/domain"
 	"frontend/graph"
-	"frontend/utils"
 )
 
 const (
@@ -16,7 +16,7 @@ const (
 func injectHTTPMiddleware(svc frontend.Service) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			httpContext := utils.HTTPContext{
+			httpContext := domain.HTTPContext{
 				W: &w,
 				R: r,
 			}

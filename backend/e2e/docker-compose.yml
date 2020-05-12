@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+  workspace:
+    build:
+      context: ../docker
+      dockerfile: Dockerfile.golang
+    environment:
+      GRAPHQL_HTTP_URL: http://mash-s-frontend:4000/graphql
+    networks:
+      - default
+    volumes:
+      - .:/app
+      - v-go:/go
+    working_dir: /app
+    tty: true
+    command: make test
+
+networks:
+  default:
+    external:
+      name: n-mash-backend
+
+volumes:
+  v-go:

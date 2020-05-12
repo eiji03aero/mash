@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"frontend/graph/model"
-	"frontend/mocks"
 	"frontend/testutils"
+	"frontend/testutils/mocks"
 
 	"github.com/99designs/gqlgen/client"
 	"github.com/go-redis/redis"
@@ -13,18 +13,14 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type mockSet struct {
+func NewMockSet(t *testing.T) (ms struct {
 	c     *client.Client
 	rc    *redis.Client
 	svc   *mocks.Service
 	apxy  *mocks.AuthProxy
 	aqpxy *mocks.AuthQueryProxy
-}
-
-func NewMockSet(t *testing.T) *mockSet {
+}) {
 	t.Helper()
-
-	ms := &mockSet{}
 
 	ms.rc = testutils.NewMockRedis(t)
 	ms.svc = &mocks.Service{}

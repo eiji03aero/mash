@@ -11,6 +11,7 @@ require (
 	github.com/go-redis/redis v6.15.7+incompatible
 	github.com/gomodule/redigo v2.0.0+incompatible // indirect
 	github.com/gorilla/websocket v1.4.0
+	github.com/izumin5210/cgt v0.0.0-20181103063432-ac2ef913eb51 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/mattn/go-colorable v0.1.6 // indirect
 	github.com/onsi/ginkgo v1.12.0 // indirect

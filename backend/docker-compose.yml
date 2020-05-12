@@ -19,10 +19,7 @@ x-go-service-default: &go-service-default
     - -c
     - |
       echo wait for rabbitmq to get ready
-      while ! nc -z mash-rabbitmq 5672; do
-        echo waiting for rabbitmq...
-        sleep 3s
-      done
+      /backend/scripts/utils.sh await-address mash-rabbitmq 5672
       echo Connected to rabbitmq
       make run
 
@@ -84,12 +81,18 @@ services:
     container_name: mash-rabbitmq
     volumes:
       - v-rabbitmq:/var/lib/rabbitmq
+    ports:
+      - 5672:5672
     tty: true
 
   mash-redis:
     image: redis:5.0.8-buster
     container_name: mash-redis
     tty: true
+
+networks:
+  default:
+    name: n-mash-backend
 
 volumes:
   v-rabbitmq:
