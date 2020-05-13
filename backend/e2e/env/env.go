@@ -1,4 +1,4 @@
-package setup
+package env
 
 import (
 	"github.com/kelseyhightower/envconfig"

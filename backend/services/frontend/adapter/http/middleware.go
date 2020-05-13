@@ -1,19 +1,22 @@
 package http
 
 import (
+	"bytes"
 	"context"
 	"net/http"
 
 	"frontend"
 	"frontend/domain"
 	"frontend/graph"
+
+	"github.com/eiji03aero/mskit/utils/logger"
 )
 
 const (
 	bearerPrefix = "Bearer "
 )
 
-func injectHTTPMiddleware(svc frontend.Service) func(http.Handler) http.Handler {
+func createContextMiddleware(svc frontend.Service) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			httpContext := domain.HTTPContext{
@@ -40,6 +43,30 @@ func injectHTTPMiddleware(svc frontend.Service) func(http.Handler) http.Handler 
 
 			r = r.WithContext(ctx)
 			next.ServeHTTP(w, r)
+		})
+	}
+}
+
+type bodyLogWriter struct {
+	http.ResponseWriter
+	body *bytes.Buffer
+}
+
+func (w bodyLogWriter) Write(b []byte) (int, error) {
+	w.body.Write(b)
+	return w.ResponseWriter.Write(b)
+}
+
+func createLogMiddleware() func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			wrappedWriter := &bodyLogWriter{ResponseWriter: w, body: bytes.NewBuffer([]byte{})}
+			next.ServeHTTP(wrappedWriter, r)
+
+			logger.Println(
+				logger.HiBlueString("Response body"),
+				wrappedWriter.body.String(),
+			)
 		})
 	}
 }

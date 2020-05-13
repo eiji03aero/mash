@@ -24,7 +24,8 @@ func NewRouter(
 		Debug:            true,
 	}).Handler)
 
-	router.Use(injectHTTPMiddleware(service))
+	router.Use(createContextMiddleware(service))
+	router.Use(createLogMiddleware())
 
 	router.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
 	router.Handle("/graphql", gqlServer)

@@ -16,7 +16,7 @@ func TestAuth(t *testing.T) {
 	ctx = WithContextUser(ctx, user)
 
 	receivedUser, err := GetContextUser(ctx)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, user, receivedUser)
 	assert.True(t, IsAuthenticated(ctx))
 }
