@@ -4,40 +4,40 @@ import (
 	"testing"
 	"time"
 
-	"github.com/machinebox/graphql"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAuthentication(t *testing.T) {
-	name := "test-user" + time.Now().String()
-	password := "test123"
+	var (
+		name     = "test-user" + time.Now().String()
+		password = "test123"
+		token    string
+	)
 
-	signupReq := graphql.NewRequest(`
-		mutation ($input: ISignup!) {
-			signup(input: $input) {
-				user {
-					id
-					name
-				}
-			}
-		}
-	`)
-	signupReq.Var("input", map[string]interface{}{
-		"name":     name,
-		"password": password,
+	// -------------------- signup --------------------
+	user, err := Signup(SignupParams{
+		Name:     name,
+		Password: password,
 	})
 
-	var res struct {
-		Signup struct {
-			User struct {
-				Id   string `json:"id"`
-				Name string `json:"name"`
-			} `json:"user"`
-		} `json:"signup"`
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, user.Name, name)
+	assert.Greater(t, len(user.Id), 0)
+	assert.Greater(t, len(user.Name), 0)
 
-	err := client.Run(requestContext(), signupReq, &res)
+	// -------------------- login --------------------
+	token, err = Login(LoginParams{
+		Name:     name,
+		Password: password,
+	})
 
 	assert.NoError(t, err)
-	assert.Equal(t, name, res.Signup.User.Name)
+	assert.Greater(t, len(token), 0)
+
+	// -------------------- logout --------------------
+	err = Logout(LogoutParams{
+		Token: token,
+	})
+
+	assert.NoError(t, err)
 }
