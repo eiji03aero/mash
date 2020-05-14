@@ -33,24 +33,12 @@
 
 ```
 # issues
-- github action
-  - cache for go mod, docker
-    - https://github.com/features/packages
-    - https://github.com/dtinth/github-actions-docker-layer-caching-poc/blob/master/.github/workflows/dockerimage.yml
-
 - client
   - create template stuff for client package
     - when adding next package
   - mash-term
 
 - backend
-  - refactor mskit
-    - there are tons of tedious work when using mskit. they should be simplified
-    - pains
-      - consuming events to replicate data
-        - with current feature, consumers will have to keep track of every single events in order to
-          have complete data
-        - more concrete examples are required to plan how it can be extracted
   - deploy
     - gcp, kubernetes
   - add test
@@ -60,12 +48,26 @@
       - to cover
         - domain
         - service
+  - refactor mskit
+    - there are tons of tedious work when using mskit. they should be simplified
+    - pains
+      - consuming events to replicate data
+        - with current feature, consumers will have to keep track of every single events in order to
+          have complete data
+        - more concrete examples are required to plan how it can be extracted
   - frontend service
 
 - rabbitmq
   - queuing might be not really working
     - service launched after queueing message does not receive them when ready
     - have to read more about it on documents
+
+- github action
+  - speed up backend e2e ci test. couple of possible solutions
+    - actions/cache
+      - https://github.com/features/packages
+      - https://github.com/dtinth/github-actions-docker-layer-caching-poc/blob/master/.github/workflows/dockerimage.yml
+    - create registry and pull images from there
 
 # packages
 - mash

@@ -21,7 +21,7 @@ fi
 
 cp -r templates/go $service_path
 
-docker build -t $docker_image -f ./docker/Dockerfile.golang .
+docker build -t $docker_image -f ./docker/Dockerfile.go-dev .
 
 docker run --rm \
   -w /app \

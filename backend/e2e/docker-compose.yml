@@ -4,7 +4,7 @@ services:
   workspace:
     build:
       context: ../docker
-      dockerfile: Dockerfile.golang
+      dockerfile: Dockerfile.go-dev
     environment:
       GRAPHQL_HTTP_URL: http://mash-s-frontend:4000/graphql
     networks:

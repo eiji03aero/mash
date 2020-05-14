@@ -9,7 +9,7 @@ x-shared-env: &shared-env
 x-go-service-default: &go-service-default
   build:
     context: ./docker
-    dockerfile: Dockerfile.golang
+    dockerfile: Dockerfile.go-dev
   volumes:
     - .:/backend
     - v-go:/go
