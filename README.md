@@ -36,18 +36,17 @@
 - client
   - create template stuff for client package
     - when adding next package
+  - add loading state on startup
+  - improve prompt
+    - show current directory
+    - show user name
   - mash-term
 
 - backend
+  - filesystem service
+    - create skelton
   - deploy
     - gcp, kubernetes
-  - add test
-    - unit tests
-      - look up examples on gql-gen
-      - should setup github action when all done
-      - to cover
-        - domain
-        - service
   - refactor mskit
     - there are tons of tedious work when using mskit. they should be simplified
     - pains
@@ -100,7 +99,6 @@
 - mash-term
   - add test
   - command history feature
-  - tab completion
   - delete row by index
   - dynamically change prompt
     - like current directory
@@ -117,13 +115,6 @@
 # services
 - frontend-service
   - features
-    - user account feature
-      - signup
-        - create user
-      - login
-        - set cookie with signed password
-      - logout
-        - remove cookie
     - fetch filesystem
       - only the home directory fetched from BE
       - loads static nodes from yaml

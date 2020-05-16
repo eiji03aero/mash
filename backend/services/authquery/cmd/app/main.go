@@ -47,7 +47,7 @@ func main() {
 		panic(err)
 	}
 
-	logger.Println("server starting to listen ...")
+	logger.Println(logger.CyanString("server started listening ..."))
 	bff := make(chan bool, 1)
 	<-bff
 }

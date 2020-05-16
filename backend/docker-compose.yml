@@ -30,7 +30,6 @@ x-mongo-default: &mongo-default
 services:
   mash-s-frontend:
     <<: *go-service-default
-    container_name: mash-s-frontend
     working_dir: /backend/services/frontend
     environment:
       <<: *shared-env
@@ -42,11 +41,9 @@ services:
       - 4000:4000
   mash-s-frontend-mongo:
     <<: *mongo-default
-    container_name: mash-s-frontend-mongo
 
   mash-s-auth:
     <<: *go-service-default
-    container_name: mash-s-auth
     working_dir: /backend/services/auth
     environment:
       <<: *shared-env
@@ -58,11 +55,9 @@ services:
       - 4001:4001
   mash-s-auth-mongo:
     <<: *mongo-default
-    container_name: mash-s-auth-mongo
 
   mash-s-authquery:
     <<: *go-service-default
-    container_name: mash-s-authquery
     working_dir: /backend/services/authquery
     environment:
       <<: *shared-env
@@ -74,11 +69,37 @@ services:
       - 4002:4002
   mash-s-authquery-mongo:
     <<: *mongo-default
-    container_name: mash-s-authquery-mongo
+
+  mash-s-fs:
+    <<: *go-service-default
+    working_dir: /backend/services/fs
+    environment:
+      <<: *shared-env
+      HOST: 0.0.0.0
+      PORT: 4003
+      DB_HOST: mash-s-fs-mongo
+      DB_PORT: 27017
+    ports:
+      - 4003:4003
+  mash-s-fs-mongo:
+    <<: *mongo-default
+
+  mash-s-fsquery:
+    <<: *go-service-default
+    working_dir: /backend/services/fsquery
+    environment:
+      <<: *shared-env
+      HOST: 0.0.0.0
+      PORT: 4004
+      DB_HOST: mash-s-fsquery-mongo
+      DB_PORT: 27017
+    ports:
+      - 4004:4004
+  mash-s-fsquery-mongo:
+    <<: *mongo-default
 
   mash-rabbitmq:
     image: rabbitmq:3.7-alpine
-    container_name: mash-rabbitmq
     volumes:
       - v-rabbitmq:/var/lib/rabbitmq
     ports:
@@ -87,7 +108,6 @@ services:
 
   mash-redis:
     image: redis:5.0.8-buster
-    container_name: mash-redis
     tty: true
 
 networks:
