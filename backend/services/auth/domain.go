@@ -6,6 +6,6 @@ import (
 
 type UserService interface {
 	Create(userent.CreateUser) (*userent.UserAggregate, error)
-	LoginUser(userent.LoginUser) (string, error)
-	LogoutUser(cmd userent.LogoutUser) error
+	Login(userent.LoginUser) (string, error)
+	Logout(cmd userent.LogoutUser) error
 }

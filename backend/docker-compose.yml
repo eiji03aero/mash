@@ -14,6 +14,8 @@ x-go-service-default: &go-service-default
     - .:/backend
     - v-go:/go
   tty: true
+  depends_on:
+    - mash-rabbitmq
   command:
     - /bin/bash
     - -c
