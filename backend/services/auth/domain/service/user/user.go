@@ -17,7 +17,7 @@ type Service struct {
 func New(
 	er *mskit.EventRepository,
 	aqpxy auth.AuthQueryProxy,
-) *Service {
+) auth.UserService {
 	return &Service{
 		eventRepository: er,
 		authQueryProxy:  aqpxy,

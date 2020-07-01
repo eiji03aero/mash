@@ -105,6 +105,8 @@
 
 - web
   - setup tests
+  - rewrite the src/adapters/proxy to separate the methods
+    - `Object.assign(Printer.prototype, generatorFunctions);`
 
 - mash-viewer
   - features

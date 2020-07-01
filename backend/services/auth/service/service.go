@@ -10,7 +10,7 @@ import (
 type service struct {
 	eventRepository *mskit.EventRepository
 	authQueryProxy  auth.AuthQueryProxy
-	userService     *usersvc.Service
+	userService     auth.UserService
 }
 
 func New(
