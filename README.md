@@ -34,17 +34,18 @@
 ```
 # issues
 - client
+  - cursor position wrong when first page loaded
+  - add loading state on startup
   - create template stuff for client package
     - when adding next package
-  - add loading state on startup
   - improve prompt
     - show current directory
     - show user name
   - mash-term
 
 - backend
-  - filesystem service
-    - create skelton
+  - fs service
+  - frontend service
   - deploy
     - gcp, kubernetes
   - refactor mskit
@@ -54,7 +55,6 @@
         - with current feature, consumers will have to keep track of every single events in order to
           have complete data
         - more concrete examples are required to plan how it can be extracted
-  - frontend service
 
 - rabbitmq
   - queuing might be not really working
@@ -106,7 +106,7 @@
 - web
   - setup tests
   - rewrite the src/adapters/proxy to separate the methods
-    - `Object.assign(Printer.prototype, generatorFunctions);`
+    - https://www.typescriptlang.org/docs/handbook/mixins.html
 
 - mash-viewer
   - features
@@ -115,7 +115,7 @@
     - file explorer along with filesystem nodes
 
 # services
-- frontend-service
+- frontend
   - features
     - fetch filesystem
       - only the home directory fetched from BE
@@ -128,5 +128,5 @@
 
 - auth-service
 
-- filesystem-service
+- fs
 ```

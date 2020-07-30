@@ -5,11 +5,20 @@
 ```
 - create new FileSystem
   - supposedly be called when user is created
+  - have welcome message file
 - cud file
   - read will be done by fsquery
 - cud directory
   - read will be done by fsquery
 
+```
+
+## Aggregate
+
+```
+- FileSystemAggregate
+  - properties
+    - FileSystem *FileSystem
 ```
 
 ## Entity
