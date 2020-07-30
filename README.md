@@ -34,7 +34,6 @@
 ```
 # issues
 - client
-  - cursor position wrong when first page loaded
   - add loading state on startup
   - create template stuff for client package
     - when adding next package

@@ -100,9 +100,11 @@ export class CursorRenderLayer extends BaseRenderLayer {
   private get _cursorX () {
     const promptStr = text.stripHideCharacters(this.terminal.config.prompt);
     const promptWidth = this.ctx.measureText(promptStr).width;
-    const inputLength = this.terminal.textarea.value === ""
+
+    const inputValue = this.terminal.textarea.value;
+    const inputLength = inputValue === ""
       ? 0
-      : this.ctx.measureText(this.terminal.textarea.value.slice(0, this.terminal.textarea.selectionStart)).width;
+      : this.ctx.measureText(inputValue.slice(0, this.terminal.textarea.selectionStart)).width;
     return this.terminal.config.rowLeftMargin + promptWidth + inputLength;
   }
 

@@ -48,8 +48,6 @@ export class Buffer implements IBuffer {
   }
 
   updateRowByIndex (idx: number, str: string) {
-    const prerrows = this.rawRows.slice();
-    const prerows = this.rows.slice();
     this.rawRows = this.rawRows.map((s: string, i: number) => {
       return i === idx
         ? str
@@ -72,15 +70,6 @@ export class Buffer implements IBuffer {
       ...splitted,
       ...latter
     ] as CachedRows;
-
-    console.warn({
-      former, latter, splitted,
-      clIdx, cfIdx
-    })
-    console.warn({
-      str, idx, lastidx: this.rawRows.length - 1,
-      prerows, rawRows: this.rawRows, prerrows, rows: this.rows,
-    })
   }
 
   updateRows () {

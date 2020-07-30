@@ -134,8 +134,10 @@ export class Mash implements IMash {
 
   private _onKeyHandler (e: KeyboardEvent) {
     // Do nothing if it's enter, in order to avoid bugs
-    // like read method's prompt gets overriden
-    if (e.keyCode === 13) return;
+    // like read method's prompt gets overwritten
+    if (e.keyCode === 13) {
+      return;
+    }
 
     const value = (e.target as HTMLInputElement).value;
     const prompt = this._terminal.config.prompt;

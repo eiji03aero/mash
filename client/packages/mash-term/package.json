@@ -19,6 +19,7 @@
   },
   "scripts": {
     "build": "rm -rf ./lib && tsc",
+    "build:watch": "tsc --watch",
     "dev": "webpack-dev-server",
     "test": "jest",
     "test:watch": "jest --watch",
