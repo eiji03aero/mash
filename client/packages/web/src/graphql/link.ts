@@ -1,9 +1,13 @@
-import { ApolloLink, split, Operation } from "apollo-link";
-import { HttpLink } from "apollo-link-http";
-import { WebSocketLink } from "apollo-link-ws";
-import { onError } from "apollo-link-error";
-import { setContext } from  "apollo-link-context";
-import { getMainDefinition } from "apollo-utilities";
+import {
+  ApolloLink,
+  split,
+  Operation,
+  HttpLink,
+} from "@apollo/client";
+import { WebSocketLink } from "@apollo/client/link/ws";
+import { onError } from "@apollo/client/link/error";
+import { setContext } from  "@apollo/client/link/context";
+import { getMainDefinition } from "@apollo/client/utilities";
 import * as E from "fp-ts/lib/Either";
 
 import { ILocalStore } from "../types";

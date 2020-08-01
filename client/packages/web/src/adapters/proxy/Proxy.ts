@@ -1,7 +1,11 @@
 import * as E from "fp-ts/lib/Either";
 
-import { CustomApolloClient, IProxy } from "../../types";
-import { tag } from "../../graphql";
+import {
+  CustomApolloClient,
+  IProxy,
+  PromisedEither,
+} from "../../types";
+import { tags } from "../../graphql";
 
 export class Proxy implements IProxy {
   private _apolloClient: CustomApolloClient;
@@ -15,9 +19,9 @@ export class Proxy implements IProxy {
   async signup (params: {
     name: string;
     password: string;
-  }): Promise<E.Either<Error, null>> {
+  }): PromisedEither<null> {
     const result = await this._apolloClient.mutate({
-      mutation: tag.mutations.Signup,
+      mutation: tags.mutations.Signup,
       variables: {
         input: {
           name: params.name,
@@ -36,9 +40,9 @@ export class Proxy implements IProxy {
   async login (params: {
     name: string;
     password: string;
-  }): Promise<E.Either<Error, string>> {
+  }): PromisedEither<string> {
     const result = await this._apolloClient.mutate({
-      mutation: tag.mutations.Login,
+      mutation: tags.mutations.Login,
       variables: {
         input: {
           name: params.name,
@@ -54,9 +58,9 @@ export class Proxy implements IProxy {
     return E.right(result.data.login.token);
   }
 
-  async logout (): Promise<E.Either<Error, null>> {
+  async logout (): PromisedEither<null> {
     const result = await this._apolloClient.mutate({
-      mutation: tag.mutations.Logout,
+      mutation: tags.mutations.Logout,
     })
       .catch(err => err);
     if (result instanceof Error) {

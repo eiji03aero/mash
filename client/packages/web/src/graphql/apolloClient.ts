@@ -1,9 +1,7 @@
-import { ApolloClient } from "apollo-client";
-import { InMemoryCache, NormalizedCacheObject } from "apollo-cache-inmemory";
+import { ApolloClient, InMemoryCache, NormalizedCacheObject } from "@apollo/client";
 import { createLink } from "./link";
 
 import { CustomApolloClient } from "../types";
-import { initialState, resolvers } from "./resolvers";
 import { ILocalStore } from "../types";
 
 export const createApolloClient = (params: {
@@ -22,15 +20,6 @@ export const createApolloClient = (params: {
   const apolloClient: CustomApolloClient = new ApolloClient<NormalizedCacheObject>({
     cache,
     link,
-    resolvers,
-  });
-
-  cache.writeData({ data: initialState });
-
-  apolloClient.onResetStore(() => {
-    cache.writeData({ data: initialState });
-    // returning promise in favor of onResetStore's signature
-    return Promise.resolve();
   });
 
   return apolloClient;

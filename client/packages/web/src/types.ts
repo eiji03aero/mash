@@ -1,12 +1,18 @@
-import { ApolloClient } from "apollo-client";
-import { NormalizedCacheObject } from "apollo-cache-inmemory";
+import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 import * as E from "fp-ts/lib/Either";
 
+// -------------------- primitives --------------------
+export type PromisedEither<T> = Promise<E.Either<Error, T>>;
+
+export type CustomApolloClient = ApolloClient<NormalizedCacheObject>;
+
+// -------------------- domain --------------------
 export interface IMash {
   initialize(): void;
   read(promptStr: string): Promise<string>;
 }
 
+// -------------------- service --------------------
 export interface IService {
   isLoggedIn: boolean;
   initialize(params: {
@@ -15,26 +21,26 @@ export interface IService {
   signup(params: {
     name: string;
     password: string;
-  }): Promise<E.Either<Error, null>>;
+  }): PromisedEither<null>;
   login(params: {
     name: string;
     password: string;
-  }): Promise<E.Either<Error, string>>;
-  logout(): Promise<E.Either<Error, null>>;
+  }): PromisedEither<string>;
+  logout(): PromisedEither<null>;
 }
 
-export type CustomApolloClient = ApolloClient<NormalizedCacheObject>;
-
-export interface IProxy {
+// -------------------- proxy --------------------
+export interface IProxy
+  {
   signup(params: {
     name: string;
     password: string;
-  }): Promise<E.Either<Error, null>>;
+  }): PromisedEither<null>;
   login(params: {
     name: string;
     password: string;
-  }): Promise<E.Either<Error, string>>;
-  logout(): Promise<E.Either<Error, null>>;
+  }): PromisedEither<string>;
+  logout(): PromisedEither<null>;
 }
 
 export interface ILocalStore {
