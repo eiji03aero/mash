@@ -1,17 +1,12 @@
-import * as E from "fp-ts/lib/Either";
+import * as E from "fp-ts/es6/Either";
+import * as types from "../../types";
+import { gen } from "../../graphql";
 
-import {
-  CustomApolloClient,
-  IProxy,
-  PromisedEither,
-} from "../../types";
-import { tags } from "../../graphql";
-
-export class Proxy implements IProxy {
-  private _apolloClient: CustomApolloClient;
+export class AuthRepository implements types.IAuthRepository {
+  private _apolloClient: types.CustomApolloClient;
 
   constructor (params: {
-    apolloClient: CustomApolloClient;
+    apolloClient: types.CustomApolloClient;
   }) {
     this._apolloClient = params.apolloClient;
   }
@@ -19,9 +14,9 @@ export class Proxy implements IProxy {
   async signup (params: {
     name: string;
     password: string;
-  }): PromisedEither<null> {
+  }): types.PromisedEither<null> {
     const result = await this._apolloClient.mutate({
-      mutation: tags.mutations.Signup,
+      mutation: gen.SignupDocument,
       variables: {
         input: {
           name: params.name,
@@ -40,9 +35,9 @@ export class Proxy implements IProxy {
   async login (params: {
     name: string;
     password: string;
-  }): PromisedEither<string> {
+  }): types.PromisedEither<string> {
     const result = await this._apolloClient.mutate({
-      mutation: tags.mutations.Login,
+      mutation: gen.LoginDocument,
       variables: {
         input: {
           name: params.name,
@@ -58,9 +53,9 @@ export class Proxy implements IProxy {
     return E.right(result.data.login.token);
   }
 
-  async logout (): PromisedEither<null> {
+  async logout (): types.PromisedEither<null> {
     const result = await this._apolloClient.mutate({
-      mutation: tags.mutations.Logout,
+      mutation: gen.LogoutDocument,
     })
       .catch(err => err);
     if (result instanceof Error) {

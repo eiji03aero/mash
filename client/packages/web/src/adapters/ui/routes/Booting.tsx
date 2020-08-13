@@ -1,51 +1,57 @@
 import React from "react";
 import { css, cx } from "emotion";
+import { useQuery } from "@apollo/client";
 
 import { HorizontalLoadingIndicator } from "../components";
 import { useCompositeState } from "../hooks";
+import { gen } from "../../../graphql";
 import { colors } from "../utils";
-
-interface IProps {
-  show: boolean;
-}
 
 interface IState {
   show: boolean;
   removed: boolean;
 }
 
-export const Booting: React.SFC<IProps> = ({
-  show,
-}) => {
+export const Booting: React.FC = () => {
   const [state, setState] = useCompositeState<IState>({
     show: false,
     removed: false,
   });
+  const { data: localStateResult } = useQuery<
+    { localState: gen.LocalState }
+  >(gen.GetLocalStateDocument);
 
-  const handleShow = () => {
+  const handleShow = React.useCallback(() => {
     setState({ removed: false });
     setTimeout(() => {
       setState({ show: true });
     }, 50);
-  };
+  }, [setState]);
 
-  const handleHide = () => {
+  const handleHide = React.useCallback(() => {
     setState({ show: false });
     setTimeout(() => {
       setState({ removed: true });
     }, 500);
-  };
+  }, [setState]);
+
+  const handleApplicationStateChange = React.useCallback((state: gen.ApplicationState) => {
+    switch (state) {
+      case gen.ApplicationState.Running:
+        handleHide();
+        break;
+      case gen.ApplicationState.Booting:
+        handleShow();
+    }
+  }, [handleHide, handleShow]);
+
 
   React.useEffect(() => {
-    setState;
-  }, [show]);
-
-  React.useEffect(() => {
-    handleShow();
-    setTimeout(() => {
-      handleHide();
-    }, 2000);
-  }, [])
+    const state = localStateResult?.localState.applicationState;
+    if (state) {
+      handleApplicationStateChange(state);
+    }
+  }, [localStateResult?.localState.applicationState])
 
 
   const containerClassName = cx(Styles.container, {
@@ -58,7 +64,7 @@ export const Booting: React.SFC<IProps> = ({
       <div className={Styles.box}>
         <HorizontalLoadingIndicator />
         <p className={Styles.boxStatement}>
-        Booting mash, hold on a second ...
+          Booting mash, hold on a second ...
         </p>
       </div>
     </div>

@@ -22,13 +22,20 @@
     "dev": "webpack-dev-server --config webpack.dev.config.js",
     "test": "jest",
     "test:watch": "jest --watch",
-    "lint": "eslint --ext .ts --ext .tsx ."
+    "lint": "eslint --ext .ts --ext .tsx .",
+    "gen:graphql": "graphql-codegen --config codegen.yml",
+    "gen:graphql:watch": "npm run gen:graphql -- --watch"
   },
   "bugs": {
     "url": "https://github.com/eiji03aero/mash/issues"
   },
   "homepage": "https://github.com/eiji03aero/mash#readme",
   "devDependencies": {
+    "@graphql-codegen/cli": "1.17.6",
+    "@graphql-codegen/fragment-matcher": "1.17.6",
+    "@graphql-codegen/typescript": "1.17.6",
+    "@graphql-codegen/typescript-operations": "1.17.6",
+    "@graphql-codegen/typescript-react-apollo": "1.17.6",
     "@types/jest": "^24.0.25",
     "@types/node": "^13.1.4",
     "@types/react": "^16.9.19",
@@ -50,9 +57,12 @@
   },
   "dependencies": {
     "@apollo/client": "^3.1.1",
+    "@apollo/react-common": "^3.1.4",
+    "@apollo/react-hooks": "^4.0.0",
     "emotion": "^10.0.27",
     "fp-ts": "^2.5.3",
     "graphql": "^15.3.0",
+    "jest": "^24.7.1",
     "mash": "^0.0.0",
     "mash-filesystem": "^0.0.0",
     "mash-term": "^0.0.0",

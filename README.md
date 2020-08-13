@@ -34,22 +34,13 @@
 ```
 # issues
 - client
-  - add loading state on startup
-    - add local state to indicate loading status
-    - try splitting code the way babel-parser does
-    - try implementing the thing I was thinking about
-      - three components: service, UI, graphql(apollo local)
-      - graphql holds local states
-      - service and UI reads local states from graphql
-      - service writes local states to graphql
   - configure term parameters from web
-  - consider merging proxy and localStore
-  - create template stuff for client package
-    - when adding next package
+
   - improve prompt
     - show current directory
     - show user name
-  - mash-term
+  - create template stuff for client package
+    - when adding next package
 
 - backend
   - fs service

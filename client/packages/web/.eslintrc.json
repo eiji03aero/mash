@@ -11,6 +11,9 @@
       "jsx": true
     }
   },
+  "ignorePatterns": [
+    "src/graphql/gen/**"
+  ],
   "rules": {
     "react/prop-types": "off"
   }

@@ -1,5 +1,5 @@
 import { Service } from "./service";
-import { Proxy } from "./adapters/proxy";
+import * as repos from "./adapters/repositories";
 import { LocalStore } from "./adapters/localStore";
 
 import { createApolloClient } from "./graphql";
@@ -15,12 +15,16 @@ document.addEventListener("DOMContentLoaded", () => {
     localStore,
   });
 
-  const proxy = new Proxy({
+  const localStateRepository = new repos.LocalStateRepository({
+    apolloClient,
+  });
+  const authRepository = new repos.AuthRepository({
     apolloClient,
   });
 
   const service = new Service({
-    proxy,
+    localStateRepository,
+    authRepository,
   });
 
   const container = document.getElementById("app");

@@ -16,6 +16,7 @@ x-go-service-default: &go-service-default
   tty: true
   depends_on:
     - mash-rabbitmq
+    - mash-redis
   command:
     - /bin/bash
     - -c

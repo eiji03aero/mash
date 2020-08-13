@@ -1,8 +1,9 @@
 import { ApolloClient, InMemoryCache, NormalizedCacheObject } from "@apollo/client";
 import { createLink } from "./link";
+import * as gen from "./gen";
+import { initialState } from "./local";
 
-import { CustomApolloClient } from "../types";
-import { ILocalStore } from "../types";
+import { ILocalStore, CustomApolloClient } from "../types";
 
 export const createApolloClient = (params: {
   httpURL: string;
@@ -20,6 +21,20 @@ export const createApolloClient = (params: {
   const apolloClient: CustomApolloClient = new ApolloClient<NormalizedCacheObject>({
     cache,
     link,
+  });
+
+  const writeInitialState = () => {
+    apolloClient.writeQuery({
+      query: gen.GetLocalStateDocument,
+      data: initialState,
+    });
+  };
+
+  writeInitialState();
+
+  apolloClient.onResetStore(() => {
+    writeInitialState();
+    return Promise.resolve();
   });
 
   return apolloClient;

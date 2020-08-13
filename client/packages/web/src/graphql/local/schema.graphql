@@ -1,0 +1,13 @@
+type Query {
+  localState: LocalState!
+}
+
+type LocalState {
+  applicationState: ApplicationState!
+}
+
+enum ApplicationState {
+  Stopped
+  Booting
+  Running
+}

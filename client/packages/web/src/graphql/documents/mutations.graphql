@@ -1,0 +1,27 @@
+mutation CreateTodo($input: INewTodo!) {
+  createTodo(input: $input) {
+    id
+    text
+  }
+}
+
+mutation Signup($input: ISignup!) {
+  signup(input: $input) {
+    user {
+      id
+      name
+    }
+  }
+}
+
+mutation Login($input: ILogin!) {
+  login(input: $input) {
+    token
+  }
+}
+
+mutation Logout {
+  logout {
+    none
+  }
+}

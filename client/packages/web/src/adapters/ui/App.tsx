@@ -26,7 +26,7 @@ export const App: React.FC = () => {
   return (
     <div className={Styles.container}>
       <Term />
-      <Booting show={true} />
+      <Booting />
     </div>
   );
 };

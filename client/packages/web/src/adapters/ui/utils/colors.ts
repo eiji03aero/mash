@@ -5,7 +5,5 @@ export const colors = {
   blue: "#396fe2",
   red: "#e54b4b",
   yellow: "#faed70",
-  deepGreen: "#202c32",
-
-  cursorBlue: "#2060a0",
+  deepGreen: "#182F40",
 };

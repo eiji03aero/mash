@@ -4,10 +4,7 @@ import { ApolloProvider } from "@apollo/client";
 
 import { App } from "./App";
 
-import {
-  IService,
-  CustomApolloClient,
-} from "../../types";
+import { IService, CustomApolloClient } from "../../types";
 import { AppContext } from "./context";
 
 type RenderParams = {
