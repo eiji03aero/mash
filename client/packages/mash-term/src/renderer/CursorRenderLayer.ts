@@ -53,12 +53,14 @@ export class CursorRenderLayer extends BaseRenderLayer {
     const timeoutId = window.setTimeout(() => {
       const intervalId = window.setInterval(() => {
         this._isCursorShown = !this._isCursorShown;
+
         if (this._isCursorShown) {
           this._showBlockCursor();
         } else {
           this.clear();
         }
       }, this.terminal.config.cursorIntervalMs);
+
       this._blinkIntervalIds.push(intervalId);
     }, this.terminal.config.cursorInitialPauseMs);
 

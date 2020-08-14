@@ -14,7 +14,7 @@
     ]
   },
   "scripts": {
-    "bootstrap": "yarn install && lerna clean --yes && lerna bootstrap",
+    "bootstrap": "yarn install && lerna bootstrap",
     "fulltest": "yarn lint && yarn build && yarn test",
     "build": "lerna run build --stream",
     "build:watch": "lerna run --parallel build:watch -- --preserveWatchOutput",
