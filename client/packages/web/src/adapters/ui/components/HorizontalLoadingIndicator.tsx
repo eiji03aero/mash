@@ -1,7 +1,7 @@
 import React from "react";
 import { css, keyframes } from "emotion";
 
-import { colors } from "../utils";
+import { colors } from "../../../utils";
 
 export const HorizontalLoadingIndicator: React.SFC = () => {
   return (
@@ -47,12 +47,12 @@ const Styles = {
     position: relative;
     width: 100%;
     height: 10px;
-    background-color: ${colors.black};
+    background-color: ${colors.pallete.black};
   `,
   pingPong: css`
     position: absolute;
     height: 100%;
-    background-color: ${colors.blue};
+    background-color: ${colors.pallete.blue};
     animation: ${doubleBullet} 3s linear infinite;
   `
 };

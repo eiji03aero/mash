@@ -5,7 +5,7 @@ import { useQuery } from "@apollo/client";
 import { HorizontalLoadingIndicator } from "../components";
 import { useCompositeState } from "../hooks";
 import { gen } from "../../../graphql";
-import { colors } from "../utils";
+import { colors } from "../../../utils";
 
 interface IState {
   show: boolean;
@@ -81,7 +81,7 @@ const Styles = {
     bottom: 0;
     left: 0;
     right: 0;
-    background: ${colors.deepGreen};
+    background: ${colors.pallete.deepGreen};
 
     opacity: 1;
     transform: translateY(0px);
@@ -107,6 +107,6 @@ const Styles = {
     }
   `,
   boxStatement: css`
-    color: ${colors.white};
+    color: ${colors.pallete.white};
   `
 };

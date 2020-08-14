@@ -26,7 +26,7 @@ export class Terminal implements ITerminal {
 
   constructor (
     container: HTMLElement,
-    cfg?: any,
+    cfg?: Partial<IConfig>,
   ) {
     const config = cfg || {} as IConfig;
 

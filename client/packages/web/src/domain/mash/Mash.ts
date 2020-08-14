@@ -8,6 +8,7 @@ import { IMash, IService, ILocalStateRepository } from "../../types";
 import { IContext } from "./types";
 import { builtins } from "./builtins";
 import { fixtureNodes } from "./fixtureNodes";
+import { colors } from "../../utils";
 
 export class Mash implements IMash {
   private _filesystem: IFileSystem;
@@ -23,7 +24,21 @@ export class Mash implements IMash {
     localStateRepository: ILocalStateRepository;
   }) {
     const filesystem = FileSystem.bootstrap();
-    const terminal = new Terminal(params.terminalContainer);
+    const terminal = new Terminal(params.terminalContainer, {
+      cursorInitialPauseMs: 1000,
+      cursorIntervalMs: 500,
+      terminalBg: colors.pallete.deepGreen,
+      cursorBg: colors.pallete.blue,
+      textWhite: colors.pallete.white,
+      textBlue: colors.pallete.blue,
+      textYellow: colors.pallete.yellow,
+      fontFamily: "Menlo",
+      fontSize: 16,
+      rowTopMargin: 4,
+      rowBottomMargin: 4,
+      rowLeftMargin: 8,
+      rowRightMargin: 8,
+    });
 
     const environment = new Environment({
       onWriteln: terminal.writeln.bind(terminal),
