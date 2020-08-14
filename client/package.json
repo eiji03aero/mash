@@ -19,6 +19,7 @@
     "build": "lerna run build --stream",
     "build:watch": "lerna run --parallel build:watch -- --preserveWatchOutput",
     "build:fs": "(cd packages/mash-filesystem && yarn build)",
+    "build:t": "(cd packages/mash-term && yarn build)",
     "dev:t": "(cd packages/mash-term && yarn run dev)",
     "dev:w": "(cd packages/web && yarn run dev)",
     "test": "lerna run test --parallel",

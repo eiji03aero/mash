@@ -36,9 +36,10 @@
 - client
   - configure term parameters from web
 
-  - improve prompt
-    - show current directory
-    - show user name
+  - implement mash-viewer
+    - planning
+      - what feature does it provide
+
   - create template stuff for client package
     - when adding next package
 
@@ -104,8 +105,6 @@
 
 - web
   - setup tests
-  - rewrite the src/adapters/proxy to separate the methods
-    - https://www.typescriptlang.org/docs/handbook/mixins.html
 
 - mash-viewer
   - features

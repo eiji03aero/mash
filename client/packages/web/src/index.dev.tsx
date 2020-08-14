@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   const service = new Service({
+    localStore,
     localStateRepository,
     authRepository,
   });

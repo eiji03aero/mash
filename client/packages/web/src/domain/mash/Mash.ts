@@ -1,8 +1,10 @@
+import * as E from "fp-ts/es6/Either";
 import { MashClient, Environment, IMashClient, IEnvironment } from "mash";
 import { Terminal, ITerminal } from "mash-term";
 import { FileSystem, IFileSystem } from "mash-filesystem";
+import { text } from "mash-common";
 
-import { IMash, IService } from "../../types";
+import { IMash, IService, ILocalStateRepository } from "../../types";
 import { IContext } from "./types";
 import { builtins } from "./builtins";
 import { fixtureNodes } from "./fixtureNodes";
@@ -13,15 +15,15 @@ export class Mash implements IMash {
   private _environment: IEnvironment;
   private _client: IMashClient<IContext>;
   private _service: IService;
+  private _localStateRepository: ILocalStateRepository;
 
   constructor (params: {
     terminalContainer: HTMLElement;
     service: IService;
+    localStateRepository: ILocalStateRepository;
   }) {
     const filesystem = FileSystem.bootstrap();
-    const terminal = new Terminal(params.terminalContainer, {
-      prompt: "Eijis-MacBook-Pro ~ $ "
-    });
+    const terminal = new Terminal(params.terminalContainer);
 
     const environment = new Environment({
       onWriteln: terminal.writeln.bind(terminal),
@@ -37,16 +39,15 @@ export class Mash implements IMash {
     this._environment = environment;
     this._client = client;
     this._service = params.service;
+    this._localStateRepository = params.localStateRepository;
 
     // Bind methods
     this.read = this.read.bind(this);
     this._onKeyPressHandler = this._onKeyPressHandler.bind(this);
     this._onKeyHandler = this._onKeyHandler.bind(this);
 
-    this._filesystem
-    this._terminal
-    this._environment
-    this._client
+    this._updatePromptString();
+    this._environment;
   }
 
   get context (): IContext {
@@ -111,6 +112,23 @@ export class Mash implements IMash {
     return value;
   }
 
+  private async _updatePromptString () {
+    const username = await this._getUsername();
+    const currentPath = await this._getCurrentDirectoryPath();
+
+    const promptString = [
+      text.colorSequence.white + username,
+      text.colorSequence.blue + currentPath,
+      text.colorSequence.white + "$ ",
+    ].join(" ");
+    this._terminal.config.prompt = promptString;
+  }
+
+  private async _executeClient (value: string) {
+    await this._client.eval(value, this.context);
+    await this._updatePromptString();
+  }
+
   private _attachKeyboardHandlers () {
     this._terminal.onKeyPress(this._onKeyPressHandler);
     this._terminal.onKey(this._onKeyHandler);
@@ -126,7 +144,7 @@ export class Mash implements IMash {
     switch (e.key) {
       case "Enter":
         e.preventDefault();
-        await this._client.eval(value, this.context);
+        await this._executeClient(value);
         this._terminal.prompt();
         break;
     }
@@ -145,5 +163,23 @@ export class Mash implements IMash {
 
     this._terminal.updateRowByIndex(lastIndex, prompt + value);
     this._terminal.showCursor();
+  }
+
+  private async _getUsername () {
+    const r1 = await this._localStateRepository.get();
+    if (E.isLeft(r1)) {
+      throw r1.left;
+    }
+
+    return r1.right.username;
+  }
+
+  private async _getCurrentDirectoryPath () {
+    const r1 = this._filesystem.resolveAbsolutePath(this._filesystem.currentDirectory.id);
+    if (E.isLeft(r1)) {
+      throw r1.left;
+    }
+
+    return r1.right;
   }
 }

@@ -2,7 +2,6 @@ import * as E from "fp-ts/lib/Either";
 
 import * as types from "../types";
 import { Mash } from "../domain/mash";
-import { LocalStore } from "../adapters/localStore";
 import { gen } from "../graphql";
 import * as utils from "../utils";
 
@@ -13,15 +12,14 @@ export class Service implements types.IService {
   private _localStore: types.ILocalStore;
 
   constructor (params: {
+    localStore: types.ILocalStore;
     authRepository: types.IAuthRepository;
     localStateRepository: types.ILocalStateRepository;
   }) {
+    this._localStore = params.localStore;
     this._localStateRepository = params.localStateRepository;
     this._authRepository = params.authRepository;
     this._mash = null as any;
-    this._localStore = new LocalStore();
-
-    this._localStateRepository;
   }
 
   async initialize (params: {
@@ -40,6 +38,7 @@ export class Service implements types.IService {
     this._mash = new Mash({
       terminalContainer: params.terminalContainer,
       service: this,
+      localStateRepository: this._localStateRepository,
     });
     this._mash.initialize();
   }
@@ -50,7 +49,6 @@ export class Service implements types.IService {
     return E.isRight(r);
   }
 
-  // -------------------- Proxy --------------------
   async signup (params: {
     name: string;
     password: string;
@@ -68,6 +66,9 @@ export class Service implements types.IService {
     }
 
     this._localStore.saveToken(r1.right);
+    await this._localStateRepository.update({
+      username: params.name
+    });
     return r1;
   }
 
@@ -78,6 +79,9 @@ export class Service implements types.IService {
     }
 
     this._localStore.clearToken();
+    await this._localStateRepository.update({
+      username: "guest",
+    });
     return r1;
   }
 }

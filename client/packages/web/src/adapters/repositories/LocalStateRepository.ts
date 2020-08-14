@@ -1,6 +1,6 @@
 import * as E from "fp-ts/es6/Either";
 import * as types from "../../types";
-import { gen } from "../../graphql";
+import { gen, local } from "../../graphql";
 
 export class LocalStateRepository implements types.ILocalStateRepository {
   private _apolloClient: types.CustomApolloClient;
@@ -29,13 +29,10 @@ export class LocalStateRepository implements types.ILocalStateRepository {
     }
     const localState = r1.right;
 
-    const updatedLocalState = Object.assign<
-      gen.LocalState, gen.LocalState, Partial<gen.LocalState>
-    >({} as gen.LocalState, localState, params);
     this._apolloClient.writeQuery({
       query: gen.GetLocalStateDocument,
       data: {
-        localState: updatedLocalState,
+        localState: local.mergeLocalState(localState, params)
       }
     });
 

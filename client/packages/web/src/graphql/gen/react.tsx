@@ -12,71 +12,6 @@ export type Scalars = {
   Float: number;
 };
 
-export type RLogin = {
-  __typename?: 'RLogin';
-  token: Scalars['String'];
-};
-
-export type INone = {
-  none?: Maybe<Scalars['Boolean']>;
-};
-
-export type INewTodo = {
-  text: Scalars['String'];
-  userId: Scalars['String'];
-};
-
-export type RSignup = {
-  __typename?: 'RSignup';
-  user: User;
-};
-
-export type Todo = {
-  __typename?: 'Todo';
-  id: Scalars['ID'];
-  text: Scalars['String'];
-  done: Scalars['Boolean'];
-  user: User;
-};
-
-export type User = {
-  __typename?: 'User';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  token: Scalars['String'];
-};
-
-export type ISignup = {
-  name: Scalars['String'];
-  password: Scalars['String'];
-};
-
-export type ILogin = {
-  name: Scalars['String'];
-  password: Scalars['String'];
-};
-
-export type RNone = {
-  __typename?: 'RNone';
-  none?: Maybe<Scalars['Boolean']>;
-};
-
-export type Query = {
-  __typename?: 'Query';
-  localState: LocalState;
-  users: Array<User>;
-};
-
-export type Subscription = {
-  __typename?: 'Subscription';
-  todoAdded: Todo;
-};
-
-
-export type SubscriptionTodoAddedArgs = {
-  userId: Scalars['String'];
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
   createTodo: Todo;
@@ -100,8 +35,74 @@ export type MutationLoginArgs = {
   input: ILogin;
 };
 
+export type ISignup = {
+  name: Scalars['String'];
+  password: Scalars['String'];
+};
+
+export type INone = {
+  none?: Maybe<Scalars['Boolean']>;
+};
+
+export type RNone = {
+  __typename?: 'RNone';
+  none?: Maybe<Scalars['Boolean']>;
+};
+
+export type User = {
+  __typename?: 'User';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  token: Scalars['String'];
+};
+
+export type INewTodo = {
+  text: Scalars['String'];
+  userId: Scalars['String'];
+};
+
+export type RLogin = {
+  __typename?: 'RLogin';
+  token: Scalars['String'];
+};
+
+export type Todo = {
+  __typename?: 'Todo';
+  id: Scalars['ID'];
+  text: Scalars['String'];
+  done: Scalars['Boolean'];
+  user: User;
+};
+
+export type Query = {
+  __typename?: 'Query';
+  localState: LocalState;
+  users: Array<User>;
+};
+
+export type RSignup = {
+  __typename?: 'RSignup';
+  user: User;
+};
+
+export type ILogin = {
+  name: Scalars['String'];
+  password: Scalars['String'];
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  todoAdded: Todo;
+};
+
+
+export type SubscriptionTodoAddedArgs = {
+  userId: Scalars['String'];
+};
+
 export type LocalState = {
   __typename?: 'LocalState';
+  username: Scalars['String'];
   applicationState: ApplicationState;
 };
 
@@ -184,7 +185,7 @@ export type GetLocalStateQuery = (
   { __typename?: 'Query' }
   & { localState: (
     { __typename?: 'LocalState' }
-    & Pick<LocalState, 'applicationState'>
+    & Pick<LocalState, 'username' | 'applicationState'>
   ) }
 );
 
@@ -353,6 +354,7 @@ export type TodoAddedSubscriptionResult = ApolloReactCommon.SubscriptionResult<T
 export const GetLocalStateDocument = gql`
     query GetLocalState {
   localState @client {
+    username
     applicationState
   }
 }
