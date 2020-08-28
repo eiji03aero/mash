@@ -38,7 +38,23 @@ bootstrap () {
   execute-docker-compose exec mash lerna clean --yes
   execute-docker-compose exec mash lerna bootstrap
   execute-docker-compose exec mash lerna link
-  stop-docker-compose
+}
+
+# Expecting docker container is already up and running, to avoid filesystem mismatch
+# caused by docker-sync's sync-delay.
+init-package () {
+  package_name=$1
+
+  # Need to run without sync-container, since it bothers lerna to find
+  # git root directory
+  docker-compose \
+    -p $project_name \
+    -f ./docker-compose.yml \
+    run --rm $client_cname \
+    ./scripts/init-package.sh init-skelton $package_name
+
+  execute-docker-compose exec $client_cname \
+    ./scripts/init-package.sh install-dependencies $package_name
 }
 
 clean () {
@@ -68,6 +84,9 @@ elif [ $cmd = 'bash-w' ]; then
 
 elif [ $cmd = 'bootstrap' ]; then
   bootstrap
+
+elif [ $cmd = 'init-package' ]; then
+  init-package $2
 
 elif [ $cmd = 'clean' ]; then
   clean

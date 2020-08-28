@@ -8,7 +8,7 @@
   - filesystem for mash
 - mash-term
   - terminal-ish canvas module
-- mash-viewer
+- mash-editor
   - to view the pages with filesystem explorer
 - mash-common
   - shared stuff
@@ -34,9 +34,7 @@
 ```
 # issues
 - client
-  - configure term parameters from web
-
-  - implement mash-viewer
+  - implement mash-editor
     - planning
       - what feature does it provide
 
@@ -106,7 +104,7 @@
 - web
   - setup tests
 
-- mash-viewer
+- mash-editor
   - features
     - switch display markdown/raw text
     - display react component

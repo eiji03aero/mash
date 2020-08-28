@@ -1,17 +1,17 @@
 #!/bin/bash
 
-package_name="$1"
+if [ $# -lt 1 ]; then
+  echo "arguments not enough"
+  echo "usabe: init-package.sh [package_name]"
+  exit 1
+fi
 
-package_path="packages/$package_name"
-src_package_path="packages/mash"
+cmd="$1"
+package_name="$2"
 
-file_names=$(cat <<- EOF
-.eslintrc.json
-jest.config.js
-tsconfig.eslint.json
-tsconfig.json
-EOF
-)
+root_dir=$(cd $(dirname $0); cd ../; pwd)
+package_path="$root_dir/packages/$package_name"
+template_package_path="$root_dir/templates/ts"
 
 lib_names=$(cat <<- EOF
 @types/jest
@@ -26,17 +26,15 @@ typescript
 EOF
 )
 
-if [ $# -lt 1 ]; then
-  echo "arguments not enough"
-  exit 1
+if [ $cmd = "init-skelton" ]; then
+  yarn lerna create $package_name --yes
+
+  for fname in $(ls -A $template_package_path); do
+    cp "$template_package_path/$fname" "$package_path/"
+  done
+
+elif [ $cmd = "install-dependencies" ]; then
+  for lname in $lib_names; do
+    yarn lerna add -D $lname --scope=$package_name
+  done
 fi
-
-npx lerna create $package_name --yes
-
-for fname in $file_names; do
-  cp "$src_package_path/$fname" "$package_path"
-done
-
-for lname in $lib_names; do
-  npx lerna add -D $lname --scope=$package_name
-done
