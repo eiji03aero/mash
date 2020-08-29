@@ -5,7 +5,6 @@ coverage/
 .docker-sync/
 .env
 .netlify/
-.yarn/
 
 lerna-debug.log
 yarn-error.log*
