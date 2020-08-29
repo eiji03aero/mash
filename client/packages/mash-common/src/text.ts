@@ -13,11 +13,11 @@ export const colorSequenceToken = "\\e[";
 export const colorSequenceCodeRegExp = /\\e\[(.+)m/;
 export const stripHideCharacterRegExp = /\\\[.*\\\[/g;
 
-export const hideCharacters = (str: string) => {
+export const hideCharacters = (str: string): string => {
   return hideToken + str + hideToken;
 };
 
-export const stripHideCharacters = (str: string) => {
+export const stripHideCharacters = (str: string): string => {
   return _.chain(str)
     .split(hideToken)
     .filter((_: string, idx: number) => {
@@ -27,7 +27,7 @@ export const stripHideCharacters = (str: string) => {
     .value();
 };
 
-export const colorSequence = _.mapValues(colorNameMap, (c: string) => {
+export const colorSequence = _.mapValues(colorNameMap, (c: string): string => {
   return hideCharacters(`${colorSequenceToken}${c}m`);
 });
 

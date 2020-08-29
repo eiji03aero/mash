@@ -17,31 +17,31 @@ export class BaseRenderLayer {
     this.resizeCanvas();
   }
 
-  public get ctx () {
+  public get ctx (): CanvasRenderingContext2D {
     return this.canvas.getContext("2d") as CanvasRenderingContext2D;
   }
 
-  public render (_: IRenderPayload) {
+  public render (_: IRenderPayload): void {
     return;
   }
 
-  public resize (params: IRenderPayload) {
+  public resize (params: IRenderPayload): void {
     this.resizeCanvas();
     this.render(params);
   }
 
-  public clear (params?: IRectCoords) {
+  public clear (params?: IRectCoords): void {
     const p = params || { x: 0, y: 0, width: this.canvas.offsetWidth, height: this.canvas.offsetHeight };
 
     this.ctx.clearRect(p.x, p.y, p.width, p.height);
   }
 
-  protected setTextBaseStyle () {
+  protected setTextBaseStyle (): void {
     this.ctx.font = `${this.terminal.config.fontSize}px ${this.terminal.config.fontFamily}`;
     this.ctx.textBaseline = "alphabetic";
   }
 
-  protected setTextColorFromObject (t: ITextObject) {
+  protected setTextColorFromObject (t: ITextObject): void {
     const { config } = this.terminal;
     this.ctx.fillStyle =
       t.color === "blue" ? config.textBlue :
@@ -49,7 +49,7 @@ export class BaseRenderLayer {
       config.textWhite;
   }
 
-  private resizeCanvas = () => {
+  private resizeCanvas = (): void => {
     this.canvas.width = this.terminal.container.offsetWidth;
     this.canvas.height = this.terminal.container.offsetHeight;
   }

@@ -23,7 +23,7 @@ export class MashClient<T extends IContext> implements IMashClient<T> {
     this._commandMap = commandMap;
   }
 
-  async eval (str: string, ctx: T) {
+  async eval (str: string, ctx: T): Promise<void> {
     this._environment.reset();
 
     const lexer = new Lexer(str);

@@ -7,7 +7,7 @@ export default async ({
   context: {
     filesystem
   }
-}: CommandPayload) => {
+}: CommandPayload): Promise<void> => {
   const currentDirectory = filesystem.currentDirectory;
   const r = filesystem.resolveAbsolutePath(currentDirectory.id);
   if (E.isLeft(r)) {

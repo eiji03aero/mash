@@ -81,6 +81,8 @@ elif [ $cmd = 'bash-t' ]; then
   execute-docker-compose exec -w /projects/client/packages/mash-term $client_cname bash
 elif [ $cmd = 'bash-w' ]; then
   execute-docker-compose exec -w /projects/client/packages/web $client_cname bash
+elif [ $cmd = 'bash-e' ]; then
+  execute-docker-compose exec -w /projects/client/packages/mash-editor $client_cname bash
 
 elif [ $cmd = 'bootstrap' ]; then
   bootstrap

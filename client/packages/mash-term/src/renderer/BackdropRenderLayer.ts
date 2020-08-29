@@ -9,7 +9,7 @@ export class BackdropRenderLayer extends BaseRenderLayer {
     super(terminal, zIndex);
   }
 
-  public render = (params: IRenderPayload) => {
+  public render = (params: IRenderPayload): void => {
     this.ctx.fillStyle = params.config.terminalBg;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }

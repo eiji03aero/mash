@@ -23,31 +23,31 @@ export class Buffer implements IBuffer {
     this.rows = [] as CachedRows;
   }
 
-  get isOnBottom () {
+  get isOnBottom (): boolean {
     if (this.rows.length < this.numberOfDisplayedRows) return false;
     return this.rowPosition <= this.rows.length - this.numberOfDisplayedRows;
   }
 
-  get bottomPosition () {
+  get bottomPosition (): number {
     const bottomPosition = this.rows.length - this.numberOfDisplayedRows;
     return Math.max(bottomPosition, 0);
   }
 
-  get numberOfDisplayedRows () {
+  get numberOfDisplayedRows (): number {
     const { height } = this._terminal.windowStat;
     return Math.floor(height / this._terminal.rowHeight);
   }
 
-  get displayedRows () {
+  get displayedRows (): CachedRows {
     return this.rows.slice(this.rowPosition, this.rowPosition + this.numberOfDisplayedRows);
   }
 
-  appendRow (str: string) {
+  appendRow (str: string): void {
     this.rawRows.push(str);
     this.updateRows();
   }
 
-  updateRowByIndex (idx: number, str: string) {
+  updateRowByIndex (idx: number, str: string): void {
     this.rawRows = this.rawRows.map((s: string, i: number) => {
       return i === idx
         ? str
@@ -72,7 +72,7 @@ export class Buffer implements IBuffer {
     ] as CachedRows;
   }
 
-  updateRows () {
+  updateRows (): void {
     let rowIdx = 0;
     this.rows = this.rawRows.reduce((accum: CachedRows, cur: string) => {
       const splitRows = this._splitRowWithLimit(cur, rowIdx);
@@ -82,7 +82,7 @@ export class Buffer implements IBuffer {
     }, [] as CachedRows);
   }
 
-  scroll (numberToScroll: number) {
+  scroll (numberToScroll: number): void {
     const nextPosition = this.rowPosition + numberToScroll;
     const shouldBeOnTop = nextPosition < 0;
     const shouldBeOnBottom = nextPosition >= this.rows.length;
@@ -94,7 +94,7 @@ export class Buffer implements IBuffer {
     );
   }
 
-  scrollToBottom () {
+  scrollToBottom (): void {
     this.rowPosition = this.bottomPosition;
   }
 

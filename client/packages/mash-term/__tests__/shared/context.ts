@@ -1,6 +1,7 @@
 import { Terminal } from "../../src/Terminal";
+import { ITerminal } from "../../src/types";
 
-export const hasTerminal = () => {
+export const hasTerminal = (): {terminal: ITerminal} => {
   const containerDOM = document.createElement("div");
   containerDOM.setAttribute(
     "style",

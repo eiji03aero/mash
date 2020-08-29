@@ -1,6 +1,7 @@
 import { Row } from "mash-common";
 
 export type KeyboardEventHandler = (e: KeyboardEvent) => void;
+export type KeyboardEventHandlerRegisterer = (cb: KeyboardEventHandler) => void;
 
 export interface IConfig {
   prompt: string;
@@ -80,14 +81,14 @@ export interface IParsedRow {
 export type CachedRows = IParsedRow[];
 
 export interface IInputHandler {
-  onKey: (cb: KeyboardEventHandler) => void;
-  onKeyDown: (cb: KeyboardEventHandler) => void;
-  onKeyPress: (cb: KeyboardEventHandler) => void;
-  onKeyUp: (cb: KeyboardEventHandler) => void;
-  offKey: (cb: KeyboardEventHandler) => void;
-  offKeyDown: (cb: KeyboardEventHandler) => void;
-  offKeyPress: (cb: KeyboardEventHandler) => void;
-  offKeyUp: (cb: KeyboardEventHandler) => void;
+  onKey: KeyboardEventHandlerRegisterer;
+  onKeyDown: KeyboardEventHandlerRegisterer;
+  onKeyPress: KeyboardEventHandlerRegisterer;
+  onKeyUp: KeyboardEventHandlerRegisterer;
+  offKey: KeyboardEventHandlerRegisterer;
+  offKeyDown: KeyboardEventHandlerRegisterer;
+  offKeyPress: KeyboardEventHandlerRegisterer;
+  offKeyUp: KeyboardEventHandlerRegisterer;
 }
 
 export interface IBuffer {
@@ -114,14 +115,14 @@ export interface ITerminal {
   rawRows: string[];
   rows: CachedRows;
   relativePromptRowPosition: number;
-  onKey: (cb: KeyboardEventHandler) => void;
-  onKeyDown: (cb: KeyboardEventHandler) => void;
-  onKeyPress: (cb: KeyboardEventHandler) => void;
-  onKeyUp: (cb: KeyboardEventHandler) => void;
-  offKey: (cb: KeyboardEventHandler) => void;
-  offKeyDown: (cb: KeyboardEventHandler) => void;
-  offKeyPress: (cb: KeyboardEventHandler) => void;
-  offKeyUp: (cb: KeyboardEventHandler) => void;
+  onKey: KeyboardEventHandlerRegisterer;
+  onKeyDown: KeyboardEventHandlerRegisterer;
+  onKeyPress: KeyboardEventHandlerRegisterer;
+  onKeyUp: KeyboardEventHandlerRegisterer;
+  offKey: KeyboardEventHandlerRegisterer;
+  offKeyDown: KeyboardEventHandlerRegisterer;
+  offKeyPress: KeyboardEventHandlerRegisterer;
+  offKeyUp: KeyboardEventHandlerRegisterer;
   measureText(str: string): TextMetrics;
   focus(): void;
   blur(): void;

@@ -28,18 +28,13 @@
     "test:watch:t": "(cd packages/mash-term && yarn run test:watch)",
     "test:watch:c": "(cd packages/mash-common && yarn run test:watch)",
     "test:watch:w": "(cd packages/web && yarn run test:watch)",
+    "test:watch:e": "(cd packages/mash-editor && yarn run test:watch)",
     "lint": "lerna run lint --parallel",
     "lint:fix": "lerna run lint --parallel -- --fix"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.11",
-    "@types/node": "^11.13.0",
-    "jest": "^24.7.1",
     "lerna": "^3.13.1",
-    "netlify-cli": "^2.40.0",
-    "ts-jest": "^24.0.1",
-    "ts-node": "^8.0.3",
-    "typescript": "^3.4.1"
+    "netlify-cli": "^2.40.0"
   },
   "repository": "https://github.com/eiji03aero/mash.git",
   "author": "eiji03aero <eiji03aero@gmail.com>"

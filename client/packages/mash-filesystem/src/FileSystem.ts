@@ -20,17 +20,16 @@ import * as utils from "./utils";
 export class FileSystem implements IFileSystem {
   private static _instance: FileSystem;
 
-  static get instance () {
+  static get instance (): IFileSystem {
     return this._instance;
   }
 
-  static bootstrap () {
+  static bootstrap (): IFileSystem {
     this._instance = new FileSystem();
     return this._instance;
   }
 
-  static reboot () {
-    delete this._instance;
+  static reboot (): IFileSystem {
     return this.bootstrap();
   }
 
@@ -51,17 +50,17 @@ export class FileSystem implements IFileSystem {
     this._currentDirectoryId = rootDirectory.id;
   }
 
-  get size () {
+  get size (): number {
     return this._nodeStore.size;
   }
 
-  get rootDirectory () {
+  get rootDirectory (): IDirectory {
     const r = this.resolveNodeFromPath("/");
     if (E.isLeft(r)) throw new Error("root directory is not properly set");
     return r.right as IDirectory;
   }
 
-  get currentDirectory () {
+  get currentDirectory (): IDirectory {
     const r = this._expectDirectoryById(this._currentDirectoryId);
     if (E.isLeft(r)) throw new Error("current directory is not properly set");
     return r.right;
@@ -132,7 +131,7 @@ export class FileSystem implements IFileSystem {
     return this._nodeStore.getNodes(ids);
   }
 
-  installNodes (parentNodeId: string, nodes: any[]) {
+  installNodes (parentNodeId: string, nodes: any[]): void {
     const r = this._expectDirectoryById(parentNodeId);
     if (E.isLeft(r)) throw r.left;
     const parentNode = r.right;

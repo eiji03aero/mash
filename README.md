@@ -35,11 +35,11 @@
 # issues
 - client
   - implement mash-editor
-    - planning
-      - what feature does it provide
-
-  - create template stuff for client package
-    - when adding next package
+    - work on phase 1
+      - should start from domain models
+      - should have test
+  - upgrade packages
+    - mash-editor should be refered about which version to upgrade
 
 - backend
   - fs service

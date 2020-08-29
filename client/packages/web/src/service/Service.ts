@@ -24,7 +24,7 @@ export class Service implements types.IService {
 
   async initialize (params: {
     terminalContainer: HTMLElement;
-  }) {
+  }): Promise<void> {
     this._localStateRepository.update({
       applicationState: gen.ApplicationState.Booting,
     });
@@ -44,7 +44,7 @@ export class Service implements types.IService {
   }
 
   // -------------------- auth --------------------
-  get isLoggedIn () {
+  get isLoggedIn (): boolean {
     const r = this._localStore.getToken()
     return E.isRight(r);
   }

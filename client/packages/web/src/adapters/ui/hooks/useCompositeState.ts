@@ -1,5 +1,5 @@
 import React from "react";
-import _ from "lodash";
+import * as _ from "lodash";
 
 type SetParams<T> = Partial<T>;
 type StateSetter<T> = (p: SetParams<T>) => void;

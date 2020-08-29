@@ -9,11 +9,11 @@ export class CalculateService implements ICalculateService {
     this._canvas = document.createElement("canvas");
   }
 
-  public get ctx () {
+  public get ctx (): CanvasRenderingContext2D {
     return this._canvas.getContext("2d") as CanvasRenderingContext2D;
   }
 
-  public measureText (text: string) {
+  public measureText (text: string): TextMetrics {
     this.ctx.save();
     this.setTextBaseStyle();
     const metrics = this.ctx.measureText(text);
@@ -21,7 +21,7 @@ export class CalculateService implements ICalculateService {
     return metrics;
   }
 
-  private setTextBaseStyle () {
+  private setTextBaseStyle (): void {
     this.ctx.font = `${this._terminal.config.fontSize}px ${this._terminal.config.fontFamily}`;
     this.ctx.textBaseline = "alphabetic";
   }

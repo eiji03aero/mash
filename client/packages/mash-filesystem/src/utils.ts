@@ -14,7 +14,7 @@ export const isFile = (node: IFileSystemNode): node is IFile => {
   return node instanceof File;
 };
 
-export const parsePath = (path: string) => {
+export const parsePath = (path: string): {isAbsolutePath: boolean, fragments: string[]} => {
   const isAbsolutePath = path[0] === "/";
   const fragments = isAbsolutePath
     ? path.substring(1).split("/")

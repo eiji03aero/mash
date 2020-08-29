@@ -9,7 +9,7 @@ export class TextRenderLayer extends BaseRenderLayer {
     super(terminal, zIndex);
   }
 
-  public render (params: IRenderPayload) {
+  public render (params: IRenderPayload): void {
     this.ctx.save();
     this.clear();
     for (let i = 0; i < params.displayedRows.length; i++) {
@@ -18,7 +18,7 @@ export class TextRenderLayer extends BaseRenderLayer {
     this.ctx.restore();
   }
 
-  public renderRow (parsedRow: IParsedRow, index: number, config: IConfig) {
+  public renderRow (parsedRow: IParsedRow, index: number, config: IConfig): void {
     let xPosition: number = config.rowLeftMargin;
     const yPosition = (index + 1) * this.terminal.rowHeight - this.terminal.config.rowBottomMargin;
     this.ctx.save();

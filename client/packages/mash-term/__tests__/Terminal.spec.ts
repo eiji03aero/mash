@@ -1,8 +1,8 @@
 import { sharedContext } from "./shared";
-import { Terminal } from "../src/Terminal";
+import { ITerminal } from "../src/types";
 
 describe("Terminal", () => {
-  let subject: Terminal;
+  let subject: ITerminal;
 
   beforeEach(() => {
     const { terminal } = sharedContext.hasTerminal();

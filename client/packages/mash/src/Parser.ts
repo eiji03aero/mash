@@ -5,6 +5,7 @@ import {
   ILexer,
   IParser,
   IToken,
+  IAstProgram,
 } from "./types";
 
 // TODO: have to deal with the tokens for program and commandline
@@ -30,7 +31,7 @@ export class Parser implements IParser {
     this.peekToken = this.lexer.nextToken();
   }
 
-  public parseProgram () {
+  public parseProgram (): IAstProgram {
     const program = new A.AstProgram(placeholderToken);
 
     while (!this.curTokenIs(tokens.EOF)) {

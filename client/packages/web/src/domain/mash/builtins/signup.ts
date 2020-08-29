@@ -9,7 +9,7 @@ export default async ({
     service,
     read,
   }
-}: CommandPayload) => {
+}: CommandPayload): Promise<void> => {
   if (service.isLoggedIn) {
     environment.error(ExitStatus.Failure, "already logged in");
     return

@@ -8,12 +8,12 @@ export class LocalStore implements ILocalStore {
     return E.fromNullable(null)(token);
   }
 
-  saveToken (token: string) {
+  saveToken (token: string): void {
     window.localStorage.setItem("token", token);
   }
 
 
-  clearToken () {
+  clearToken (): void {
     window.localStorage.removeItem("token");
   }
 }

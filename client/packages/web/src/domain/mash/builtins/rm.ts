@@ -10,7 +10,7 @@ export default async ({
   context: {
     filesystem
   }
-}: CommandPayload) => {
+}: CommandPayload): Promise<void> => {
   const { args, options } = utils.parseCommandArgs(_args, {
     r: false,
   });

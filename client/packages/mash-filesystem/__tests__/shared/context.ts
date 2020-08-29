@@ -1,10 +1,16 @@
 import { date } from "mash-common";
 import { Directory } from "../../src/Directory";
 import { File } from "../../src/File";
+import {
+  IFile,
+  IFileBasis,
+  IDirectory,
+  IDirectoryBasis,
+} from "../../src/types";
 
 let nodeCounter = 0;
 
-export const hasFileBasis = (params: any = {}) => {
+export const hasFileBasis = (params: Partial<IFileBasis> = {}): IFileBasis => {
   return Object.assign({
     id: "file-id-" + nodeCounter++,
     name: "file" + nodeCounter++,
@@ -14,12 +20,12 @@ export const hasFileBasis = (params: any = {}) => {
   }, params);
 };
 
-export const hasFile = (_params: any = {}) => {
+export const hasFile = (_params: Partial<IFileBasis> = {}): IFile => {
   const params = hasFileBasis(_params);
   return new File(params);
 };
 
-export const hasDirectoryBasis = (params: any = {}) => {
+export const hasDirectoryBasis = (params: Partial<IDirectoryBasis> = {}): IDirectoryBasis => {
   return Object.assign({
     id: "directory-id-" + nodeCounter++,
     name: "directory" + nodeCounter++,
@@ -29,7 +35,7 @@ export const hasDirectoryBasis = (params: any = {}) => {
   }, params);
 };
 
-export const hasDirectory = (_params: any = {}) => {
+export const hasDirectory = (_params: Partial<IDirectoryBasis> = {}): IDirectory => {
   const params = hasFileBasis(_params)
   return new Directory(params);
 };

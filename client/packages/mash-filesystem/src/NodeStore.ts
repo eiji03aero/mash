@@ -20,11 +20,11 @@ export class NodeStore implements INodeStore {
     this._rootDirectoryId;
   }
 
-  get size () {
+  get size (): number {
     return this._nodes.size;
   }
 
-  setRootDirectory (directory: IDirectory) {
+  setRootDirectory (directory: IDirectory): void {
     this._rootDirectoryId = directory.id;
     this._nodes.set(directory.id, directory);
   }

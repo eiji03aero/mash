@@ -22,23 +22,23 @@ export class Renderer implements IRenderer {
     ];
   }
 
-  render (params: IRenderPayload) {
+  render (params: IRenderPayload): void {
     for (const l of this.renderLayers) {
       l.render(params);
     }
   }
 
-  resize (params: IRenderPayload) {
+  resize (params: IRenderPayload): void {
     for (const l of this.renderLayers) {
       l.resize(params);
     }
   }
 
-  showCursor () {
+  showCursor (): void {
     this._cursorRenderLayer.showCursor();
   }
 
-  hideCursor () {
+  hideCursor (): void {
     this._cursorRenderLayer.hideCursor();
   }
 

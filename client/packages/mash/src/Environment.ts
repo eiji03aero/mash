@@ -17,23 +17,23 @@ export class Environment implements IEnvironment {
     this._onWritelnHandler = onWriteln;
   }
 
-  get exitStatus () {
+  get exitStatus (): ExitStatus {
     return this._exitStatus;
   }
 
-  onWriteln (cb: EnvironmentWriteHandler) {
+  onWriteln (cb: EnvironmentWriteHandler): void {
     this._onWritelnHandler = cb;
   }
 
-  writeln (input: string) {
+  writeln (input: string): void {
     this._onWritelnHandler(input);
   }
 
-  reset () {
+  reset (): void {
     this._exitStatus = ExitStatus.Success;
   }
 
-  error (code: ExitStatus, message?: string) {
+  error (code: ExitStatus, message?: string): void {
     if (message) {
       const msg = `mash: ${message}`;
       this.writeln(msg);

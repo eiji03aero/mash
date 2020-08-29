@@ -12,15 +12,15 @@ export class Directory extends FileSystemNode implements IDirectory {
     this._children = new Set<string>();
   }
 
-  get children () {
+  get children (): string[] {
     return Array.from(this._children);
   }
 
-  addChild (id: string) {
+  addChild (id: string): void {
     this._children.add(id);
   }
 
-  removeChild (id: string) {
+  removeChild (id: string): void {
     this._children.delete(id);
   }
 }

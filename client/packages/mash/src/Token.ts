@@ -55,6 +55,8 @@ const keywords: {[key: string]: string} = {
   function: tokens.FUNCTION,
 };
 
-export const lookUpIdent = (ident: string) => {
+type tokenString = typeof tokens[keyof typeof tokens];
+
+export const lookUpIdent = (ident: string): tokenString => {
   return keywords[ident] || tokens.IDENT;
 };

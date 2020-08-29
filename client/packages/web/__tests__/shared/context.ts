@@ -1,8 +1,14 @@
-import { Environment } from "mash";
-import { FileSystem } from "mash-filesystem";
+import { Environment, IEnvironment } from "mash";
+import { FileSystem, IFileSystem } from "mash-filesystem";
 import { installFixtureNodes } from "mash-filesystem/lib/bin/installFixtureNodes";
 
-export const hasMockEnvironment = () => {
+type MockEnvironment = {
+  fs: IFileSystem;
+  env: IEnvironment;
+  onWriteMock: (_: string) => void;
+}
+
+export const hasMockEnvironment = (): MockEnvironment => {
   const fs = FileSystem.bootstrap();
   installFixtureNodes(fs);
 

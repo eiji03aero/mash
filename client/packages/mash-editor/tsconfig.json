@@ -1,7 +1,11 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./lib"
+    "outDir": "./lib",
+    "declaration": false,
+    "sourceMap": false,
+    "declarationMap": false,
+    "jsx": "react"
   },
   "include": [
     "./src"

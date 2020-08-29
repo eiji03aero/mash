@@ -20,7 +20,7 @@ export class CursorRenderLayer extends BaseRenderLayer {
     this._isCursorShown = false;
   }
 
-  render = (_: IRenderPayload) => {
+  render = (_: IRenderPayload): void => {
     if (this._isCursorShown) {
       this.showCursor();
     } else {
@@ -28,13 +28,13 @@ export class CursorRenderLayer extends BaseRenderLayer {
     }
   }
 
-  showCursor = () => {
+  showCursor = (): void => {
     this.clear();
     this._clearIntervals();
     this._beginBlinkCursor();
   }
 
-  hideCursor = () => {
+  hideCursor = (): void => {
     this.clear();
     this._clearIntervals();
   }

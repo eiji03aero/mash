@@ -17,6 +17,6 @@ export const defaultConfig: IConfig = {
   rowRightMargin: 8,
 };
 
-export const getConfig = (config: any): IConfig => {
+export const getConfig = (config: Partial<IConfig>): IConfig => {
   return Object.assign({}, defaultConfig, config);
 };

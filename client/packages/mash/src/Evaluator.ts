@@ -30,7 +30,7 @@ export class Evaluator<T extends IContext> implements IEvaluator {
     this._context = context;
   }
 
-  async eval (node: IAstNode) {
+  async eval (node: IAstNode): Promise<void> {
     // Have to make use of constructor instead of interface,
     // since switch-case based on implement-interface is currently not supported
     switch (node.constructor) {

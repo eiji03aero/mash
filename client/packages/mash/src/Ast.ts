@@ -11,11 +11,11 @@ export class AstNode implements IAstNode {
     public token: IToken,
   ) { }
 
-  public tokenLiteral () {
+  public tokenLiteral (): string {
     return this.token.literal;
   }
 
-  public toString () {
+  public toString (): string {
     return this.token.literal;
   }
 }
@@ -28,15 +28,15 @@ export class AstProgram extends AstNode implements IAstProgram {
     this.nodes = [] as IAstNode[];
   }
 
-  public append (node: IAstNode) {
+  public append (node: IAstNode): void {
     this.nodes.push(node);
   }
 
-  public tokenLiteral () {
+  public tokenLiteral (): string {
     return this.nodes.toString();
   }
 
-  public toString () {
+  public toString (): string {
     return this.nodes.toString();
   }
 }
@@ -49,7 +49,7 @@ export class AstCommandLine extends AstNode implements IAstCommandLine {
     this.args = args;
   }
 
-  public toString () {
+  public toString (): string {
     return this.args.map((t) => t.toString()).join(", ");
   }
 }

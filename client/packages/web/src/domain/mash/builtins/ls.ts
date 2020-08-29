@@ -9,7 +9,7 @@ export default async ({
   context: {
     filesystem
   }
-}: CommandPayload) => {
+}: CommandPayload): Promise<void> => {
   const path = args[1] || ".";
   const r = filesystem.resolveNodeFromPath(path);
   if (E.isLeft(r)) {

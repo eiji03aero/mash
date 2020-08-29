@@ -8,7 +8,7 @@ export default async ({
   context: {
     service,
   }
-}: CommandPayload) => {
+}: CommandPayload): Promise<void> => {
   if (!service.isLoggedIn) {
     environment.error(ExitStatus.Failure, "not yet logged in");
     return

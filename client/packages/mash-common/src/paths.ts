@@ -1,9 +1,9 @@
-export const basename = (path: string) => {
+export const basename = (path: string): string => {
   const split = path.split("/");
   return split[split.length - 1];
 };
 
-export const dirname = (path: string) => {
+export const dirname = (path: string): string => {
   // when path does not contain slash, aka invalid
   if (path.indexOf("/") === -1) {
     return ".";
@@ -13,7 +13,7 @@ export const dirname = (path: string) => {
   return split.slice(0, split.length - 1).join("/");
 };
 
-export const inspect = (path: string) => {
+export const inspect = (path: string): {[key:string]: string} => {
   return {
     basename: basename(path),
     dirname: dirname(path),

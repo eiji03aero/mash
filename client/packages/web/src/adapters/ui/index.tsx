@@ -19,7 +19,7 @@ export const render = ({
   apolloClient,
 
   container,
-}: RenderParams) => {
+}: RenderParams): void => {
   const context = {
     service,
   };

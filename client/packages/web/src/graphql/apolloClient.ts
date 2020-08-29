@@ -9,7 +9,7 @@ export const createApolloClient = (params: {
   httpURL: string;
   websocketURL: string;
   localStore: ILocalStore;
-}) => {
+}): CustomApolloClient => {
   const cache = new InMemoryCache;
 
   const link = createLink({

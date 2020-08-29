@@ -19,7 +19,7 @@ export class Lexer implements ILexer {
     this.readChar();
   }
 
-  public nextToken () {
+  public nextToken (): IToken {
     const tok: IToken = newToken();
 
     this.skipSpace();

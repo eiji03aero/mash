@@ -74,7 +74,7 @@ export class Mash implements IMash {
     };
   }
 
-  initialize () {
+  initialize (): void {
     this._filesystem.installNodes(this._filesystem.rootDirectory.id, fixtureNodes);
 
     const msgs = [
@@ -98,7 +98,7 @@ export class Mash implements IMash {
     this._attachKeyboardHandlers();
   }
 
-  async read (promptString: string) {
+  async read (promptString: string): Promise<string> {
     const currentPrompt = this._terminal.config.prompt;
     this._terminal.config.prompt = promptString;
     this._detachKeyboardHandlers();

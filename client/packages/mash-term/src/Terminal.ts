@@ -12,6 +12,9 @@ import {
   ITerminal,
   IInputHandler,
   IBuffer,
+  KeyboardEventHandlerRegisterer,
+  CachedRows,
+  IWindowStat,
 } from "./types";
 
 export class Terminal implements ITerminal {
@@ -55,32 +58,32 @@ export class Terminal implements ITerminal {
     this.focus();
   }
 
-  get onKey () { return this._inputHandler.onKey; }
-  get onKeyDown () { return this._inputHandler.onKeyDown; }
-  get onKeyPress () { return this._inputHandler.onKeyPress; }
-  get onKeyUp () { return this._inputHandler.onKeyDown; }
-  get offKey () { return this._inputHandler.offKey; }
-  get offKeyDown () { return this._inputHandler.offKeyDown; }
-  get offKeyPress () { return this._inputHandler.offKeyPress; }
-  get offKeyUp () { return this._inputHandler.offKeyDown; }
+  get onKey (): KeyboardEventHandlerRegisterer { return this._inputHandler.onKey; }
+  get onKeyDown (): KeyboardEventHandlerRegisterer { return this._inputHandler.onKeyDown; }
+  get onKeyPress (): KeyboardEventHandlerRegisterer { return this._inputHandler.onKeyPress; }
+  get onKeyUp (): KeyboardEventHandlerRegisterer { return this._inputHandler.onKeyDown; }
+  get offKey (): KeyboardEventHandlerRegisterer { return this._inputHandler.offKey; }
+  get offKeyDown (): KeyboardEventHandlerRegisterer { return this._inputHandler.offKeyDown; }
+  get offKeyPress (): KeyboardEventHandlerRegisterer { return this._inputHandler.offKeyPress; }
+  get offKeyUp (): KeyboardEventHandlerRegisterer { return this._inputHandler.offKeyDown; }
 
 
-  get rows () {
+  get rows (): CachedRows {
     return this._buffer.rows;
   }
-  get rawRows () {
+  get rawRows (): string[] {
     return this._buffer.rawRows;
   }
 
-  get relativePromptRowPosition () {
+  get relativePromptRowPosition (): number {
     return this._buffer.rows.length - 1 - this._buffer.rowPosition;
   }
 
-  get rowHeight () {
+  get rowHeight (): number {
     return this.config.fontSize + this.config.rowTopMargin + this.config.rowBottomMargin;
   }
 
-  get windowStat () {
+  get windowStat (): IWindowStat {
     const width = this.container.offsetWidth;
     const height = this.container.offsetHeight;
     return {
@@ -91,19 +94,19 @@ export class Terminal implements ITerminal {
     };
   }
 
-  measureText (str: string) {
+  measureText (str: string): TextMetrics {
     return this._calculateService.measureText(str);
   }
 
-  focus () {
+  focus (): void {
     this.textarea.focus();
   }
 
-  blur () {
+  blur (): void {
     this.textarea.blur();
   }
 
-  prompt () {
+  prompt (): void {
     this.textarea.value = "";
     this.appendRow(this.config.prompt);
     this._scrollToBottomIfNecessary();
@@ -112,41 +115,41 @@ export class Terminal implements ITerminal {
     this._render();
   }
 
-  clear () {
+  clear (): void {
     this._buffer.rowPosition = this._buffer.rows.length;
     this._render();
   }
 
-  showCursor () {
+  showCursor (): void {
     this._renderer.showCursor();
   }
 
-  hideCursor () {
+  hideCursor (): void {
     this._renderer.hideCursor();
   }
 
-  writeln (str: string) {
+  writeln (str: string): void {
     this.appendRow(str);
     this._scrollToBottomIfNecessary();
 
     this._render();
   }
 
-  appendRow (str: string) {
+  appendRow (str: string): void {
     this._buffer.appendRow(str);
   }
 
-  updateRowByIndex (idx: number, str: string) {
+  updateRowByIndex (idx: number, str: string): void {
     this._buffer.updateRowByIndex(idx, str);
     this._render();
   }
 
-  scroll (numberToScroll: number) {
+  scroll (numberToScroll: number): void {
     this._buffer.scroll(numberToScroll);
     this._render();
   }
 
-  scrollToBottom () {
+  scrollToBottom (): void {
     this._buffer.scrollToBottom();
     this._render();
   }

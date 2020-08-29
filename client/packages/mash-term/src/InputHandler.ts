@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { ITerminal, IInputHandler } from "./types";
+import { ITerminal, IInputHandler, KeyboardEventHandlerRegisterer } from "./types";
 
 export class InputHandler implements IInputHandler {
   private _emitter: EventEmitter;
@@ -21,15 +21,15 @@ export class InputHandler implements IInputHandler {
     this._terminal.textarea.addEventListener("keyup", this._onKeyUp.bind(this));
   }
 
-  get onKey () { return this._emitter.on.bind(this._emitter, "key"); }
-  get onKeyDown () { return this._emitter.on.bind(this._emitter, "keydown"); }
-  get onKeyPress () { return this._emitter.on.bind(this._emitter, "keypress"); }
-  get onKeyUp () { return this._emitter.on.bind(this._emitter, "keyup"); }
+  get onKey (): KeyboardEventHandlerRegisterer { return this._emitter.on.bind(this._emitter, "key"); }
+  get onKeyDown (): KeyboardEventHandlerRegisterer { return this._emitter.on.bind(this._emitter, "keydown"); }
+  get onKeyPress (): KeyboardEventHandlerRegisterer { return this._emitter.on.bind(this._emitter, "keypress"); }
+  get onKeyUp (): KeyboardEventHandlerRegisterer { return this._emitter.on.bind(this._emitter, "keyup"); }
 
-  get offKey () { return this._emitter.off.bind(this._emitter, "key"); }
-  get offKeyDown () { return this._emitter.off.bind(this._emitter, "keydown"); }
-  get offKeyPress () { return this._emitter.off.bind(this._emitter, "keypress"); }
-  get offKeyUp () { return this._emitter.off.bind(this._emitter, "keyup"); }
+  get offKey (): KeyboardEventHandlerRegisterer { return this._emitter.off.bind(this._emitter, "key"); }
+  get offKeyDown (): KeyboardEventHandlerRegisterer { return this._emitter.off.bind(this._emitter, "keydown"); }
+  get offKeyPress (): KeyboardEventHandlerRegisterer { return this._emitter.off.bind(this._emitter, "keypress"); }
+  get offKeyUp (): KeyboardEventHandlerRegisterer { return this._emitter.off.bind(this._emitter, "keyup"); }
 
   private _onKeyDown (e: KeyboardEvent) {
     this._downEt = e.timeStamp;
