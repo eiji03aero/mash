@@ -1,1 +1,2 @@
+# node-gyp(5x, lerna's dependency) needs node v10x
 FROM node:10.18.0-buster
