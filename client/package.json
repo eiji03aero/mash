@@ -22,6 +22,7 @@
     "build:t": "(cd packages/mash-term && yarn build)",
     "dev:t": "(cd packages/mash-term && yarn run dev)",
     "dev:w": "(cd packages/web && yarn run dev)",
+    "dev:e": "(cd packages/mash-editor && yarn run dev)",
     "test": "lerna run test --parallel",
     "test:watch:m": "(cd packages/mash && yarn run test:watch)",
     "test:watch:fs": "(cd packages/mash-filesystem && yarn run test:watch)",

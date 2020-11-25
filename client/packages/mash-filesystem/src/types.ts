@@ -72,6 +72,7 @@ export interface IFileSystem {
   deleteDirectory(id: string): E.Either<Error, null>;
   resolveNodeFromPath(path: string): E.Either<Error, IFileSystemNode>;
   resolveAbsolutePath(id: string): E.Either<Error, string>;
+  getNode(id: string): E.Either<Error, IFileSystemNode>;
   getNodes(ids: string[]): E.Either<Error, Nodes>;
   installNodes(parentDirectoryId: string, nodes: any[]): void;
 }

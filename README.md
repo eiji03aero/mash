@@ -32,6 +32,14 @@
 ## Todos
 
 ```
+# milestone for deployment
+- implement massh-editor
+- implement fsservice
+- look at monitoring service
+  - prometheus
+- kubernetes
+  - gcp
+
 # issues
 - client
   - implement mash-editor

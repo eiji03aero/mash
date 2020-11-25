@@ -127,6 +127,10 @@ export class FileSystem implements IFileSystem {
     return this._nodeStore.resolveAbsolutePath(id);
   }
 
+  getNode (id: string): E.Either<Error, IFileSystemNode> {
+    return this._nodeStore.getNode(id);
+  }
+
   getNodes (ids: string[]): E.Either<Error, Nodes> {
     return this._nodeStore.getNodes(ids);
   }
