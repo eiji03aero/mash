@@ -44,4 +44,17 @@ export class BufferWindow implements types.IBufferWindow {
       this.sourceIds = this.sourceIds.concat(sourceId);
     }
   }
+
+  handleKey (params: {
+    key: string;
+    buffer: types.IBufferKind;
+    stats: types.BufferWindowStats;
+  }): void {
+    if (params.key === "j") {
+      params.buffer.scroll(1, params.stats);
+    }
+    else if (params.key === "k") {
+      params.buffer.scroll(-1, params.stats);
+    }
+  }
 }

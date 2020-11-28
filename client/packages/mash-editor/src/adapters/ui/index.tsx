@@ -3,7 +3,8 @@ import ReactDOM from "react-dom";
 
 import * as types from "../../types";
 import * as ltypes from "./types";
-import { AppContext, defaultConfig } from "./context";
+import { AppContext } from "./context";
+import { defaultConfig } from "../../service";
 
 import { Editor } from "./Editor";
 

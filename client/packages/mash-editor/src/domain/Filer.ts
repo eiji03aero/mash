@@ -1,24 +1,15 @@
-import { cid } from "mash-common";
-
 import * as types from "../types";
+import { BaseBuffer, BaseBufferCtorParams } from "./BaseBuffer";
 
-export class Filer implements types.IFiler {
-  id: string;
-  nodeId: string;
-
-  constructor (params: {
-    id?: string;
-    nodeId: string;
-  }) {
-    this.id = params.id || cid.generate();
-    this.nodeId = params.nodeId;
+export class Filer extends BaseBuffer implements types.IFiler {
+  constructor (params: BaseBufferCtorParams) {
+    super(params);
   }
 
   serialize (): types.SFiler {
     return {
+      ...super.serialize(),
       type: "Filer",
-      id: this.id,
-      nodeId: this.nodeId,
     };
   }
 }

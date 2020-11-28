@@ -27,7 +27,7 @@ export const BufferWindow: React.FC<IProps> = ({
   );
 
   return (
-    <div className={containerClassName}>
+    <div className={containerClassName} data-buffer-window-id={bufferWindow.id}>
       {buffer.type === "Buffer" ? (
         <BufferContent
           buffer={buffer}
@@ -46,7 +46,7 @@ const Styles = {
     vertColumn: string;
   }) => css`
     height: 100%;
-    overflow-y: scroll;
+    overflow-y: hidden;
 
     &:not(:first-of-type) {
       border-left: 8px solid ${params.vertColumn};

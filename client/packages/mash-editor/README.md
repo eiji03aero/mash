@@ -7,10 +7,27 @@
       - create buffer if not found
     - [ ] select to open file
       - display cursor and focused line
+        - add fields on Buffer
+          - scrollLine: number
       - hjkl to move cursor
         - keep cursor position for buffer basis
+        - gonna need dummy input element
+          - to obtain focus
+          - not to let extensions like vimium to steal key events
+        - improve scroll behavior
+          - scroll only when cursor is around the edge of window
+      - Ctrl w + hl to move focus
       - enter to open file in buffer
         - add field to indicate modifiable
+    - [ ] refactor config related
+      - now it lives in both context value and Editor state
+    - [ ] optimize render
+      - memoize components
+      - slice render data properly (to cut off the ones after bottom edge)
+        - Filer
+        - Buffer
+      - not to setState on handlers
+        - let service handlers return undefined in case of there is no need to update
   - BufferWindow
     - [x] display file content
     - [ ] Ctrl-W hjkl to move focus

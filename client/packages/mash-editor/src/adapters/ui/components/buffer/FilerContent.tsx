@@ -61,14 +61,17 @@ export const FilerContent: React.FC<IProps> = ({
     };
   }));
 
+  rowDatas = rowDatas.slice(filer.scrollLine);
+
   return (
     <div className={Styles.container}>
-      {rowDatas.map((rd: RowData) => {
+      {rowDatas.map((rd: RowData, idx: number) => {
         return (
           <Row
             key={rd.id}
             text={rd.text}
             style={rd.style}
+            cursored={idx === filer.cursorLine}
           />
         );
       })}

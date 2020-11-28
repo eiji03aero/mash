@@ -13,13 +13,17 @@ interface IProps {
 export const BufferContent: React.FC<IProps> = ({
   buffer,
 }) => {
+  const lines = mc.text.splitByNewLine(buffer.content);
+  const displayLines = lines.slice(buffer.scrollLine);
+
   return (
     <div className={Styles.container}>
-      {mc.text.splitByNewLine(buffer.content).map((line) => {
+      {displayLines.map((line, idx) => {
         return (
           <Row
-            key={line}
+            key={idx + line}
             text={line}
+            cursored={idx === buffer.cursorLine}
           />
         )
       })}

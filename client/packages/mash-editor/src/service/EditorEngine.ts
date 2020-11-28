@@ -11,8 +11,6 @@ export class EditorEngine implements types.IEditorEngine {
     this.service = new Service({
       filesystem: params.filesystem,
     });
-
-    this.service;
   }
 
   requestAction (action: types.RequestAction.Kind): void {

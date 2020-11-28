@@ -68,7 +68,7 @@ export const parseColorString = (str: string): Row => {
   return result;
 };
 
-export const NewLineRegexp =  /(\r\n|\n)/g;
+export const NewLineRegexp = /\r?\n/;
 
 export const splitByNewLine = (text: string) => {
   return text.split(NewLineRegexp);

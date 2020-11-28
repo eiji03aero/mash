@@ -1,27 +1,20 @@
-import { cid } from "mash-common";
-
 import * as types from "../types";
+import { BaseBuffer, BaseBufferCtorParams } from "./BaseBuffer";
 
-export class Buffer implements types.IBuffer {
-  id: string;
-  nodeId: string;
+export class Buffer extends BaseBuffer implements types.IBuffer {
   content: string;
 
-  constructor (params: {
-    id?: string;
-    nodeId: string;
+  constructor (params: BaseBufferCtorParams & {
     content?: string;
   }) {
-    this.id = params.id || cid.generate();
-    this.nodeId = params.nodeId;
+    super(params);
     this.content = params.content || "";
   }
 
   serialize (): types.SBuffer {
     return {
+      ...super.serialize(),
       type: "Buffer",
-      id: this.id,
-      nodeId: this.nodeId,
       content: this.content,
     };
   }
