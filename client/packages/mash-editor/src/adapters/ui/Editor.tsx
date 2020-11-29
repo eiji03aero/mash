@@ -40,6 +40,20 @@ export const Editor: React.FC<IProps> = ({
     else {
       engine.service.blur();
     }
+
+    const windowDoms = document.querySelectorAll<HTMLElement>("[data-component-name='BufferWindow']");
+    for (const key in windowDoms) {
+      const dw = windowDoms[key];
+      if (!dw.contains(target)) {
+        continue;
+      }
+
+      const id = dw.getAttribute("data-buffer-window-id")!;
+      engine.service.setState({
+        currentWindowId: id,
+      });
+      break;
+    }
   };
 
   const onKeyDown = (e: KeyboardEvent) => {

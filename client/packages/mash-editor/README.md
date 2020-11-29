@@ -23,8 +23,8 @@
 - [x] refactor how it's update state
   - remove the part which updates by utilizing state
   - add events to update each of them
-- [ ] add some commands
-- [ ] click on bufferwindow to move focus
+- [x] add some commands
+- [x] click on bufferwindow to move focus
 - [ ] refactor config related
   - now it lives in both context value and Editor state
 - [ ] optimize render
@@ -36,6 +36,7 @@
     - let service handlers return undefined in case of there is no need to update
 - [ ] misc
   - make sure all lines get focus line when it goes multiple lines
+  - disable user selection
 - BufferWindow
   - [x] display file content
   - [x] Ctrl-W hjkl to move focus

@@ -27,7 +27,10 @@ export const BufferWindow: React.FC<IProps> = ({
   );
 
   return (
-    <div className={containerClassName} data-buffer-window-id={bufferWindow.id}>
+    <div className={containerClassName}
+      data-buffer-window-id={bufferWindow.id}
+      data-component-name="BufferWindow"
+    >
       {buffer.type === "Buffer" ? (
         <BufferContent
           buffer={buffer}
