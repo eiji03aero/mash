@@ -19,12 +19,29 @@ export const Editor: React.FC<IProps> = ({
   };
 
 
+  const updateState = (result: types.ASHandlerResult): void => {
+    if (!result) {
+      return;
+    }
+    setState(result);
+  }
+
   const onRequestAction: types.RequestActionHandler = (action) => {
     switch (action.type) {
       case "openBuffer":
-        setState(engine.service.openBuffer(state, {
+        updateState(engine.service.openBuffer(state, {
           nodeId: action.nodeId,
         }));
+        break;
+      case "setUIState":
+        updateState({
+          ...state,
+          ui: {
+            ...state.ui,
+            ...action.ui,
+          }
+        });
+        break;
     }
   };
 
@@ -44,8 +61,9 @@ export const Editor: React.FC<IProps> = ({
   };
 
   const onKey = (e: KeyboardEvent) => {
-    setState(engine.service.handleKeyPress(state, {
+    updateState(engine.service.handleKeyPress(state, {
       key: e.key,
+      ctrlKey: e.ctrlKey,
     }));
   };
 

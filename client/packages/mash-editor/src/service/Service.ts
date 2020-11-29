@@ -12,6 +12,10 @@ export class Service implements types.IService {
   private _filesystem: mfs.IFileSystem;
   private _emitter: EventEmitter;
 
+  timerIds: {
+    changingWindow: number;
+  };
+
   constructor (params: {
     filesystem: mfs.IFileSystem,
   }) {
@@ -19,7 +23,9 @@ export class Service implements types.IService {
     this._filesystem = params.filesystem;
     this._emitter = new EventEmitter();
 
-    this._filesystem, this._emitter;
+    this.timerIds = {
+      changingWindow: 0,
+    };
   }
 
   focus (): void {
@@ -49,6 +55,9 @@ export class Service implements types.IService {
     ] as types.SBufferWindow[];
 
     return {
+      ui: {
+        changingWindow: false,
+      },
       config: defaultConfig,
       windows,
       buffers,
@@ -104,7 +113,42 @@ export class Service implements types.IService {
 
   handleKeyPress (state: types.AS, params: {
     key: string;
-  }): types.AS {
+    ctrlKey: boolean;
+  }): types.ASHandlerResult {
+    if (params.ctrlKey && params.key === "w") {
+      if (state.ui.changingWindow) {
+        return;
+      }
+
+      this.timerIds.changingWindow = window.setTimeout(() => {
+        this.requestAction({
+          type: "setUIState",
+          ui: {
+            changingWindow: false,
+          },
+        });
+      }, 500);
+      return this.mergeState(state, {
+        ui: {
+          changingWindow: true,
+        }
+      });
+    }
+
+    if (state.ui.changingWindow) {
+      const nextWindowId =
+        params.key === "h" ? state.windows[0].id :
+        params.key === "l" ? state.windows[1].id :
+        state.currentWindowId;
+      window.clearTimeout(this.timerIds.changingWindow);
+      return this.mergeState(state, {
+        currentWindowId: nextWindowId,
+        ui: {
+          changingWindow: false,
+        }
+      });
+    }
+
     const { bufferWindow, buffer } = this.getCurrentBufferWindowSet(state);
     const stats = this.getWindowStats({
       config: state.config,
@@ -149,14 +193,6 @@ export class Service implements types.IService {
     const bufferWindow = this.getCurrentBufferWindow(state);
     const buffer = this.findBuffer(state, { id: bufferWindow.currentSourceId })!;
     return { bufferWindow, buffer };
-  }
-
-  private mergeState (state: types.ApplicationState, partial: Partial<types.ApplicationState>):
-  types.ApplicationState {
-    return {
-      ...state,
-      ...partial,
-    };
   }
 
   private findBuffer (state: types.AS, params: {
@@ -250,6 +286,18 @@ export class Service implements types.IService {
     else {
       throw new Error("unknown buffer type");
     }
+  }
+
+  private mergeState (state: types.ApplicationState, partial: Partial<types.ApplicationState>):
+  types.ApplicationState {
+    return {
+      ...state,
+      ...partial,
+      ui: {
+        ...state.ui,
+        ...partial.ui,
+      }
+    };
   }
 
   private updateBuffers (buffers: types.SBufferKind[], buffer: types.IBufferKind):

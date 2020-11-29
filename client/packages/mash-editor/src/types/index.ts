@@ -5,7 +5,12 @@ import * as dmn from "./domain";
 export * from "./base";
 export * from "./domain";
 
+export type UIState = {
+  changingWindow: boolean;
+};
+
 export type ApplicationState = {
+  ui: UIState;
   config: Config;
   windows: dmn.SBufferWindow[];
   buffers: dmn.SBufferKind[];
@@ -37,11 +42,19 @@ export namespace RequestAction {
     nodeId: string;
   };
 
+  export type SetUIState = Base & {
+    type: "setUIState";
+    ui: Partial<UIState>;
+  };
+
   export type Kind =
-    | OpenBuffer;
+    | OpenBuffer
+    | SetUIState;
 }
 
 export type RequestActionHandler = (action: RequestAction.Kind) => void;
+
+export type ASHandlerResult = AS | undefined;
 
 export interface IService {
   handlerTextarea: HTMLTextAreaElement;
@@ -54,7 +67,8 @@ export interface IService {
   }): AS;
   handleKeyPress(s: AS, params: {
     key: string;
-  }): AS;
+    ctrlKey: boolean;
+  }): ASHandlerResult;
   requestAction(action: RequestAction.Kind): void;
   onRequestAction(cb: RequestActionHandler): void;
   offRequestAction(cb: (...args: any[]) => void): void;

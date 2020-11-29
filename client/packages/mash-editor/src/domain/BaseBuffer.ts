@@ -34,7 +34,7 @@ export class BaseBuffer implements types.IBaseBuffer {
 
   scroll (n: number, stats: types.BufferWindowStats): void {
     const nextCursorLine = this.cursorLine + n;
-    const maxDisplayIdx = stats.displayLines - 1;
+    const maxDisplayIdx = Math.min(stats.lines - 1, stats.displayLines - 1);
     this.cursorLine = mc.math.ensureInRange(nextCursorLine, 0, maxDisplayIdx);
     if (nextCursorLine < 0 || nextCursorLine > maxDisplayIdx) {
       const delta = nextCursorLine < 0
