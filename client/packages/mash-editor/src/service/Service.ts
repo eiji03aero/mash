@@ -9,6 +9,7 @@ import { InputHandler } from "./InputHandler";
 import { defaultConfig } from "./config";
 
 export class Service implements types.IService {
+  state: types.AS;
   handlerTextarea: HTMLTextAreaElement;
   private _filesystem: mfs.IFileSystem;
   private _emitter: EventEmitter;
@@ -23,6 +24,8 @@ export class Service implements types.IService {
     this._inputHandler = new InputHandler({
       service: this,
     });
+
+    this.state = this.buildInitialState();
   }
 
   focus (): void {
@@ -63,6 +66,69 @@ export class Service implements types.IService {
     };
   }
 
+  setState (s: Partial<types.AS>): void {
+    this.state = {
+      ...this.state,
+      ...s,
+      ui: {
+        ...this.state.ui,
+        ...s.ui,
+      },
+    };
+    this.requestAction({
+      type: "setState",
+      state: this.state,
+    });
+  }
+
+  openBuffer (nodeId: string): void {
+    const r1 = this._filesystem.getNode(nodeId);
+    if (E.isLeft(r1)) {
+      throw r1.left;
+    }
+    const node = r1.right;
+
+    const bufferWindow = this.getModifiableBufferWindow();
+
+    const buffer = (
+      this.findBufferByNodeId({
+        bufferWindowId: bufferWindow.id,
+        nodeId: nodeId,
+      })
+      || this.createBufferWithNode({ node: node })
+    );
+
+    bufferWindow.openBuffer(buffer.id);
+
+    this.setState({
+      currentWindowId: bufferWindow.id,
+      windows: this.updateWindows(bufferWindow),
+      buffers: this.updateBuffers(buffer),
+    });
+  }
+
+  handleKeyPress (params: {
+    key: string;
+    ctrlKey: boolean;
+  }): void {
+    return this._inputHandler.handleKey({
+      key: params.key,
+      ctrlKey: params.ctrlKey,
+    });
+  }
+
+  requestAction (action: types.RequestAction.Kind): void {
+    this._emitter.emit("requestAction", action);
+  }
+
+  onRequestAction (cb: types.RequestActionHandler): void {
+    this._emitter.on("requestAction", cb);
+  }
+
+  offRequestAction (cb: types.RequestActionHandler): void {
+    this._emitter.off("requestAction", cb);
+  }
+
   getChildNodes (nodeId: string): mfs.IFileSystemNode[] {
     const r1 = this._filesystem.getNode(nodeId);
     if (E.isLeft(r1)) {
@@ -83,8 +149,11 @@ export class Service implements types.IService {
     return nodes;
   }
 
-  getFilerRows (f: types.SFiler): types.FilerRow[] {
-    const filer = new dmn.Filer(f);
+  getFilerRows (filerId: string): types.FilerRow[] {
+    const filer = this.findBuffer(filerId);
+    if (!filer || !dmn.utils.isFiler(filer)) {
+      throw new Error("not a filer");
+    }
 
     const recur = (nodeId: string, nest: number): types.FilerRow[] =>  {
       const nodes = this.getChildNodes(nodeId);
@@ -107,111 +176,70 @@ export class Service implements types.IService {
       }, [] as types.FilerRow[]);
     };
 
-    return recur(f.nodeId, 0);
+    return recur(filer.nodeId, 0);
   }
 
-  openBuffer (state: types.AS, params: {
-    nodeId: string;
-  }): types.ApplicationState {
-    const r1 = this._filesystem.getNode(params.nodeId);
-    if (E.isLeft(r1)) {
-      throw r1.left;
-    }
-    const node = r1.right;
-
-    const bufferWindow = this.getModifiableBufferWindow(state);
-
-    const buffer = (
-      this.findBufferByNodeId(state, {
-        bufferWindow: bufferWindow,
-        nodeId: params.nodeId,
-      })
-      || this.createBufferWithNode({ node: node })
-    );
-
-    bufferWindow.openBuffer(buffer.id);
-
-    return this.mergeState(state, {
-      currentWindowId: bufferWindow.id,
-      windows: this.updateWindows(state.windows, bufferWindow),
-      buffers: this.updateBuffers(state.buffers, buffer),
-    });
-  }
-
-  handleKeyPress (state: types.AS, params: {
-    key: string;
-    ctrlKey: boolean;
-  }): types.ASHandlerResult {
-    return this._inputHandler.handleKey(state, {
-      key: params.key,
-      ctrlKey: params.ctrlKey,
-    });
-  }
-
-  requestAction (action: types.RequestAction.Kind): void {
-    this._emitter.emit("requestAction", action);
-  }
-
-  onRequestAction (cb: types.RequestActionHandler): void {
-    this._emitter.on("requestAction", cb);
-  }
-
-  offRequestAction (cb: types.RequestActionHandler): void {
-    this._emitter.off("requestAction", cb);
-  }
-
-  private getCurrentBufferWindow (s: types.AS): types.IBufferWindow {
-    const bufferWindow = s.windows.find((w) => w.id === s.currentWindowId);
+  private getCurrentBufferWindow (): types.IBufferWindow {
+    const bufferWindow = this.state.windows.find((w) => w.id === this.state.currentWindowId);
     if (!bufferWindow) {
       throw new Error("current buffer window not found");
     }
     return new dmn.BufferWindow(bufferWindow);
   }
 
-  private getModifiableBufferWindow (s: types.AS): types.IBufferWindow {
-    const bufferWindow = s.windows.find((w) => w.modifiable);
+  private getModifiableBufferWindow (): types.IBufferWindow {
+    const bufferWindow = this.state.windows.find((w) => w.modifiable);
     if (!bufferWindow) {
       throw new Error("no modifiable window found");
     }
     return new dmn.BufferWindow(bufferWindow);
   }
 
-  getCurrentBufferWindowSet (state: types.AS): types.BufferWindowSet {
-    const bufferWindow = this.getCurrentBufferWindow(state);
-    const buffer = this.findBuffer(state, { id: bufferWindow.currentSourceId })!;
+  getCurrentBufferWindowSet (): types.BufferWindowSet {
+    const bufferWindow = this.getCurrentBufferWindow();
+    const buffer = this.findBuffer(bufferWindow.currentSourceId)!;
     return { bufferWindow, buffer };
   }
 
-  private findBuffer (state: types.AS, params: {
-    id: string;
-  }): types.IBufferKind | undefined {
-    const sbuffer = state.buffers.find((b) => b.id === params.id);
+  findBuffer (id: string): types.IBufferKind | undefined {
+    const sbuffer = this.state.buffers.find((b) => b.id === id);
     if (!sbuffer) {
       return;
     }
-    return this.createBufferKind({ buffer: sbuffer });
+    return this.createBufferKind(sbuffer);
   }
 
-  findBufferByNodeId (state: types.AS, params: {
-    bufferWindow: types.IBufferWindow;
+  findBufferWindow (id: string): types.IBufferWindow | undefined {
+    const swindow = this.state.windows.find((w) => w.id === id);
+    if (!swindow) {
+      return;
+    }
+    return new dmn.BufferWindow(swindow);
+  }
+
+  findBufferByNodeId (params: {
+    bufferWindowId: string;
     nodeId: string;
   }): types.IBufferKind | undefined {
-    const buffer = state.buffers
-      .find((b) => params.bufferWindow.hasSourceId(b.id) && b.nodeId === params.nodeId);
+    const bufferWindow = this.findBufferWindow(params.bufferWindowId);
+    if (!bufferWindow) {
+      return;
+    }
+
+    const buffer = this.state.buffers
+      .find((b) => bufferWindow.hasSourceId(b.id) && b.nodeId === params.nodeId);
     if (!buffer) {
       return;
     }
-    return this.createBufferKind({ buffer });
+    return this.createBufferKind(buffer);
   }
 
-  private createBufferKind (params: {
-    buffer: types.SBufferKind;
-  }): types.IBufferKind {
-    if (params.buffer.type === "Buffer") {
-      return new dmn.Buffer(params.buffer);
+  private createBufferKind (buffer: types.SBufferKind): types.IBufferKind {
+    if (buffer.type === "Buffer") {
+      return new dmn.Buffer(buffer);
     }
-    else if (params.buffer.type === "Filer") {
-      return new dmn.Filer(params.buffer);
+    else if (buffer.type === "Filer") {
+      return new dmn.Filer(buffer);
     }
     else {
       throw new Error("unknown buffer");
@@ -238,77 +266,66 @@ export class Service implements types.IService {
   }
 
   getWindowStats (params: {
-    config: types.Config;
-    bufferWindow: types.IBufferWindow;
-    buffer: types.IBufferKind;
+    bufferWindowId: string;
+    bufferId: string;
   }): types.BufferWindowStats {
-    const dom = document.querySelector<HTMLElement>(`[data-buffer-window-id="${params.bufferWindow.id}"]`);
+    const bufferWindow = this.findBufferWindow(params.bufferWindowId);
+    const buffer = this.findBuffer(params.bufferId);
+    if (!bufferWindow || !buffer) {
+      throw new Error("bufferWindow or buffer not found");
+    }
+
+    const dom = document.querySelector<HTMLElement>(`[data-buffer-window-id="${bufferWindow.id}"]`);
     if (!dom) {
       throw new Error("buffer window dom not found");
     }
 
-    const rowHeight = this.getRowHeight({ config: params.config });
+    const rowHeight = this.getRowHeight();
     const windowHeight = dom.offsetHeight;
 
     return {
-      lines: this.getLinesOfBuffer({ buffer: params.buffer }),
+      lines: this.getLinesOfBuffer(buffer.id),
       displayLines: Math.floor(windowHeight / rowHeight)
     };
   }
 
-  getRowHeight (params: {
-    config: types.Config;
-  }): number {
-    const c = params.config;
+  getRowHeight (): number {
+    const c = this.state.config;
     // 2 is border width
     return c.rowPaddingTop + c.fontSize + c.rowPaddingBottom + 2;
   }
 
-  getMaxDisplayRowNumber (params: {
-    config: types.Config;
-  }): number {
-    return Math.floor(window.innerHeight / this.getRowHeight(params));
+  getMaxDisplayRowNumber (): number {
+    return Math.floor(window.innerHeight / this.getRowHeight());
   }
 
-  private getLinesOfBuffer (params: {
-    buffer: types.IBufferKind;
-  }): number {
-    const buffer = params.buffer.serialize();
-    if (buffer.type === "Buffer") {
-      return mc.text.splitByNewLine(buffer.content).length;
+  private getLinesOfBuffer (bufferId: string): number {
+    const buffer = this.findBuffer(bufferId);
+    if (!buffer) {
+      throw new Error("buffer not found");
     }
-    else if (buffer.type === "Filer") {
+
+    if (dmn.utils.isBuffer(buffer)) {
+      return mc.text.splitByNewLine(buffer.serialize().content).length;
+    }
+    else if (dmn.utils.isFiler(buffer)) {
       // FIXME: make it compatible with recursive calculation for opened directories
-      return this.getFilerRows(buffer).length;
+      return this.getFilerRows(buffer.id).length;
     }
     else {
       throw new Error("unknown buffer type");
     }
   }
 
-  mergeState (state: types.ApplicationState, partial: Partial<types.ApplicationState>):
-  types.ApplicationState {
-    return {
-      ...state,
-      ...partial,
-      ui: {
-        ...state.ui,
-        ...partial.ui,
-      }
-    };
+  updateBuffers (buffer: types.IBufferKind): types.SBufferKind[] {
+    return this.state.buffers.find((b) => b.id === buffer.id)
+      ? this.state.buffers.map((b) => b.id === buffer.id ? buffer.serialize() : b)
+      : this.state.buffers.concat(buffer.serialize());
   }
 
-  updateBuffers (buffers: types.SBufferKind[], buffer: types.IBufferKind):
-  types.SBufferKind[] {
-    return buffers.find((b) => b.id === buffer.id)
-      ? buffers.map((b) => b.id === buffer.id ? buffer.serialize() : b)
-      : buffers.concat(buffer.serialize());
-  }
-
-  updateWindows (windows: types.SBufferWindow[], bufferWindow: types.IBufferWindow):
-  types.SBufferWindow[] {
-    return windows.find((w) => w.id === bufferWindow.id)
-      ? windows.map((w) => w.id === bufferWindow.id ? bufferWindow.serialize() : w)
-      : windows.concat(bufferWindow.serialize());
+  updateWindows (bufferWindow: types.IBufferWindow): types.SBufferWindow[] {
+    return this.state.windows.find((w) => w.id === bufferWindow.id)
+      ? this.state.windows.map((w) => w.id === bufferWindow.id ? bufferWindow.serialize() : w)
+      : this.state.windows.concat(bufferWindow.serialize());
   }
 }

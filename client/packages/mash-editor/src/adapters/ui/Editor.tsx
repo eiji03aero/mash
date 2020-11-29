@@ -12,35 +12,17 @@ interface IProps {
 export const Editor: React.FC<IProps> = ({
   engine,
 }) => {
-  const [state, setState] = React.useState(engine.service.buildInitialState());
+  const [state, setState] = React.useState(engine.service.state);
   const refs = {
     container: React.useRef<HTMLDivElement>(null),
     handlerTextarea: React.useRef<HTMLTextAreaElement>(null),
   };
 
 
-  const updateState = (result: types.ASHandlerResult): void => {
-    if (!result) {
-      return;
-    }
-    setState(result);
-  }
-
   const onRequestAction: types.RequestActionHandler = (action) => {
     switch (action.type) {
-      case "openBuffer":
-        updateState(engine.service.openBuffer(state, {
-          nodeId: action.nodeId,
-        }));
-        break;
-      case "setUIState":
-        updateState({
-          ...state,
-          ui: {
-            ...state.ui,
-            ...action.ui,
-          }
-        });
+      case "setState":
+        setState(action.state);
         break;
     }
   };
@@ -61,10 +43,10 @@ export const Editor: React.FC<IProps> = ({
   };
 
   const onKey = (e: KeyboardEvent) => {
-    updateState(engine.service.handleKeyPress(state, {
+    engine.service.handleKeyPress({
       key: e.key,
       ctrlKey: e.ctrlKey,
-    }));
+    });
   };
 
 
@@ -78,7 +60,7 @@ export const Editor: React.FC<IProps> = ({
       window.document.removeEventListener("click", onClickDocument);
       refs.handlerTextarea.current?.removeEventListener("keypress", onKey);
     };
-  }, [state]);
+  }, [state, setState]);
 
   React.useEffect(() => {
     const hta = refs.handlerTextarea.current;

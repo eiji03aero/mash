@@ -30,8 +30,8 @@ export const FilerContent: React.FC<IProps> = ({
 
 
   const rowDatas = service
-    .getFilerRows(filer)
-    .slice(filer.scrollLine, service.getMaxDisplayRowNumber({ config }))
+    .getFilerRows(filer.id)
+    .slice(filer.scrollLine, service.getMaxDisplayRowNumber())
     .map((row) => {
       const id = row.node.id;
       const indent = mc.text.repeat("  ", row.nest);

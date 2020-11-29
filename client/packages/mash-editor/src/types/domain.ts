@@ -34,6 +34,7 @@ export interface SFiler extends SBaseBuffer {
 
 export interface IFiler extends IBaseEntity<SFiler>, IBaseBuffer {
   toggleOpenedNode(nodeId: string): void;
+  isNodeOpened(nodeId: string): boolean;
   closeNode(nodeId: string): void;
 }
 

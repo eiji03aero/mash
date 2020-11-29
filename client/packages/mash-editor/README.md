@@ -1,56 +1,73 @@
 # Mash-editor
 
 ## Apis
-- phase 1
-  - todos
-    - [x] implement open method on engine
-      - create buffer if not found
-    - [x] select to open file
-      - display cursor and focused line
-        - add fields on Buffer
-          - scrollLine: number
-      - hjkl to move cursor
-        - keep cursor position for buffer basis
-        - gonna need dummy input element
-          - to obtain focus
-          - not to let extensions like vimium to steal key events
-        - improve scroll behavior
-          - scroll only when cursor is around the edge of window
-      - Ctrl w + hl to move focus
-      - improve filer
-        - enter to open file in buffer
-          - add field to indicate modifiable
-        - enter to expand children
-    - [ ] refactor config related
-      - now it lives in both context value and Editor state
-    - [ ] optimize render
-      - memoize components
-      - slice render data properly (to cut off the ones after bottom edge)
-        - Filer
-        - Buffer
-      - not to setState on handlers
-        - let service handlers return undefined in case of there is no need to update
-    - [ ] misc
-      - make sure all lines get focus line when it goes multiple lines
-  - BufferWindow
-    - [x] display file content
-    - [x] Ctrl-W hjkl to move focus
-    - [ ] show normal mode
-    - [ ] show file name
-    - [ ] show directory path
-  - Filer
-    - [x] view current directory
-    - [ ] select to open the file
-    - [ ] select to collapse the directory
-  - CommandLine
-    - [ ] :q/quit close vim
-    - [ ] :h/help show help
-- phase 2
-  - save current buffer
-  - insertmode
-  - edit file content
-  - create file on filer
-  - create file/directory on filer
+### phase 1
+- [x] implement open method on engine
+  - create buffer if not found
+- [x] select to open file
+  - display cursor and focused line
+    - add fields on Buffer
+      - scrollLine: number
+  - hjkl to move cursor
+    - keep cursor position for buffer basis
+    - gonna need dummy input element
+      - to obtain focus
+      - not to let extensions like vimium to steal key events
+    - improve scroll behavior
+      - scroll only when cursor is around the edge of window
+  - Ctrl w + hl to move focus
+  - improve filer
+    - enter to open file in buffer
+      - add field to indicate modifiable
+    - enter to expand children
+- [x] refactor how it's update state
+  - remove the part which updates by utilizing state
+  - add events to update each of them
+- [ ] add some commands
+- [ ] click on bufferwindow to move focus
+- [ ] refactor config related
+  - now it lives in both context value and Editor state
+- [ ] optimize render
+  - memoize components
+  - slice render data properly (to cut off the ones after bottom edge)
+    - Filer
+    - Buffer
+  - not to setState on handlers
+    - let service handlers return undefined in case of there is no need to update
+- [ ] misc
+  - make sure all lines get focus line when it goes multiple lines
+- BufferWindow
+  - [x] display file content
+  - [x] Ctrl-W hjkl to move focus
+  - [ ] show normal mode
+  - [ ] show file name
+  - [ ] show directory path
+- Filer
+  - [x] view current directory
+  - [ ] select to open the file
+  - [ ] select to collapse the directory
+- CommandLine
+  - [ ] :q/quit close vim
+  - [ ] :h/help show help
+
+### phase 2
+- save current buffer
+- insertmode
+- edit file content
+- create file on filer
+- create file/directory on filer
+
+### commands
+- common
+  - normal
+    - ctrl-w h, ctrl-w l
+    - ctrl-d, ctrl-u
+    - gg, G
+- Filer
+  - normal
+    - Enter
+    - o (toggle directory or open buffer)
+    - x
 
 ## Models
 

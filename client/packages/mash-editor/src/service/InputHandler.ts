@@ -18,49 +18,49 @@ export class InputHandler implements types.IInputHandler {
     };
   }
 
-  handleKey (state: types.AS, params: {
+  handleKey (params: {
     key: string;
     ctrlKey: boolean;
-  }): types.ASHandlerResult {
+  }): void {
     if (params.ctrlKey && params.key === "w") {
-      if (state.ui.changingWindow) {
+      if (this.service.state.ui.changingWindow) {
         return;
       }
 
       this.timerIds.changingWindow = window.setTimeout(() => {
-        this.service.requestAction({
-          type: "setUIState",
+        this.service.setState({
           ui: {
             changingWindow: false,
           },
         });
       }, 500);
-      return this.service.mergeState(state, {
+      this.service.setState({
         ui: {
           changingWindow: true,
         }
       });
+      return;
     }
 
-    if (state.ui.changingWindow) {
+    if (this.service.state.ui.changingWindow) {
       const nextWindowId =
-        params.key === "h" ? state.windows[0].id :
-        params.key === "l" ? state.windows[1].id :
-        state.currentWindowId;
+        params.key === "h" ? this.service.state.windows[0].id :
+        params.key === "l" ? this.service.state.windows[1].id :
+        this.service.state.currentWindowId;
       window.clearTimeout(this.timerIds.changingWindow);
-      return this.service.mergeState(state, {
+      this.service.setState({
         currentWindowId: nextWindowId,
         ui: {
           changingWindow: false,
         }
       });
+      return;
     }
 
-    const { bufferWindow, buffer } = this.service.getCurrentBufferWindowSet(state);
+    const { bufferWindow, buffer } = this.service.getCurrentBufferWindowSet();
     const stats = this.service.getWindowStats({
-      config: state.config,
-      bufferWindow,
-      buffer,
+      bufferWindowId: bufferWindow.id,
+      bufferId: buffer.id,
     });
 
     if (dmn.utils.isBuffer(buffer)) {
@@ -78,10 +78,9 @@ export class InputHandler implements types.IInputHandler {
       });
     }
 
-
-    return this.service.mergeState(state, {
-      windows: this.service.updateWindows(state.windows, bufferWindow),
-      buffers: this.service.updateBuffers(state.buffers, buffer),
+    this.service.setState({
+      windows: this.service.updateWindows(bufferWindow),
+      buffers: this.service.updateBuffers(buffer),
     });
   }
 
@@ -115,7 +114,7 @@ export class InputHandler implements types.IInputHandler {
     const { key, filer, stats } = params;
     const s = filer.serialize();
 
-    const rows = this.service.getFilerRows(s);
+    const rows = this.service.getFilerRows(filer.id);
     const idx = s.scrollLine + s.cursorLine;
     const node = rows[idx].node;
 
@@ -126,13 +125,8 @@ export class InputHandler implements types.IInputHandler {
       filer.scroll(-1, stats);
     }
     else if (key === "Enter") {
-
       if (mfs.utils.isFile(node)) {
-        this.service.requestAction({
-          type: "openBuffer",
-          nodeId: node.id,
-        });
-        return;
+        this.service.openBuffer(node.id);
       }
       else if (mfs.utils.isDirectory(node)) {
         filer.toggleOpenedNode(node.id);

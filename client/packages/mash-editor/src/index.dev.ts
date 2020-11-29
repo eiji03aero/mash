@@ -29,9 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   window.setTimeout(() => {
-    engine.requestAction({
-      type: "openBuffer",
-      nodeId: r1.right.id,
-    });
+    engine.openBuffer(r1.right.id);
   }, 500);
 });

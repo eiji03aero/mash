@@ -37,30 +37,22 @@ export namespace RequestAction {
     type: string;
   };
 
-  export type OpenBuffer = Base & {
-    type: "openBuffer";
-    nodeId: string;
-  };
-
-  export type SetUIState = Base & {
-    type: "setUIState";
-    ui: Partial<UIState>;
+  export type SetState = Base & {
+    type: "setState";
+    state: AS;
   };
 
   export type Kind =
-    | OpenBuffer
-    | SetUIState;
+    | SetState;
 }
 
 export type RequestActionHandler = (action: RequestAction.Kind) => void;
 
-export type ASHandlerResult = AS | undefined;
-
 export interface IInputHandler {
-  handleKey(s: AS, params: {
+  handleKey(params: {
     key: string;
     ctrlKey: boolean;
-  }): ASHandlerResult;
+  }): void;
 }
 
 export type BufferWindowSet = {
@@ -74,44 +66,45 @@ export type FilerRow = {
 };
 
 export interface IService {
+  state: AS;
   handlerTextarea: HTMLTextAreaElement;
   focus(): void;
   blur(): void;
   buildInitialState(): AS;
-  getChildNodes(nodeId: string): mfs.IFileSystemNode[];
-  getFilerRows(f: dmn.SFiler): FilerRow[];
-  openBuffer(s: AS, params: {
-    nodeId: string;
-  }): AS;
-  handleKeyPress(s: AS, params: {
+  setState(s: Partial<AS>): void;
+  openBuffer(nodeId: string): void;
+  handleKeyPress(params: {
     key: string;
     ctrlKey: boolean;
-  }): ASHandlerResult;
+  }): void;
+  // emitter related
   requestAction(action: RequestAction.Kind): void;
   onRequestAction(cb: RequestActionHandler): void;
   offRequestAction(cb: (...args: any[]) => void): void;
-  getCurrentBufferWindowSet(s: AS): BufferWindowSet;
+  // retrieval methods
+  getChildNodes(nodeId: string): mfs.IFileSystemNode[];
+  getFilerRows(filerId: string): FilerRow[];
+  getCurrentBufferWindowSet(): BufferWindowSet;
   getWindowStats(params: {
-    config: Config;
-    bufferWindow: dmn.IBufferWindow;
-    buffer: dmn.IBufferKind;
+    bufferWindowId: string;
+    bufferId: string;
   }): dmn.BufferWindowStats;
-  getRowHeight(params: {
-    config: Config;
-  }): number;
-  getMaxDisplayRowNumber(params: {
-    config: Config;
-  }): number;
-  findBufferByNodeId(state: AS, params: {
-    bufferWindow: dmn.IBufferWindow;
+  getRowHeight(): number;
+  getMaxDisplayRowNumber(): number;
+  // query methods
+  findBuffer(id: string): dmn.IBufferKind | undefined;
+  findBufferWindow(id: string): dmn.IBufferWindow | undefined;
+  findBufferByNodeId(params: {
+    bufferWindowId: string;
     nodeId: string;
   }): dmn.IBufferKind | undefined;
-  mergeState(s: AS, ps: Partial<AS>): AS;
-  updateBuffers(bs: dmn.SBufferKind[], b: dmn.IBufferKind): dmn.SBufferKind[];
-  updateWindows(ws: dmn.SBufferWindow[], w: dmn.IBufferWindow): dmn.SBufferWindow[];
+  // update methods
+  updateBuffers(b: dmn.IBufferKind): dmn.SBufferKind[];
+  updateWindows(w: dmn.IBufferWindow): dmn.SBufferWindow[];
 }
 
 export interface IEditorEngine {
   service: IService;
+  openBuffer(nodeId: string): void;
   requestAction(action: RequestAction.Kind): void;
 }
