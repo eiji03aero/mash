@@ -5,16 +5,14 @@ import * as E from "fp-ts/es6/Either";
 
 import * as types from "../types";
 import * as dmn from "../domain";
+import { InputHandler } from "./InputHandler";
 import { defaultConfig } from "./config";
 
 export class Service implements types.IService {
   handlerTextarea: HTMLTextAreaElement;
   private _filesystem: mfs.IFileSystem;
   private _emitter: EventEmitter;
-
-  timerIds: {
-    changingWindow: number;
-  };
+  private _inputHandler: types.IInputHandler;
 
   constructor (params: {
     filesystem: mfs.IFileSystem,
@@ -22,10 +20,9 @@ export class Service implements types.IService {
     this.handlerTextarea = document.createElement("textarea");
     this._filesystem = params.filesystem;
     this._emitter = new EventEmitter();
-
-    this.timerIds = {
-      changingWindow: 0,
-    };
+    this._inputHandler = new InputHandler({
+      service: this,
+    });
   }
 
   focus (): void {
@@ -47,7 +44,8 @@ export class Service implements types.IService {
     const windows = [
       new dmn.BufferWindow({
         currentSourceId: filer.id,
-        width: 400,
+        width: 360,
+        modifiable: false,
       }).serialize(),
       new dmn.BufferWindow({
         currentSourceId: buffer.id
@@ -65,8 +63,8 @@ export class Service implements types.IService {
     };
   }
 
-  getChildNodes (id: string): mfs.IFileSystemNode[] {
-    const r1 = this._filesystem.getNode(id);
+  getChildNodes (nodeId: string): mfs.IFileSystemNode[] {
+    const r1 = this._filesystem.getNode(nodeId);
     if (E.isLeft(r1)) {
       throw r1.left;
     }
@@ -85,6 +83,33 @@ export class Service implements types.IService {
     return nodes;
   }
 
+  getFilerRows (f: types.SFiler): types.FilerRow[] {
+    const filer = new dmn.Filer(f);
+
+    const recur = (nodeId: string, nest: number): types.FilerRow[] =>  {
+      const nodes = this.getChildNodes(nodeId);
+      const {files, directories} = mfs.utils.groupNodes(nodes);
+      directories.sort((a, b) => mc.text.compareMagnitude(a.name, b.name));
+      files.sort((a, b) => mc.text.compareMagnitude(a.name, b.name));
+
+      return [...directories, ...files].reduce((accum, cur) => {
+        accum.push({
+          node: cur,
+          nest: nest,
+        });
+
+        if (mfs.utils.isDirectory(cur) && filer.isNodeOpened(cur.id)) {
+          const nodes = recur(cur.id, nest + 1);
+          accum.push(...nodes);
+        }
+
+        return accum;
+      }, [] as types.FilerRow[]);
+    };
+
+    return recur(f.nodeId, 0);
+  }
+
   openBuffer (state: types.AS, params: {
     nodeId: string;
   }): types.ApplicationState {
@@ -94,7 +119,8 @@ export class Service implements types.IService {
     }
     const node = r1.right;
 
-    const bufferWindow = this.getCurrentBufferWindow(state);
+    const bufferWindow = this.getModifiableBufferWindow(state);
+
     const buffer = (
       this.findBufferByNodeId(state, {
         bufferWindow: bufferWindow,
@@ -106,6 +132,7 @@ export class Service implements types.IService {
     bufferWindow.openBuffer(buffer.id);
 
     return this.mergeState(state, {
+      currentWindowId: bufferWindow.id,
       windows: this.updateWindows(state.windows, bufferWindow),
       buffers: this.updateBuffers(state.buffers, buffer),
     });
@@ -115,56 +142,9 @@ export class Service implements types.IService {
     key: string;
     ctrlKey: boolean;
   }): types.ASHandlerResult {
-    if (params.ctrlKey && params.key === "w") {
-      if (state.ui.changingWindow) {
-        return;
-      }
-
-      this.timerIds.changingWindow = window.setTimeout(() => {
-        this.requestAction({
-          type: "setUIState",
-          ui: {
-            changingWindow: false,
-          },
-        });
-      }, 500);
-      return this.mergeState(state, {
-        ui: {
-          changingWindow: true,
-        }
-      });
-    }
-
-    if (state.ui.changingWindow) {
-      const nextWindowId =
-        params.key === "h" ? state.windows[0].id :
-        params.key === "l" ? state.windows[1].id :
-        state.currentWindowId;
-      window.clearTimeout(this.timerIds.changingWindow);
-      return this.mergeState(state, {
-        currentWindowId: nextWindowId,
-        ui: {
-          changingWindow: false,
-        }
-      });
-    }
-
-    const { bufferWindow, buffer } = this.getCurrentBufferWindowSet(state);
-    const stats = this.getWindowStats({
-      config: state.config,
-      bufferWindow,
-      buffer,
-    });
-
-    bufferWindow.handleKey({
+    return this._inputHandler.handleKey(state, {
       key: params.key,
-      buffer: buffer,
-      stats: stats,
-    });
-
-    return this.mergeState(state, {
-      windows: this.updateWindows(state.windows, bufferWindow),
-      buffers: this.updateBuffers(state.buffers, buffer),
+      ctrlKey: params.ctrlKey,
     });
   }
 
@@ -188,8 +168,15 @@ export class Service implements types.IService {
     return new dmn.BufferWindow(bufferWindow);
   }
 
-  private getCurrentBufferWindowSet (state: types.AS):
-  { bufferWindow: types.IBufferWindow, buffer: types.IBufferKind } {
+  private getModifiableBufferWindow (s: types.AS): types.IBufferWindow {
+    const bufferWindow = s.windows.find((w) => w.modifiable);
+    if (!bufferWindow) {
+      throw new Error("no modifiable window found");
+    }
+    return new dmn.BufferWindow(bufferWindow);
+  }
+
+  getCurrentBufferWindowSet (state: types.AS): types.BufferWindowSet {
     const bufferWindow = this.getCurrentBufferWindow(state);
     const buffer = this.findBuffer(state, { id: bufferWindow.currentSourceId })!;
     return { bufferWindow, buffer };
@@ -205,7 +192,7 @@ export class Service implements types.IService {
     return this.createBufferKind({ buffer: sbuffer });
   }
 
-  private findBufferByNodeId (state: types.AS, params: {
+  findBufferByNodeId (state: types.AS, params: {
     bufferWindow: types.IBufferWindow;
     nodeId: string;
   }): types.IBufferKind | undefined {
@@ -250,7 +237,7 @@ export class Service implements types.IService {
     }
   }
 
-  private getWindowStats (params: {
+  getWindowStats (params: {
     config: types.Config;
     bufferWindow: types.IBufferWindow;
     buffer: types.IBufferKind;
@@ -260,16 +247,27 @@ export class Service implements types.IService {
       throw new Error("buffer window dom not found");
     }
 
-
-    const cfg = params.config;
-    // 2 is border width
-    const rowHeight = cfg.fontSize + cfg.rowPaddingTop + cfg.rowPaddingBottom + 2;
+    const rowHeight = this.getRowHeight({ config: params.config });
     const windowHeight = dom.offsetHeight;
 
     return {
       lines: this.getLinesOfBuffer({ buffer: params.buffer }),
       displayLines: Math.floor(windowHeight / rowHeight)
     };
+  }
+
+  getRowHeight (params: {
+    config: types.Config;
+  }): number {
+    const c = params.config;
+    // 2 is border width
+    return c.rowPaddingTop + c.fontSize + c.rowPaddingBottom + 2;
+  }
+
+  getMaxDisplayRowNumber (params: {
+    config: types.Config;
+  }): number {
+    return Math.floor(window.innerHeight / this.getRowHeight(params));
   }
 
   private getLinesOfBuffer (params: {
@@ -281,14 +279,14 @@ export class Service implements types.IService {
     }
     else if (buffer.type === "Filer") {
       // FIXME: make it compatible with recursive calculation for opened directories
-      return this.getChildNodes(buffer.nodeId).length;
+      return this.getFilerRows(buffer).length;
     }
     else {
       throw new Error("unknown buffer type");
     }
   }
 
-  private mergeState (state: types.ApplicationState, partial: Partial<types.ApplicationState>):
+  mergeState (state: types.ApplicationState, partial: Partial<types.ApplicationState>):
   types.ApplicationState {
     return {
       ...state,
@@ -300,14 +298,14 @@ export class Service implements types.IService {
     };
   }
 
-  private updateBuffers (buffers: types.SBufferKind[], buffer: types.IBufferKind):
+  updateBuffers (buffers: types.SBufferKind[], buffer: types.IBufferKind):
   types.SBufferKind[] {
     return buffers.find((b) => b.id === buffer.id)
       ? buffers.map((b) => b.id === buffer.id ? buffer.serialize() : b)
       : buffers.concat(buffer.serialize());
   }
 
-  private updateWindows (windows: types.SBufferWindow[], bufferWindow: types.IBufferWindow):
+  updateWindows (windows: types.SBufferWindow[], bufferWindow: types.IBufferWindow):
   types.SBufferWindow[] {
     return windows.find((w) => w.id === bufferWindow.id)
       ? windows.map((w) => w.id === bufferWindow.id ? bufferWindow.serialize() : w)

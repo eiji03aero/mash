@@ -1,6 +1,7 @@
 import React from "react";
 import { css } from "emotion";
 import * as mfs from "mash-filesystem";
+import * as mc from "mash-common";
 
 import * as types from "../../../../types";
 import * as hooks from "../../hooks";
@@ -10,11 +11,6 @@ import { Row } from "./Row";
 interface IProps {
   filer: types.SFiler;
 }
-
-type NodeGroups = {
-  files: mfs.IFile[];
-  directories: mfs.IDirectory[];
-};
 
 type RowData = {
   id: string;
@@ -33,35 +29,38 @@ export const FilerContent: React.FC<IProps> = ({
   const { engine: { service }, config } = hooks.useAppContext();
 
 
-  const nodes = service.getChildNodes(filer.nodeId);
-  const { files, directories } = nodes.reduce((accum: NodeGroups, cur: mfs.IFileSystemNode) => {
-    if (mfs.utils.isFile(cur)) {
-      accum.files.push(cur);
-    }
-    else if (mfs.utils.isDirectory(cur)) {
-      accum.directories.push(cur);
-    }
+  const rowDatas = service
+    .getFilerRows(filer)
+    .slice(filer.scrollLine, service.getMaxDisplayRowNumber({ config }))
+    .map((row) => {
+      const id = row.node.id;
+      const indent = mc.text.repeat("  ", row.nest);
 
-    return accum;
-  }, {files: [], directories: []} as NodeGroups)
-
-  let rowDatas = [] as RowData[];
-  rowDatas = rowDatas.concat(directories.map((d: mfs.IDirectory) => {
-    return {
-      id: d.id,
-      text: `${arrowChar.right} ${d.name}`,
-      style: { color: config.color.Directory },
-    };
-  }))
-  rowDatas = rowDatas.concat(files.map((f: mfs.IFile) => {
-    return {
-      id: f.id,
-      text: `  ${f.name}`,
-      style: {},
-    };
-  }));
-
-  rowDatas = rowDatas.slice(filer.scrollLine);
+      if (mfs.utils.isDirectory(row.node)) {
+        const caret = filer.openedNodeIds.includes(row.node.id)
+          ? arrowChar.down
+          : arrowChar.right;
+        return {
+          id,
+          text: `${indent}${caret} ${row.node.name}`,
+          style: { color: config.color.Directory },
+        };
+      }
+      else if (mfs.utils.isFile(row.node)) {
+        return {
+          id,
+          text: `${indent}${row.node.name}`,
+          style: {},
+        }
+      }
+      else {
+        return {
+          id,
+          text: `${indent} unknown`,
+          style: {},
+        };
+      }
+    });
 
   return (
     <div className={Styles.container}>

@@ -8,6 +8,7 @@ export class BufferWindow implements types.IBufferWindow {
   currentSourceId: string;
   mode: types.BufferWindowMode;
   width?: number;
+  modifiable: boolean;
 
   constructor (params: {
     id?: string;
@@ -15,12 +16,14 @@ export class BufferWindow implements types.IBufferWindow {
     currentSourceId: string;
     mode?: types.BufferWindowMode;
     width?: number;
+    modifiable?: boolean;
   }) {
     this.id = params.id || cid.generate();
     this.sourceIds = params.sourceIds || [params.currentSourceId];
     this.currentSourceId = params.currentSourceId;
     this.mode = params.mode || "normal";
     this.width = params.width;
+    this.modifiable = params.modifiable ?? true;
   }
 
   serialize (): types.SBufferWindow {
@@ -30,6 +33,7 @@ export class BufferWindow implements types.IBufferWindow {
       currentSourceId: this.currentSourceId,
       mode: this.mode,
       width: this.width,
+      modifiable: this.modifiable,
     };
   }
 
@@ -42,19 +46,6 @@ export class BufferWindow implements types.IBufferWindow {
 
     if (!this.sourceIds.includes(sourceId)) {
       this.sourceIds = this.sourceIds.concat(sourceId);
-    }
-  }
-
-  handleKey (params: {
-    key: string;
-    buffer: types.IBufferKind;
-    stats: types.BufferWindowStats;
-  }): void {
-    if (params.key === "j") {
-      params.buffer.scroll(1, params.stats);
-    }
-    else if (params.key === "k") {
-      params.buffer.scroll(-1, params.stats);
     }
   }
 }

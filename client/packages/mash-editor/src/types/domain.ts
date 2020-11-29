@@ -15,6 +15,7 @@ export interface IBaseBuffer {
   id: string;
   nodeId: string;
   scroll(n: number, stats: BufferWindowStats): void;
+  scrollTo(line: number, stats: BufferWindowStats): void;
 }
 
 export interface SBuffer extends SBaseBuffer {
@@ -28,10 +29,12 @@ export interface IBuffer extends IBaseEntity<SBuffer>, IBaseBuffer {
 
 export interface SFiler extends SBaseBuffer {
   type: "Filer";
+  openedNodeIds: string[];
 }
 
 export interface IFiler extends IBaseEntity<SFiler>, IBaseBuffer {
-  _?: any;
+  toggleOpenedNode(nodeId: string): void;
+  closeNode(nodeId: string): void;
 }
 
 export type SBufferKind =
@@ -52,6 +55,7 @@ export interface SBufferWindow {
   currentSourceId: string;
   mode: BufferWindowMode;
   width?: number;
+  modifiable: boolean;
 }
 
 export interface IBufferWindow extends
@@ -59,11 +63,6 @@ export interface IBufferWindow extends
   SBufferWindow {
   openBuffer(sourceId: string): void;
   hasSourceId(sourceId: string): boolean;
-  handleKey(params: {
-    key: string;
-    buffer: IBufferKind;
-    stats: BufferWindowStats;
-  }): void;
 }
 
 export type BufferWindowStats = {

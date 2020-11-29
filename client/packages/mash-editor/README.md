@@ -5,7 +5,7 @@
   - todos
     - [x] implement open method on engine
       - create buffer if not found
-    - [ ] select to open file
+    - [x] select to open file
       - display cursor and focused line
         - add fields on Buffer
           - scrollLine: number
@@ -17,8 +17,10 @@
         - improve scroll behavior
           - scroll only when cursor is around the edge of window
       - Ctrl w + hl to move focus
-      - enter to open file in buffer
-        - add field to indicate modifiable
+      - improve filer
+        - enter to open file in buffer
+          - add field to indicate modifiable
+        - enter to expand children
     - [ ] refactor config related
       - now it lives in both context value and Editor state
     - [ ] optimize render
@@ -28,9 +30,11 @@
         - Buffer
       - not to setState on handlers
         - let service handlers return undefined in case of there is no need to update
+    - [ ] misc
+      - make sure all lines get focus line when it goes multiple lines
   - BufferWindow
     - [x] display file content
-    - [ ] Ctrl-W hjkl to move focus
+    - [x] Ctrl-W hjkl to move focus
     - [ ] show normal mode
     - [ ] show file name
     - [ ] show directory path

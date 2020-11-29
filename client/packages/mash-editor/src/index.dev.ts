@@ -1,6 +1,7 @@
 import { FileSystem } from "mash-filesystem";
 import { EditorEngine } from "./service";
 import { render } from "./adapters/ui";
+import { fixtureNodes } from "./fixtureNodes";
 
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("app");
@@ -34,106 +35,3 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }, 500);
 });
-
-const formatString = (str: string) => str.trim();
-
-const fixtureNodes = [
-  {
-    name: "home",
-    children: [
-      {
-        name: "Applications",
-        children: [
-          {
-            name: "game.app",
-            content: "game will be here",
-          },
-          {
-            name: "vim",
-            content: "vim will be here",
-          },
-        ]
-      },
-      {
-        name: "Desktop",
-        children: [
-          {
-            name: "memo.txt",
-            content: "memo desu"
-          },
-          {
-            name: "work",
-            children: [
-              {
-                name: "todo1",
-                content: "do dishes"
-              },
-              {
-                name: "todo2",
-                content: "go for shopping"
-              }
-            ]
-          }
-        ]
-      },
-    ]
-  },
-  {
-    name: "README.txt",
-    content: formatString(`
-# mash-editor
-- vim-like filesystem editor
-
-## features
-- open file in buffer
-- vim-like experience
-  - move cursors with key binding
-  - move window focus with key binding
-- save files
-- will be integrated with mash and mash-filesystem and web
-- chotto taihen dakedo ganbarimasyo
-
-## Plans
-- phase 1
-  - support basic operations
-- phase 2
-  - implement advanced features
-  - it is a okay to directly depend on mash-filesystem!
-
-## Notes
-- hoge
-  - hoge
-  - hoge
-  - hoge
-  - hoge
-  - hoge
-  - hoge
-- kore
-  - kore
-  - kore
-    - kore
-  - kore
-    - kore
-  - kore
-    - kore
-    - kore
-    - kore
-    - kore
-
-## Waring
-- this is still
--
--
--
--
--
--
--
--
--
--
--
-- in active development
-    `)
-  }
-];

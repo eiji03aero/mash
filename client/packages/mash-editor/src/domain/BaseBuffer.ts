@@ -44,4 +44,16 @@ export class BaseBuffer implements types.IBaseBuffer {
       this.scrollLine = mc.math.ensureInRange(this.scrollLine + delta, 0, bottomPosition);
     }
   }
+
+  scrollTo (line: number, stats: types.BufferWindowStats): void {
+    if (line < this.scrollLine) {
+      this.scroll(line - this.scrollLine, stats);
+    }
+    else if (line > (this.scrollLine + stats.displayLines)) {
+      this.scroll(line - this.scrollLine + stats.displayLines, stats);
+    }
+    else {
+      this.scroll(line - this.cursorLine, stats);
+    }
+  }
 }

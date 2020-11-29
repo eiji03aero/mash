@@ -73,3 +73,17 @@ export const NewLineRegexp = /\r?\n/;
 export const splitByNewLine = (text: string) => {
   return text.split(NewLineRegexp);
 };
+
+export const compareMagnitude = (a: string, b: string): number =>
+  a < b ? -1 :
+  a > b ? 1 :
+  0;
+
+export const repeat = (text: string, times: number) => {
+  let buf = "";
+  for (let i = 0; i < times; i++) {
+    buf += text;
+  }
+  return buf;
+};
+
