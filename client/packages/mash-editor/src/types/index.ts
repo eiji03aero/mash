@@ -49,10 +49,8 @@ export namespace RequestAction {
 export type RequestActionHandler = (action: RequestAction.Kind) => void;
 
 export interface IInputHandler {
-  handleKey(params: {
-    key: string;
-    ctrlKey: boolean;
-  }): void;
+  handleKeyDown(event: KeyboardEvent): void;
+  handleKeyPress(event: KeyboardEvent): void;
 }
 
 export type BufferWindowSet = {
@@ -73,10 +71,8 @@ export interface IService {
   buildInitialState(): AS;
   setState(s: Partial<AS>): void;
   openBuffer(nodeId: string): void;
-  handleKeyPress(params: {
-    key: string;
-    ctrlKey: boolean;
-  }): void;
+  handleKeyDown(event: KeyboardEvent): void;
+  handleKeyPress(event: KeyboardEvent): void;
   // emitter related
   requestAction(action: RequestAction.Kind): void;
   onRequestAction(cb: RequestActionHandler): void;
@@ -99,8 +95,8 @@ export interface IService {
     nodeId: string;
   }): dmn.IBufferKind | undefined;
   // update methods
-  updateBuffers(b: dmn.IBufferKind): dmn.SBufferKind[];
-  updateWindows(w: dmn.IBufferWindow): dmn.SBufferWindow[];
+  updateBuffer(b: dmn.IBufferKind): void;
+  updateWindow(w: dmn.IBufferWindow): void;
 }
 
 export interface IEditorEngine {

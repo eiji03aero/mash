@@ -42,23 +42,26 @@ export const Editor: React.FC<IProps> = ({
     }
   };
 
-  const onKey = (e: KeyboardEvent) => {
-    engine.service.handleKeyPress({
-      key: e.key,
-      ctrlKey: e.ctrlKey,
-    });
+  const onKeyDown = (e: KeyboardEvent) => {
+    engine.service.handleKeyDown(e);
+  };
+
+  const onKeyPress = (e: KeyboardEvent) => {
+    engine.service.handleKeyPress(e);
   };
 
 
   React.useEffect(() => {
     engine.service.onRequestAction(onRequestAction);
     window.document.addEventListener("click", onClickDocument);
-    refs.handlerTextarea.current?.addEventListener("keypress", onKey);
+    refs.handlerTextarea.current?.addEventListener("keydown", onKeyDown);
+    refs.handlerTextarea.current?.addEventListener("keypress", onKeyPress);
 
     return () => {
       engine.service.offRequestAction(onRequestAction);
       window.document.removeEventListener("click", onClickDocument);
-      refs.handlerTextarea.current?.removeEventListener("keypress", onKey);
+      refs.handlerTextarea.current?.removeEventListener("keydown", onKeyDown);
+      refs.handlerTextarea.current?.removeEventListener("keypress", onKeyPress);
     };
   }, [state, setState]);
 

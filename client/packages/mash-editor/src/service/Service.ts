@@ -102,19 +102,17 @@ export class Service implements types.IService {
 
     this.setState({
       currentWindowId: bufferWindow.id,
-      windows: this.updateWindows(bufferWindow),
-      buffers: this.updateBuffers(buffer),
     });
+    this.updateBuffer(buffer);
+    this.updateWindow(bufferWindow);
   }
 
-  handleKeyPress (params: {
-    key: string;
-    ctrlKey: boolean;
-  }): void {
-    return this._inputHandler.handleKey({
-      key: params.key,
-      ctrlKey: params.ctrlKey,
-    });
+  handleKeyDown (event: KeyboardEvent): void {
+    return this._inputHandler.handleKeyDown(event);
+  }
+
+  handleKeyPress (event: KeyboardEvent): void {
+    return this._inputHandler.handleKeyPress(event);
   }
 
   requestAction (action: types.RequestAction.Kind): void {
@@ -317,15 +315,19 @@ export class Service implements types.IService {
     }
   }
 
-  updateBuffers (buffer: types.IBufferKind): types.SBufferKind[] {
-    return this.state.buffers.find((b) => b.id === buffer.id)
-      ? this.state.buffers.map((b) => b.id === buffer.id ? buffer.serialize() : b)
-      : this.state.buffers.concat(buffer.serialize());
+  updateBuffer (buffer: types.IBufferKind): void {
+    this.setState({
+      buffers: this.state.buffers.find((b) => b.id === buffer.id)
+        ? this.state.buffers.map((b) => b.id === buffer.id ? buffer.serialize() : b)
+        : this.state.buffers.concat(buffer.serialize())
+    });
   }
 
-  updateWindows (bufferWindow: types.IBufferWindow): types.SBufferWindow[] {
-    return this.state.windows.find((w) => w.id === bufferWindow.id)
-      ? this.state.windows.map((w) => w.id === bufferWindow.id ? bufferWindow.serialize() : w)
-      : this.state.windows.concat(bufferWindow.serialize());
+  updateWindow (bufferWindow: types.IBufferWindow): void {
+    this.setState({
+      windows: this.state.windows.find((w) => w.id === bufferWindow.id)
+        ? this.state.windows.map((w) => w.id === bufferWindow.id ? bufferWindow.serialize() : w)
+        : this.state.windows.concat(bufferWindow.serialize())
+    });
   }
 }
