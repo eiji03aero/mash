@@ -1,29 +1,35 @@
 import React from "react";
 import { css } from "emotion";
-import * as mc from "mash-common";
 
 import * as types from "../../../../types";
+import * as hooks from "../../hooks";
 
 import { Row } from "./Row";
 
 interface IProps {
+  bufferWindowId: string;
   buffer: types.SBuffer;
 }
 
 export const BufferContent: React.FC<IProps> = ({
+  bufferWindowId,
   buffer,
 }) => {
-  const lines = mc.text.splitByNewLine(buffer.content);
-  const displayLines = lines.slice(buffer.scrollLine);
+  const { engine: { service } } = hooks.useAppContext();
+
+  const rows = service.getDisplayRows({
+    bufferWindowId,
+    bufferId: buffer.id,
+  });
 
   return (
     <div className={Styles.container}>
-      {displayLines.map((line, idx) => {
+      {rows.map((row) => {
         return (
           <Row
-            key={idx + line}
-            text={line}
-            cursored={idx === buffer.cursorLine}
+            key={`${row.lineIndex}-${row.index}`}
+            text={row.text}
+            cursored={row.lineIndex === buffer.cursorLine}
           />
         )
       })}

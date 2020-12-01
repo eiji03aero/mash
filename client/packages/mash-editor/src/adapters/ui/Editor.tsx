@@ -1,5 +1,6 @@
 import React from "react";
 import { css } from "emotion";
+import _ from "lodash";
 
 import * as types from "../../types";
 
@@ -64,9 +65,16 @@ export const Editor: React.FC<IProps> = ({
     engine.service.handleKeyPress(e);
   };
 
+  const onResize = () => {
+    engine.service.setState(state);
+  };
+
 
   React.useEffect(() => {
+    const resizeHandler = _.debounce(onResize, 500);
+
     engine.service.onRequestAction(onRequestAction);
+    window.addEventListener("resize", resizeHandler);
     window.document.addEventListener("click", onClickDocument);
     refs.handlerTextarea.current?.addEventListener("keydown", onKeyDown);
     refs.handlerTextarea.current?.addEventListener("keypress", onKeyPress);
@@ -74,6 +82,7 @@ export const Editor: React.FC<IProps> = ({
     return () => {
       engine.service.offRequestAction(onRequestAction);
       window.document.removeEventListener("click", onClickDocument);
+      window.removeEventListener("resize", resizeHandler);
       refs.handlerTextarea.current?.removeEventListener("keydown", onKeyDown);
       refs.handlerTextarea.current?.removeEventListener("keypress", onKeyPress);
     };
@@ -90,8 +99,12 @@ export const Editor: React.FC<IProps> = ({
   }, []);
 
 
+  const containerClassName = Styles.container({
+    font: state.config.font,
+  });
+
   return (
-    <div className={Styles.container} ref={refs.container}>
+    <div className={containerClassName} ref={refs.container}>
       <div className={Styles.content}>
         <EditorContent
           windows={state.windows}
@@ -107,13 +120,16 @@ export const Editor: React.FC<IProps> = ({
 };
 
 const Styles = {
-  container: css`
+  container: (params: {
+    font: string;
+  }) => css`
     display: flex;
     flex-direction: column;
     width: 100%;
     height: 100%;
 
     * {
+      font-family: ${params.font};
       box-sizing: border-box;
     }
   `,

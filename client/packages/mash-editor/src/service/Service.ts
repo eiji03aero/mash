@@ -6,6 +6,7 @@ import * as E from "fp-ts/es6/Either";
 import * as types from "../types";
 import * as dmn from "../domain";
 import { InputHandler } from "./InputHandler";
+import { TextMeasurer } from "./TextMeasurerer";
 import { defaultConfig } from "./config";
 
 export class Service implements types.IService {
@@ -14,6 +15,7 @@ export class Service implements types.IService {
   private _filesystem: mfs.IFileSystem;
   private _emitter: EventEmitter;
   private _inputHandler: types.IInputHandler;
+  private _textMeasurer: types.ITextMeasurer;
 
   constructor (params: {
     filesystem: mfs.IFileSystem,
@@ -24,8 +26,10 @@ export class Service implements types.IService {
     this._inputHandler = new InputHandler({
       service: this,
     });
+    this._textMeasurer = new TextMeasurer();
 
     this.state = this.buildInitialState();
+    this._textMeasurer.configure(this.state.config);
   }
 
   focus (): void {
@@ -66,7 +70,12 @@ export class Service implements types.IService {
     };
   }
 
-  setState (s: Partial<types.AS>): void {
+  setState (s: Partial<types.AS>, opt?: types.SetStateOption): void {
+    const option: types.SetStateOption = {
+      update: true,
+      ...opt,
+    };
+
     this.state = {
       ...this.state,
       ...s,
@@ -75,10 +84,13 @@ export class Service implements types.IService {
         ...s.ui,
       },
     };
-    this.requestAction({
-      type: "setState",
-      state: this.state,
-    });
+
+    if (option.update) {
+      this.requestAction({
+        type: "setState",
+        state: this.state,
+      });
+    }
   }
 
   openBuffer (nodeId: string): void {
@@ -125,6 +137,74 @@ export class Service implements types.IService {
 
   offRequestAction (cb: types.RequestActionHandler): void {
     this._emitter.off("requestAction", cb);
+  }
+
+  splitTextWithLimit (text: string, limit: number): string[] {
+    const strings = [""];
+    let tmpWidth = 0;
+
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      tmpWidth += this._textMeasurer.measure(c).width;
+
+      if (tmpWidth <= limit) {
+        strings[strings.length - 1] += c;
+      }
+      else {
+        tmpWidth = 0;
+        strings.push(c);
+      }
+    }
+
+    return strings;
+  }
+
+  formatDisplayRows (params: {
+    rows: types.BufferRow[];
+    bufferId: string;
+    bufferWindowId: string;
+  }): types. BufferRow[] {
+    const buffer = this.findBuffer(params.bufferId);
+    if (!buffer) {
+      throw new Error("buffer not found");
+    }
+
+    const maxDisplayLines = this.getMaxDisplayLines(params.bufferWindowId);
+    let bufferRows: types.BufferRow[];
+
+    if (buffer.rowEdge === "top") {
+      const idx = params.rows.findIndex((r) => r.lineIndex === buffer.scrollLine);
+      bufferRows = params.rows.slice(idx, idx + maxDisplayLines);
+    }
+    else {
+      bufferRows = this.formatDisplayRowsFromBottom({
+        rows: params.rows,
+        bottomScrollLine: buffer.bottomScrollLine,
+        maxDisplayLines: maxDisplayLines,
+      });
+    }
+
+    return bufferRows;
+  }
+
+  formatDisplayRowsFromBottom (params: {
+    rows: types.BufferRow[];
+    bottomScrollLine: number;
+    maxDisplayLines: number;
+  }): types.BufferRow[] {
+    const idx = params.rows.findIndex((r) => r.lineIndex === params.bottomScrollLine);
+    const bottomRow = params.rows[idx];
+    let lastIdx = idx;
+    for (let i = idx + 1; i < params.rows.length; i++) {
+      const row = params.rows[i];
+      if (row.lineIndex !== bottomRow.lineIndex) {
+        break;
+      }
+      lastIdx += 1;
+    }
+    const startIdx = Math.max(lastIdx - params.maxDisplayLines + 1, 0);
+    const rows = params.rows.slice(startIdx, lastIdx + 1);
+    return rows;
   }
 
   getChildNodes (nodeId: string): mfs.IFileSystemNode[] {
@@ -273,17 +353,42 @@ export class Service implements types.IService {
       throw new Error("bufferWindow or buffer not found");
     }
 
-    const dom = document.querySelector<HTMLElement>(`[data-buffer-window-id="${bufferWindow.id}"]`);
+    const wd = this.getWindowSize(params.bufferWindowId);
+    const lineTexts = this.getLineTextsOfBuffer(buffer.id);
+    const maxDisplayLines = this.getMaxDisplayLines(bufferWindow.id);
+    let displayLines = maxDisplayLines;
+    if (!buffer.rowOverflow) {
+      const allDisplayRows = this.getAllDisplayRows(params);
+      const rows = this.formatDisplayRows({
+        rows: allDisplayRows,
+        bufferId: params.bufferId,
+        bufferWindowId: params.bufferWindowId,
+      });
+      displayLines = rows[rows.length - 1].displayIndex + 1;
+    }
+
+    return {
+      lines: lineTexts.length,
+      displayLines,
+      maxDisplayLines,
+      width: wd.width,
+      height: wd.height,
+    };
+  }
+
+  getWindowSize (bufferWindowId: string): types.WindowDimension {
+    const bufferWindow = this.findBufferWindow(bufferWindowId);
+    if (!bufferWindow) {
+      throw new Error("buffer window not found");
+    }
+    const dom = document.querySelector<HTMLElement>(`[data-buffer-window-id="${bufferWindow.id}"] [data-component-name="BufferWindow__content"]`);
     if (!dom) {
       throw new Error("buffer window dom not found");
     }
 
-    const rowHeight = this.getRowHeight();
-    const windowHeight = dom.offsetHeight;
-
     return {
-      lines: this.getLinesOfBuffer(buffer.id),
-      displayLines: Math.floor(windowHeight / rowHeight)
+      width: dom.offsetWidth,
+      height: dom.offsetHeight,
     };
   }
 
@@ -293,34 +398,110 @@ export class Service implements types.IService {
     return c.rowPaddingTop + c.fontSize + c.rowPaddingBottom + 2;
   }
 
+  getAllDisplayRows (params: {
+    bufferWindowId: string;
+    bufferId: string;
+  }): types.BufferRow[] {
+    const buffer = this.findBuffer(params.bufferId);
+    if (!buffer) {
+      throw new Error("buffer not found");
+    }
+    const wd = this.getWindowSize(params.bufferWindowId);
+    const maxDisplayLines = this.getMaxDisplayLines(params.bufferWindowId);
+    const lineTexts = this.getLineTextsOfBuffer(params.bufferId);
+    let displayLineTexts = lineTexts
+      .map((t, idx) => ({idx, text: t}));
+    if (buffer.rowEdge === "top") {
+      displayLineTexts = displayLineTexts.slice(
+        buffer.scrollLine,
+        buffer.scrollLine + maxDisplayLines
+      );
+    }
+    else {
+      const startIdx = Math.max(buffer.bottomScrollLine - maxDisplayLines + 1, 0);
+      displayLineTexts = displayLineTexts.slice(
+        startIdx,
+        buffer.bottomScrollLine + 1
+      );
+    }
+
+    const cfg = this.state.config;
+    const availableWidth = wd.width - cfg.rowPaddingLeft - cfg.rowPaddingRight;
+    const bufferRows = displayLineTexts.reduce((accum, cur, idx) => {
+      const texts = this.splitTextWithLimit(cur.text, availableWidth);
+      for (let i = 0; i < texts.length; i++) {
+        accum.push({
+          index: i,
+          displayIndex: idx,
+          lineIndex: cur.idx,
+          text: texts[i],
+        });
+      }
+      return accum;
+    }, [] as types.BufferRow[]);
+
+    return bufferRows;
+  }
+
+  private _getDisplayRows (params: {
+    bufferWindowId: string;
+    bufferId: string;
+  }): types.BufferRow[] {
+    const allBufferRows = this.getAllDisplayRows(params);
+    const bufferRows = this.formatDisplayRows({
+      rows: allBufferRows,
+      bufferId: params.bufferId,
+      bufferWindowId: params.bufferWindowId,
+    });
+
+    return bufferRows;
+  }
+
+  getDisplayRows (params: {
+    bufferWindowId: string;
+    bufferId: string;
+  }): types.BufferRow[] {
+    try {
+      return this._getDisplayRows(params);
+    } catch (e) {
+      return [] as types.BufferRow[];
+    }
+  }
+
+  getMaxDisplayLines (bufferWindowId: string): number {
+    const wd = this.getWindowSize(bufferWindowId);
+    return Math.floor(wd.height / this.getRowHeight());
+  }
+
+  // FIXME: remove this method
   getMaxDisplayRowNumber (): number {
     return Math.floor(window.innerHeight / this.getRowHeight());
   }
 
-  private getLinesOfBuffer (bufferId: string): number {
+  getLineTextsOfBuffer (bufferId: string): string[] {
     const buffer = this.findBuffer(bufferId);
     if (!buffer) {
       throw new Error("buffer not found");
     }
 
     if (dmn.utils.isBuffer(buffer)) {
-      return mc.text.splitByNewLine(buffer.serialize().content).length;
+      return mc.text.splitByNewLine(buffer.content);
     }
     else if (dmn.utils.isFiler(buffer)) {
       // FIXME: make it compatible with recursive calculation for opened directories
-      return this.getFilerRows(buffer.id).length;
+      return this.getFilerRows(buffer.id).map((r) => r.node.name);
     }
     else {
       throw new Error("unknown buffer type");
     }
   }
 
-  updateBuffer (buffer: types.IBufferKind): void {
+  updateBuffer (buffer: types.IBufferKind, opt?: types.SetStateOption): void {
     this.setState({
       buffers: this.state.buffers.find((b) => b.id === buffer.id)
         ? this.state.buffers.map((b) => b.id === buffer.id ? buffer.serialize() : b)
         : this.state.buffers.concat(buffer.serialize())
-    });
+    }, opt);
   }
 
   updateWindow (bufferWindow: types.IBufferWindow): void {

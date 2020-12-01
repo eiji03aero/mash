@@ -1,4 +1,7 @@
-export const defaultConfig = {
+import * as types from "../types";
+
+export const defaultConfig: types.Config = {
+  font: "Menlo",
   fontSize: 16,
   rowPaddingTop: 1,
   rowPaddingBottom: 1,

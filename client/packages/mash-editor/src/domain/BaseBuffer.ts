@@ -6,20 +6,29 @@ export type BaseBufferCtorParams = {
   id?: string;
   nodeId: string;
   scrollLine?: number;
+  bottomScrollLine?: number;
   cursorLine?: number;
+  rowOverflow?: boolean;
+  rowEdge?: types.BufferRowEdge;
 };
 
 export class BaseBuffer implements types.IBaseBuffer {
   id: string;
   nodeId: string;
   scrollLine: number;
+  bottomScrollLine: number;
   cursorLine: number;
+  rowOverflow: boolean;
+  rowEdge: types.BufferRowEdge;
 
   constructor (params: BaseBufferCtorParams) {
     this.id = params.id || mc.cid.generate();
     this.nodeId = params.nodeId;
     this.scrollLine = params.scrollLine || 0;
+    this.bottomScrollLine = params.bottomScrollLine || 0;
     this.cursorLine = params.cursorLine || 0;
+    this.rowOverflow = params.rowOverflow ?? false;
+    this.rowEdge = params.rowEdge ?? "top";
   }
 
   serialize (): types.SBaseBuffer {
@@ -28,32 +37,10 @@ export class BaseBuffer implements types.IBaseBuffer {
       id: this.id,
       nodeId: this.nodeId,
       scrollLine: this.scrollLine,
+      bottomScrollLine: this.bottomScrollLine,
       cursorLine: this.cursorLine,
+      rowOverflow: this.rowOverflow,
+      rowEdge: this.rowEdge,
     };
-  }
-
-  scroll (n: number, stats: types.BufferWindowStats): void {
-    const nextCursorLine = this.cursorLine + n;
-    const maxDisplayIdx = Math.min(stats.lines - 1, stats.displayLines - 1);
-    this.cursorLine = mc.math.ensureInRange(nextCursorLine, 0, maxDisplayIdx);
-    if (nextCursorLine < 0 || nextCursorLine > maxDisplayIdx) {
-      const delta = nextCursorLine < 0
-        ? nextCursorLine
-        : nextCursorLine - maxDisplayIdx;
-      const bottomPosition = Math.max(stats.lines - stats.displayLines, 0);
-      this.scrollLine = mc.math.ensureInRange(this.scrollLine + delta, 0, bottomPosition);
-    }
-  }
-
-  scrollTo (line: number, stats: types.BufferWindowStats): void {
-    if (line < this.scrollLine) {
-      this.scroll(line - this.scrollLine, stats);
-    }
-    else if (line > (this.scrollLine + stats.displayLines)) {
-      this.scroll(line - this.scrollLine + stats.displayLines, stats);
-    }
-    else {
-      this.scroll(line - this.cursorLine, stats);
-    }
   }
 }

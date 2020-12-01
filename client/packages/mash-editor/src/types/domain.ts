@@ -2,20 +2,28 @@ export interface IBaseEntity<T> {
   serialize(): T;
 }
 
+export type BufferRowEdge = "top" | "bottom";
+
 export interface SBaseBuffer {
   type: string;
   id: string;
   nodeId: string;
   // ui
   scrollLine: number;
+  bottomScrollLine: number;
   cursorLine: number;
+  rowOverflow: boolean;
+  rowEdge: BufferRowEdge;
 }
 
 export interface IBaseBuffer {
   id: string;
   nodeId: string;
-  scroll(n: number, stats: BufferWindowStats): void;
-  scrollTo(line: number, stats: BufferWindowStats): void;
+  scrollLine: number;
+  bottomScrollLine: number;
+  cursorLine: number;
+  rowOverflow: boolean;
+  rowEdge: BufferRowEdge;
 }
 
 export interface SBuffer extends SBaseBuffer {
@@ -24,7 +32,7 @@ export interface SBuffer extends SBaseBuffer {
 }
 
 export interface IBuffer extends IBaseEntity<SBuffer>, IBaseBuffer {
-  _?: any;
+  content: string;
 }
 
 export interface SFiler extends SBaseBuffer {
@@ -69,4 +77,7 @@ export interface IBufferWindow extends
 export type BufferWindowStats = {
   lines: number;
   displayLines: number;
+  maxDisplayLines: number;
+  width: number;
+  height: number;
 };

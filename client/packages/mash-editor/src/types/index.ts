@@ -20,6 +20,7 @@ export type ApplicationState = {
 export type AS = ApplicationState;
 
 export type Config = {
+  font: string;
   fontSize: number;
   rowPaddingTop: number;
   rowPaddingBottom: number;
@@ -31,6 +32,11 @@ export type Config = {
     Text: string;
   },
 };
+
+export interface ITextMeasurer {
+  configure(config: Config): void;
+  measure(text: string): TextMetrics;
+}
 
 export namespace RequestAction {
   export type Base = {
@@ -58,9 +64,30 @@ export type BufferWindowSet = {
   buffer: dmn.IBufferKind;
 };
 
+export type WindowDimension = {
+  width: number;
+  height: number;
+};
+
+export type BufferRow = {
+  lineIndex: number;
+  displayIndex: number;
+  index: number;
+  text: string;
+};
+
 export type FilerRow = {
   node: mfs.IFileSystemNode;
   nest: number;
+};
+
+export interface IBufferScroller {
+  scroll(delta: number): void;
+  scrollTo(line: number): void;
+}
+
+export type SetStateOption = {
+  update?: boolean;
 };
 
 export interface IService {
@@ -69,7 +96,7 @@ export interface IService {
   focus(): void;
   blur(): void;
   buildInitialState(): AS;
-  setState(s: Partial<AS>): void;
+  setState(s: Partial<AS>, opt?: SetStateOption): void;
   openBuffer(nodeId: string): void;
   handleKeyDown(event: KeyboardEvent): void;
   handleKeyPress(event: KeyboardEvent): void;
@@ -77,6 +104,18 @@ export interface IService {
   requestAction(action: RequestAction.Kind): void;
   onRequestAction(cb: RequestActionHandler): void;
   offRequestAction(cb: (...args: any[]) => void): void;
+  // format methods
+  splitTextWithLimit(text: string, limit: number): string[];
+  formatDisplayRows (params: {
+    rows: BufferRow[];
+    bufferId: string;
+    bufferWindowId: string;
+  }): BufferRow[];
+  formatDisplayRowsFromBottom (params: {
+    rows: BufferRow[];
+    bottomScrollLine: number;
+    maxDisplayLines: number;
+  }): BufferRow[];
   // retrieval methods
   getChildNodes(nodeId: string): mfs.IFileSystemNode[];
   getFilerRows(filerId: string): FilerRow[];
@@ -85,7 +124,17 @@ export interface IService {
     bufferWindowId: string;
     bufferId: string;
   }): dmn.BufferWindowStats;
+  getWindowSize(bufferWindowId: string): WindowDimension;
   getRowHeight(): number;
+  getAllDisplayRows(params: {
+    bufferWindowId: string;
+    bufferId: string;
+  }): BufferRow[];
+  getDisplayRows(params: {
+    bufferWindowId: string;
+    bufferId: string;
+  }): BufferRow[];
+  getMaxDisplayLines (bufferWindowId: string): number;
   getMaxDisplayRowNumber(): number;
   // query methods
   findBuffer(id: string): dmn.IBufferKind | undefined;
@@ -95,7 +144,7 @@ export interface IService {
     nodeId: string;
   }): dmn.IBufferKind | undefined;
   // update methods
-  updateBuffer(b: dmn.IBufferKind): void;
+  updateBuffer(b: dmn.IBufferKind, opt?: SetStateOption): void;
   updateWindow(w: dmn.IBufferWindow): void;
 }
 

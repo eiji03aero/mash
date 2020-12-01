@@ -25,28 +25,27 @@
   - add events to update each of them
 - [x] add some commands
 - [x] click on bufferwindow to move focus
-- [ ] refactor config related
+- [x] refactor config related
   - now it lives in both context value and Editor state
-- [ ] optimize render
-  - memoize components
-  - slice render data properly (to cut off the ones after bottom edge)
-    - Filer
-    - Buffer
-  - not to setState on handlers
-    - let service handlers return undefined in case of there is no need to update
-- [ ] misc
-  - make sure all lines get focus line when it goes multiple lines
-  - disable user selection
+- [x] fix overflow line issue
+  - create helper on service to split lines
+  - update stats related so that scroll (especially downwords) works properly
+  - add scroller class and move all the scroll related logic there
+    - move scroll method from base buffer
+  - add cached rows on buffer. deal with scroll is too much of trouble
+  - add resize handler. make sure to debounce
+- [ ] implement status line
 - BufferWindow
   - [x] display file content
   - [x] Ctrl-W hjkl to move focus
-  - [ ] show normal mode
-  - [ ] show file name
-  - [ ] show directory path
+  - status line
+    - [ ] show normal mode
+    - [ ] show file name
+    - [ ] show directory path
 - Filer
   - [x] view current directory
-  - [ ] select to open the file
-  - [ ] select to collapse the directory
+  - [x] select to open the file
+  - [x] select to collapse the directory
 - CommandLine
   - [ ] :q/quit close vim
   - [ ] :h/help show help
@@ -57,6 +56,10 @@
 - edit file content
 - create file on filer
 - create file/directory on filer
+
+### misc
+- [ ] optimize render
+  - memoize components
 
 ### commands
 - common

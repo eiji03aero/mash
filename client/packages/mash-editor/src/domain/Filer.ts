@@ -8,6 +8,7 @@ export class Filer extends BaseBuffer implements types.IFiler {
     openedNodeIds?: string[];
   }) {
     super(params);
+    this.rowOverflow = true;
     this.openedNodeIds = params.openedNodeIds || [] as string[];
   }
 

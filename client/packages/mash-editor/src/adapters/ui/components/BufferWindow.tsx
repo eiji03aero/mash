@@ -31,15 +31,18 @@ export const BufferWindow: React.FC<IProps> = ({
       data-buffer-window-id={bufferWindow.id}
       data-component-name="BufferWindow"
     >
-      {buffer.type === "Buffer" ? (
-        <BufferContent
-          buffer={buffer}
-        />
-      ) : buffer.type === "Filer" ? (
-        <FilerContent
-          filer={buffer}
-        />
-      ) : null}
+      <div className={Styles.content} data-component-name="BufferWindow__content">
+        {buffer.type === "Buffer" ? (
+          <BufferContent
+            bufferWindowId={bufferWindow.id}
+            buffer={buffer}
+          />
+        ) : buffer.type === "Filer" ? (
+          <FilerContent
+            filer={buffer}
+          />
+        ) : null}
+      </div>
     </div>
   );
 };
@@ -48,12 +51,18 @@ const Styles = {
   container: (params: {
     vertColumn: string;
   }) => css`
+    display: flex;
+    flex-direction: column;
     height: 100%;
     overflow-y: hidden;
 
     &:not(:first-of-type) {
       border-left: 8px solid ${params.vertColumn};
     }
+  `,
+  content: css`
+    flex: 1;
+    min-height: 0;
   `,
   width: (width?: number) => css`
     ${typeof width === "number" ? `

@@ -2,9 +2,11 @@ import * as mfs from "mash-filesystem";
 
 import * as types from "../types";
 import * as dmn from "../domain";
+import { BufferScroller } from "./BufferScroller";
 
 export class InputHandler implements types.IInputHandler {
   service: types.IService;
+
   combination: string | null;
   timerIds: {
     changingWindow: number;
@@ -30,15 +32,20 @@ export class InputHandler implements types.IInputHandler {
     }
 
     const { bufferWindow, buffer } = this.service.getCurrentBufferWindowSet();
+    const scroller = new BufferScroller({
+      service: this.service,
+      bufferWindow,
+      buffer,
+    });
     const stats = this.service.getWindowStats({
       bufferWindowId: bufferWindow.id,
       bufferId: buffer.id,
     });
 
-    if (this.handleWindowScroll({
+    if (this.handleWindowScrollCommand({
       event,
-      bufferWindow,
       buffer,
+      scroller,
       stats,
     })) {
       return;
@@ -51,11 +58,16 @@ export class InputHandler implements types.IInputHandler {
       bufferWindowId: bufferWindow.id,
       bufferId: buffer.id,
     });
+    const scroller = new BufferScroller({
+      service: this.service,
+      bufferWindow,
+      buffer,
+    });
 
     if (this.handleWindowOperation({
       event,
-      bufferWindow,
       buffer,
+      scroller,
       stats,
     })) {
       return;
@@ -65,7 +77,7 @@ export class InputHandler implements types.IInputHandler {
       this.handleBuffer({
         event,
         buffer,
-        bufferWindow,
+        scroller,
         stats,
       });
     }
@@ -73,7 +85,7 @@ export class InputHandler implements types.IInputHandler {
       this.handleFiler({
         event,
         filer: buffer,
-        bufferWindow,
+        scroller,
         stats,
       });
     }
@@ -122,21 +134,21 @@ export class InputHandler implements types.IInputHandler {
     return false;
   }
 
-  private handleWindowScroll (params: {
+  private handleWindowScrollCommand (params: {
     event: KeyboardEvent;
-    bufferWindow: types.IBufferWindow;
     buffer: types.IBufferKind;
+    scroller: types.IBufferScroller;
     stats: types.BufferWindowStats;
   }): boolean {
-    const { event, buffer, stats } = params;
+    const { event, buffer, stats, scroller } = params;
     let updated = false;
 
     if (event.ctrlKey && event.key === "d") {
-      buffer.scroll(Math.floor(stats.displayLines / 2), stats);
+      scroller.scroll(Math.floor(stats.maxDisplayLines / 2));
       updated = true;
     }
     else if (event.ctrlKey && event.key === "u") {
-      buffer.scroll(-1 * Math.floor(stats.displayLines / 2), stats);
+      scroller.scroll(-1 * Math.floor(stats.maxDisplayLines / 2));
       updated = true;
     }
 
@@ -149,16 +161,16 @@ export class InputHandler implements types.IInputHandler {
 
   private handleWindowOperation (params: {
     event: KeyboardEvent;
-    bufferWindow: types.IBufferWindow;
     buffer: types.IBufferKind;
+    scroller: types.IBufferScroller;
     stats: types.BufferWindowStats;
   }): boolean {
-    const { event, buffer, stats } = params;
+    const { event, buffer, scroller, stats } = params;
     let updated = false;
 
     if (event.key === "g") {
       if (this.combination === "g") {
-        buffer.scroll(-1 * stats.lines, stats);
+        scroller.scroll(-1 * stats.lines);
         window.clearTimeout(this.timerIds.combination);
         this.combination = null;
         updated = true;
@@ -172,7 +184,7 @@ export class InputHandler implements types.IInputHandler {
       }
     }
     else if (event.key === "G") {
-      buffer.scroll(stats.lines, stats);
+      scroller.scroll(stats.lines);
     }
 
     if (updated) {
@@ -185,19 +197,19 @@ export class InputHandler implements types.IInputHandler {
   private handleBuffer (params: {
     event: KeyboardEvent;
     buffer: types.IBuffer;
-    bufferWindow: types.IBufferWindow;
+    scroller: types.IBufferScroller;
     stats: types.BufferWindowStats;
   }): void {
-    const { event, buffer, stats } = params;
+    const { event, buffer, scroller } = params;
 
     if (event.key === "j") {
-      buffer.scroll(1, stats);
+      scroller.scroll(1);
     }
     else if (event.key === "k") {
-      buffer.scroll(-1, stats);
+      scroller.scroll(-1);
     }
     else if (event.key === "Enter") {
-      buffer.scroll(1, stats);
+      scroller.scroll(1);
     }
     else if (event.key === "x") {
       // TBD
@@ -210,10 +222,10 @@ export class InputHandler implements types.IInputHandler {
   private handleFiler (params: {
     event: KeyboardEvent;
     filer: types.IFiler;
-    bufferWindow: types.IBufferWindow;
+    scroller: types.IBufferScroller;
     stats: types.BufferWindowStats;
   }): void {
-    const { event, filer, stats } = params;
+    const { event, filer, scroller } = params;
     const s = filer.serialize();
 
     const rows = this.service.getFilerRows(filer.id);
@@ -221,10 +233,10 @@ export class InputHandler implements types.IInputHandler {
     const node = rows[idx].node;
 
     if (event.key === "j") {
-      filer.scroll(1, stats);
+      scroller.scroll(1);
     }
     else if (event.key === "k") {
-      filer.scroll(-1, stats);
+      scroller.scroll(-1);
     }
     else if (event.key === "Enter" || event.key === "o") {
       if (mfs.utils.isFile(node)) {
@@ -236,7 +248,7 @@ export class InputHandler implements types.IInputHandler {
     }
     else if (event.key === "x") {
       filer.closeNode(node.parentNodeId);
-      filer.scrollTo(rows.findIndex((r) => r.node.id === node.parentNodeId), stats);
+      scroller.scrollTo(rows.findIndex((r) => r.node.id === node.parentNodeId));
     }
 
     this.service.updateBuffer(filer);

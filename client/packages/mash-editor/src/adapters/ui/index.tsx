@@ -4,7 +4,6 @@ import ReactDOM from "react-dom";
 import * as types from "../../types";
 import * as ltypes from "./types";
 import { AppContext } from "./context";
-import { defaultConfig } from "../../service";
 
 import { Editor } from "./Editor";
 
@@ -14,7 +13,9 @@ export const render = (params: {
 }): void => {
   const ctx: ltypes.Context  = {
     engine: params.engine,
-    config: defaultConfig,
+    get config (): types.Config {
+      return params.engine.service.state.config;
+    },
   };
 
   ReactDOM.render(
