@@ -27,9 +27,17 @@ export type Config = {
   rowPaddingLeft: number;
   rowPaddingRight: number;
   color: {
+    ColorColumn: string;
     VertSplit: string;
     Directory: string;
     Text: string;
+    StatusLineBg: string;
+    StatusLineSubFg: string;
+    StatusLineSubBg: string;
+    StatusLineModeNormalFg: string;
+    StatusLineModeNormalBg: string;
+    StatusLineNodeNameFg: string;
+    StatusLineDirectoryPathFg: string;
   },
 };
 
@@ -79,6 +87,11 @@ export type BufferRow = {
 export type FilerRow = {
   node: mfs.IFileSystemNode;
   nest: number;
+};
+
+export type BufferDisplayInfo = {
+  name: string;
+  directoryPath: string;
 };
 
 export interface IBufferScroller {
@@ -136,6 +149,8 @@ export interface IService {
   }): BufferRow[];
   getMaxDisplayLines (bufferWindowId: string): number;
   getMaxDisplayRowNumber(): number;
+  getLineTextsOfBuffer (bufferId: string): string[];
+  getBufferDisplayInfo(bufferId: string): BufferDisplayInfo;
   // query methods
   findBuffer(id: string): dmn.IBufferKind | undefined;
   findBufferWindow(id: string): dmn.IBufferWindow | undefined;

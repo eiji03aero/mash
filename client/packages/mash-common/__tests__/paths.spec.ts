@@ -22,6 +22,8 @@ describe("paths", () => {
         ["domo/hoge", "domo"],
         ["hoge", "."],
         ["/root/home/app.ts", "/root/home"],
+        ["/root", "/"],
+        ["/", "."],
       ];
 
       for (const t of tests) {

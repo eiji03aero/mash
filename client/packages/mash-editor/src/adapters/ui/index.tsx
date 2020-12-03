@@ -13,6 +13,9 @@ export const render = (params: {
 }): void => {
   const ctx: ltypes.Context  = {
     engine: params.engine,
+    get service (): types.IService {
+      return params.engine.service;
+    },
     get config (): types.Config {
       return params.engine.service.state.config;
     },

@@ -9,11 +9,26 @@ export const dirname = (path: string): string => {
     return ".";
   }
 
+  // when fragment is right under
+  if (path.lastIndexOf("/") === 0) {
+    if (path.length === 1) {
+      return ".";
+    }
+    else {
+      return "/";
+    }
+  }
+
   const split = path.split("/");
   return split.slice(0, split.length - 1).join("/");
 };
 
-export const inspect = (path: string): {[key:string]: string} => {
+export type InspectedPath = {
+  basename: string;
+  dirname: string;
+}
+
+export const inspect = (path: string): InspectedPath => {
   return {
     basename: basename(path),
     dirname: dirname(path),

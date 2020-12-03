@@ -34,14 +34,17 @@
     - move scroll method from base buffer
   - add cached rows on buffer. deal with scroll is too much of trouble
   - add resize handler. make sure to debounce
-- [ ] implement status line
+- [x] implement status line
+- [x] implement ruler
+- [ ] implement cursor
+- [ ] implement commandline
 - BufferWindow
   - [x] display file content
   - [x] Ctrl-W hjkl to move focus
-  - status line
-    - [ ] show normal mode
-    - [ ] show file name
-    - [ ] show directory path
+- StatusLine
+  - [x] show normal mode
+  - [x] show file name
+  - [x] show directory path
 - Filer
   - [x] view current directory
   - [x] select to open the file

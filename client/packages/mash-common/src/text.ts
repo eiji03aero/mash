@@ -87,3 +87,12 @@ export const repeat = (text: string, times: number) => {
   return buf;
 };
 
+export const padStart = (text: string | number, padChar: string, maxLength: number): string => {
+  const padded = `${repeat(padChar, maxLength - String(text).length)}${text}`
+  return padded.slice(padded.length - maxLength, padded.length);
+};
+
+export const padEnd = (text: string | number, padChar: string, maxLength: number): string => {
+  const padded = `${text}${repeat(padChar, maxLength - String(text).length)}${text}`
+  return padded.slice(0, maxLength);
+};

@@ -2,26 +2,18 @@ import React from "react";
 import { css } from "emotion";
 
 import * as types from "../../../../types";
-import * as hooks from "../../hooks";
 
 import { Row } from "./Row";
 
 interface IProps {
-  bufferWindowId: string;
   buffer: types.SBuffer;
+  rows: types.BufferRow[];
 }
 
 export const BufferContent: React.FC<IProps> = ({
-  bufferWindowId,
   buffer,
+  rows,
 }) => {
-  const { engine: { service } } = hooks.useAppContext();
-
-  const rows = service.getDisplayRows({
-    bufferWindowId,
-    bufferId: buffer.id,
-  });
-
   return (
     <div className={Styles.container}>
       {rows.map((row) => {

@@ -8,11 +8,13 @@ import { BufferWindow } from "./BufferWindow";
 interface IProps {
   windows: types.SBufferWindow[];
   buffers: types.SBufferKind[];
+  currentWindowId: string;
 }
 
 export const EditorContent: React.FC<IProps> = ({
   windows,
   buffers,
+  currentWindowId,
 }) => {
   return (
     <div className={Styles.container}>
@@ -28,6 +30,7 @@ export const EditorContent: React.FC<IProps> = ({
             key={bw.id}
             bufferWindow={bw}
             buffer={buffer}
+            focused={currentWindowId === bw.id}
           />
         );
       })}

@@ -55,7 +55,8 @@ export class Service implements types.IService {
         modifiable: false,
       }).serialize(),
       new dmn.BufferWindow({
-        currentSourceId: buffer.id
+        currentSourceId: buffer.id,
+        ruler: true,
       }).serialize(),
     ] as types.SBufferWindow[];
 
@@ -493,6 +494,43 @@ export class Service implements types.IService {
     }
     else {
       throw new Error("unknown buffer type");
+    }
+  }
+
+  getBufferDisplayInfo (bufferId: string): types.BufferDisplayInfo {
+    const defaultInfo = {
+      name: "[NO NAME]",
+      directoryPath: "",
+    };
+
+    const buffer = this.findBuffer(bufferId);
+    if (!buffer) {
+      return defaultInfo;
+    }
+
+    const r1 = this._filesystem.getNode(buffer.nodeId);
+    if (E.isLeft(r1)) {
+      return defaultInfo;
+    }
+    const node = r1.right;
+
+    const r2 = this._filesystem.resolveAbsolutePath(buffer.nodeId);
+    if (E.isLeft(r2)) {
+      return defaultInfo;
+    }
+    const path = r2.right;
+
+    if (dmn.utils.isFiler(buffer)) {
+      return {
+        name: "Filer",
+        directoryPath: path,
+      };
+    }
+    else {
+      return {
+        name: node.name,
+        directoryPath: mc.paths.dirname(path),
+      };
     }
   }
 

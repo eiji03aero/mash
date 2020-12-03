@@ -104,4 +104,28 @@ describe("text", () => {
   describe("getColorEscapeSequence", () => {
     it.todo("should get color escape sequence with color");
   });
+
+  describe("padStart", () => {
+    it("should pad text", () => {
+      const tests = [
+        {
+          args: ["domo", " ", 5],
+          expected: " domo",
+        },
+        {
+          args: [10, " ", 3],
+          expected: " 10",
+        },
+        {
+          args: ["hoge", " ", 3],
+          expected: "oge",
+        },
+      ] as const;
+
+      for (const t of tests) {
+        const result = text.padStart(t.args[0], t.args[1], t.args[2]);
+        expect(result).toEqual(t.expected);
+      }
+    });
+  });
 });

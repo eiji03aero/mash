@@ -65,13 +65,14 @@ export interface SBufferWindow {
   mode: BufferWindowMode;
   width?: number;
   modifiable: boolean;
+  ruler: boolean;
 }
 
-export interface IBufferWindow extends
-  IBaseEntity<SBufferWindow>,
-  SBufferWindow {
+export interface IBufferWindow
+extends IBaseEntity<SBufferWindow>, SBufferWindow {
   openBuffer(sourceId: string): void;
   hasSourceId(sourceId: string): boolean;
+  ruler: boolean;
 }
 
 export type BufferWindowStats = {

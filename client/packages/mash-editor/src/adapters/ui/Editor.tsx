@@ -107,6 +107,7 @@ export const Editor: React.FC<IProps> = ({
     <div className={containerClassName} ref={refs.container}>
       <div className={Styles.content}>
         <EditorContent
+          currentWindowId={state.currentWindowId}
           windows={state.windows}
           buffers={state.buffers}
         />
