@@ -5,12 +5,7 @@ import * as dmn from "./domain";
 export * from "./base";
 export * from "./domain";
 
-export type UIState = {
-  changingWindow: boolean;
-};
-
 export type ApplicationState = {
-  ui: UIState;
   config: Config;
   windows: dmn.SBufferWindow[];
   buffers: dmn.SBufferKind[];
@@ -26,11 +21,14 @@ export type Config = {
   rowPaddingBottom: number;
   rowPaddingLeft: number;
   rowPaddingRight: number;
+  cursorBlinkInitialPause: number;
+  cursorBlinkDuration: number;
   color: {
     ColorColumn: string;
     VertSplit: string;
     Directory: string;
     Text: string;
+    CursorBg: string;
     StatusLineBg: string;
     StatusLineSubFg: string;
     StatusLineSubBg: string;
@@ -85,6 +83,8 @@ export type BufferRow = {
 };
 
 export type FilerRow = {
+  lineIndex: number;
+  text: string;
   node: mfs.IFileSystemNode;
   nest: number;
 };
@@ -94,9 +94,21 @@ export type BufferDisplayInfo = {
   directoryPath: string;
 };
 
+export type CursorInfo = {
+  line: number;
+  column: number;
+  charWidth: number;
+  offsetLeft: number;
+  char: string;
+};
+
 export interface IBufferScroller {
   scroll(delta: number): void;
   scrollTo(line: number): void;
+  slideCursor(delta: number): void;
+  slideCursorToNextWordBegin(): void;
+  slideCursorToNextWordEnd(): void;
+  slideCursorToPreviousWordBegin(): void;
 }
 
 export type SetStateOption = {
@@ -139,6 +151,7 @@ export interface IService {
   }): dmn.BufferWindowStats;
   getWindowSize(bufferWindowId: string): WindowDimension;
   getRowHeight(): number;
+  getRowAvailableWidth(bufferWindowId: string): number;
   getAllDisplayRows(params: {
     bufferWindowId: string;
     bufferId: string;
@@ -151,6 +164,11 @@ export interface IService {
   getMaxDisplayRowNumber(): number;
   getLineTextsOfBuffer (bufferId: string): string[];
   getBufferDisplayInfo(bufferId: string): BufferDisplayInfo;
+  getTextMetrics(text: string): TextMetrics;
+  getCursorInfo(params: {
+    bufferWindowId: string;
+    bufferId: string;
+  }): CursorInfo;
   // query methods
   findBuffer(id: string): dmn.IBufferKind | undefined;
   findBufferWindow(id: string): dmn.IBufferWindow | undefined;

@@ -4,14 +4,19 @@ import * as types from "../types";
 import * as dmn from "../domain";
 import { BufferScroller } from "./BufferScroller";
 
+const combo = {
+  ctrlw: "Ctrl w",
+};
+
+type TimerIds = {
+  combination: number;
+};
+
 export class InputHandler implements types.IInputHandler {
   service: types.IService;
 
   combination: string | null;
-  timerIds: {
-    changingWindow: number;
-    combination: number;
-  };
+  timerIds: TimerIds;
 
   constructor (params: {
     service: types.IService,
@@ -19,7 +24,6 @@ export class InputHandler implements types.IInputHandler {
     this.service = params.service;
     this.combination = null;
     this.timerIds = {
-      changingWindow: 0,
       combination: 0,
     };
   }
@@ -28,6 +32,7 @@ export class InputHandler implements types.IInputHandler {
     if (this.handleMoveWindowFocus({
       event,
     })) {
+      event.preventDefault();
       return;
     }
 
@@ -73,6 +78,14 @@ export class InputHandler implements types.IInputHandler {
       return;
     }
 
+    if (this.handleCursorCommand({
+      event,
+      buffer,
+      scroller,
+    })) {
+      return;
+    }
+
     if (dmn.utils.isBuffer(buffer)) {
       this.handleBuffer({
         event,
@@ -97,36 +110,19 @@ export class InputHandler implements types.IInputHandler {
     const { event } = params;
 
     if (event.ctrlKey && event.key === "w") {
-      if (this.service.state.ui.changingWindow) {
-        return true;
-      }
-
-      this.timerIds.changingWindow = window.setTimeout(() => {
-        this.service.setState({
-          ui: {
-            changingWindow: false,
-          },
-        });
-      }, 500);
-      this.service.setState({
-        ui: {
-          changingWindow: true,
-        }
-      });
+      this.combination = combo.ctrlw;
+      this.startCombination();
       return true;
     }
 
-    if (this.service.state.ui.changingWindow) {
+    if (this.combination === combo.ctrlw) {
       const nextWindowId =
         event.key === "h" ? this.service.state.windows[0].id :
         event.key === "l" ? this.service.state.windows[1].id :
         this.service.state.currentWindowId;
-      window.clearTimeout(this.timerIds.changingWindow);
+      this.cancelCombination();
       this.service.setState({
         currentWindowId: nextWindowId,
-        ui: {
-          changingWindow: false,
-        }
       });
       return true;
     }
@@ -159,6 +155,50 @@ export class InputHandler implements types.IInputHandler {
     return updated;
   }
 
+  private handleCursorCommand (params: {
+    event: KeyboardEvent;
+    buffer: types.IBufferKind;
+    scroller: types.IBufferScroller;
+  }): boolean {
+    const { scroller, buffer, event } = params;
+    let updated = false;
+
+    if (event.key === "j") {
+      scroller.scroll(1);
+      updated = true;
+    }
+    else if (event.key === "k") {
+      scroller.scroll(-1);
+      updated = true;
+    }
+    else if (event.key === "h") {
+      scroller.slideCursor(-1);
+      updated = true;
+    }
+    else if (event.key === "l") {
+      scroller.slideCursor(1);
+      updated = true;
+    }
+    else if (event.key === "w") {
+      scroller.slideCursorToNextWordBegin();
+      updated = true;
+    }
+    else if (event.key === "b") {
+      scroller.slideCursorToPreviousWordBegin();
+      updated = true;
+    }
+    else if (event.key === "e") {
+      scroller.slideCursorToNextWordEnd();
+      updated = true;
+    }
+
+    if (updated) {
+      this.service.updateBuffer(buffer);
+    }
+
+    return updated;
+  }
+
   private handleWindowOperation (params: {
     event: KeyboardEvent;
     buffer: types.IBufferKind;
@@ -171,20 +211,18 @@ export class InputHandler implements types.IInputHandler {
     if (event.key === "g") {
       if (this.combination === "g") {
         scroller.scroll(-1 * stats.lines);
-        window.clearTimeout(this.timerIds.combination);
-        this.combination = null;
+        this.cancelCombination();
         updated = true;
       }
       else {
         this.combination = "g";
-        this.timerIds.combination = window.setTimeout(() => {
-          this.combination = null;
-        }, 2000);
+        this.startCombination();
         updated = true;
       }
     }
     else if (event.key === "G") {
       scroller.scroll(stats.lines);
+      updated = true;
     }
 
     if (updated) {
@@ -202,13 +240,7 @@ export class InputHandler implements types.IInputHandler {
   }): void {
     const { event, buffer, scroller } = params;
 
-    if (event.key === "j") {
-      scroller.scroll(1);
-    }
-    else if (event.key === "k") {
-      scroller.scroll(-1);
-    }
-    else if (event.key === "Enter") {
+    if (event.key === "Enter") {
       scroller.scroll(1);
     }
     else if (event.key === "x") {
@@ -226,19 +258,12 @@ export class InputHandler implements types.IInputHandler {
     stats: types.BufferWindowStats;
   }): void {
     const { event, filer, scroller } = params;
-    const s = filer.serialize();
 
     const rows = this.service.getFilerRows(filer.id);
-    const idx = s.scrollLine + s.cursorLine;
+    const idx = filer.scrollLine + filer.cursorLine;
     const node = rows[idx].node;
 
-    if (event.key === "j") {
-      scroller.scroll(1);
-    }
-    else if (event.key === "k") {
-      scroller.scroll(-1);
-    }
-    else if (event.key === "Enter" || event.key === "o") {
+    if (event.key === "Enter" || event.key === "o") {
       if (mfs.utils.isFile(node)) {
         this.service.openBuffer(node.id);
       }
@@ -252,5 +277,17 @@ export class InputHandler implements types.IInputHandler {
     }
 
     this.service.updateBuffer(filer);
+  }
+
+  private startCombination () {
+    window.clearTimeout(this.timerIds.combination);
+    this.timerIds.combination = window.setTimeout(() => {
+      this.combination = null;
+    }, 1000);
+  }
+
+  private cancelCombination () {
+    window.clearTimeout(this.timerIds.combination);
+    this.combination = null;
   }
 }

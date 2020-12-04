@@ -109,62 +109,7 @@ Humanity has always lost in a war with hokai, until they founded a institution s
   },
   {
     name: "README.txt",
-    content: formatString(`
-# mash-editor
-- vim-like filesystem editor
-
-## features
-- open file in buffer
-- vim-like experience
-  - move cursors with key binding
-  - move window focus with key binding
-- save files
-- will be integrated with mash and mash-filesystem and web
-- chotto taihen dakedo ganbarimasyo
-- This will be a long line since I will have to make sure all the lines have underlined even if it gets broken into multiple
-
-## Plans
-- phase 1
-  - support basic operations
-- phase 2
-  - implement advanced features
-  - it is a okay to directly depend on mash-filesystem!
-
-## Notes
-- hoge
-  - hoge
-  - hoge
-  - hoge
-  - hoge
-  - hoge
-  - hoge
-- kore
-  - kore
-  - kore
-    - kore
-  - kore
-    - kore
-  - kore
-    - kore
-    - kore
-    - kore
-    - kore
-
-## Waring
-- this is still
--
--
--
--
--
--
--
--
--
--
--
-- in active development
-    `)
+    content: require("!raw-loader!../README.md").default,
   },
   {
     name: "lista_de_comprar.txt",

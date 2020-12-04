@@ -36,8 +36,15 @@
   - add resize handler. make sure to debounce
 - [x] implement status line
 - [x] implement ruler
-- [ ] implement cursor
+- [x] implement cursor
+  - just add cursorColumn field
+  - command to move cursor column
+    - w, e, b
+  - fix buffer row thing
+    - move the adding caret and indent logic inside service#getFilerRows so that cursor
+      calculation can be done properly
 - [ ] implement commandline
+- [ ] implement buffer list line
 - BufferWindow
   - [x] display file content
   - [x] Ctrl-W hjkl to move focus
@@ -50,8 +57,7 @@
   - [x] select to open the file
   - [x] select to collapse the directory
 - CommandLine
-  - [ ] :q/quit close vim
-  - [ ] :h/help show help
+  - implement commands
 
 ### phase 2
 - save current buffer
@@ -67,6 +73,8 @@
 ### commands
 - common
   - normal
+    - h, j, k, l
+    - w, e, b
     - ctrl-w h, ctrl-w l
     - ctrl-d, ctrl-u
     - gg, G
@@ -75,6 +83,11 @@
     - Enter
     - o (toggle directory or open buffer)
     - x
+
+### Ex commands
+- q ... quit vim
+- h ... show help
+- FilerToggle ... toggle visibility of filer
 
 ## Models
 

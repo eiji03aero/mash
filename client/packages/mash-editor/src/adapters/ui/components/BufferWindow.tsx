@@ -7,6 +7,7 @@ import * as hooks from "../hooks";
 import { BufferContent } from "./buffer/BufferContent";
 import { FilerContent } from "./buffer/FilerContent";
 import { Ruler } from "./buffer/Ruler";
+import { Cursor } from "./Cursor";
 import { StatusLine } from "./StatusLine";
 
 interface IProps {
@@ -30,28 +31,49 @@ export const BufferWindow: React.FC<IProps> = ({
     Styles.width(bufferWindow.width),
   );
 
+  const rowHeight = service.getRowHeight();
+  const cursorInfo = service.getCursorInfo({
+    bufferWindowId: bufferWindow.id,
+    bufferId: buffer.id,
+  });
+
   const renderBuffer = (buffer: types.SBuffer) => {
     const rows = service.getDisplayRows({
       bufferWindowId: bufferWindow.id,
       bufferId: buffer.id,
     });
     const lines = service.getLineTextsOfBuffer(buffer.id);
+
     const ruler = (
       <Ruler
         rows={rows}
         cursoredIndex={buffer.cursorLine}
         column={String(lines.length).length}
       />
-    )
+    );
+
     const content = (
       <BufferContent
         buffer={buffer}
         rows={rows}
       />
     );
+
+    const cursorLineIdx =
+      rows.findIndex((r) => r.lineIndex === buffer.cursorLine && r.index === cursorInfo.line);
+    const cursor = (
+      <Cursor
+        top={cursorLineIdx * rowHeight}
+        left={cursorInfo.offsetLeft}
+        width={cursorInfo.charWidth}
+        height={rowHeight}
+      />
+    );
+
     return {
       ruler,
       content,
+      cursor,
     };
   };
 
@@ -61,16 +83,27 @@ export const BufferWindow: React.FC<IProps> = ({
         filer={filer}
       />
     );
+
+    const cursor = (
+      <Cursor
+        top={(filer.cursorLine - filer.scrollLine) * rowHeight}
+        left={cursorInfo.offsetLeft}
+        width={cursorInfo.charWidth}
+        height={rowHeight}
+      />
+    );
+
     return {
       ruler: null,
       content,
+      cursor,
     };
   };
 
-  const { content, ruler } =
+  const { content, ruler, cursor } =
     buffer.type === "Buffer" ? renderBuffer(buffer) :
     buffer.type === "Filer" ? renderFiler(buffer) :
-    { content: null, ruler: null };
+    { content: null, ruler: null, cursor: null };
 
   return (
     <div className={containerClassName}
@@ -84,6 +117,7 @@ export const BufferWindow: React.FC<IProps> = ({
           </div>
         )}
         <div className={Styles.content} data-component-name="BufferWindow__content">
+          { focused && cursor }
           { content }
         </div>
       </div>
@@ -119,8 +153,11 @@ const Styles = {
     flex-shrink: 1;
   `,
   content: css`
+    position: relative;
     flex: 1;
+    min-width: 0;
     height: 100%;
+    z-index: 0;
   `,
   width: (width?: number) => css`
     ${typeof width === "number" ? `

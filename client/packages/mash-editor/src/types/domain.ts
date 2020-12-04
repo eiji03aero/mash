@@ -12,6 +12,7 @@ export interface SBaseBuffer {
   scrollLine: number;
   bottomScrollLine: number;
   cursorLine: number;
+  cursorColumn: number;
   rowOverflow: boolean;
   rowEdge: BufferRowEdge;
 }
@@ -22,6 +23,7 @@ export interface IBaseBuffer {
   scrollLine: number;
   bottomScrollLine: number;
   cursorLine: number;
+  cursorColumn: number;
   rowOverflow: boolean;
   rowEdge: BufferRowEdge;
 }

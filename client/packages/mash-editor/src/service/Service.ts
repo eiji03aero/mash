@@ -61,9 +61,6 @@ export class Service implements types.IService {
     ] as types.SBufferWindow[];
 
     return {
-      ui: {
-        changingWindow: false,
-      },
       config: defaultConfig,
       windows,
       buffers,
@@ -80,10 +77,6 @@ export class Service implements types.IService {
     this.state = {
       ...this.state,
       ...s,
-      ui: {
-        ...this.state.ui,
-        ...s.ui,
-      },
     };
 
     if (option.update) {
@@ -241,7 +234,21 @@ export class Service implements types.IService {
       files.sort((a, b) => mc.text.compareMagnitude(a.name, b.name));
 
       return [...directories, ...files].reduce((accum, cur) => {
+        let name = cur.name;
+        let indent = mc.text.repeat("  ", nest);
+        if (mfs.utils.isFile(cur)) {
+          indent = mc.text.repeat(" ", Math.max(nest * 2 - 1, 2));
+        }
+        else if (mfs.utils.isDirectory(cur)) {
+          const caret = filer.isNodeOpened(cur.id) ? "▾" : "▸";
+          name = `${caret} ${cur.name}`;
+        }
+        else {
+          name = "[unknown file]";
+        }
         accum.push({
+          lineIndex: 0,
+          text: `${indent}${name}`,
           node: cur,
           nest: nest,
         });
@@ -255,7 +262,11 @@ export class Service implements types.IService {
       }, [] as types.FilerRow[]);
     };
 
-    return recur(filer.nodeId, 0);
+    const rows = recur(filer.nodeId, 0);
+    return rows.map((r, idx) => ({
+      ...r,
+      lineIndex: idx,
+    }));
   }
 
   private getCurrentBufferWindow (): types.IBufferWindow {
@@ -384,7 +395,10 @@ export class Service implements types.IService {
     }
     const dom = document.querySelector<HTMLElement>(`[data-buffer-window-id="${bufferWindow.id}"] [data-component-name="BufferWindow__content"]`);
     if (!dom) {
-      throw new Error("buffer window dom not found");
+      return {
+        width: 0,
+        height: 0,
+      };
     }
 
     return {
@@ -399,6 +413,11 @@ export class Service implements types.IService {
     return c.rowPaddingTop + c.fontSize + c.rowPaddingBottom + 2;
   }
 
+  getRowAvailableWidth (bufferWindowId: string): number {
+    const { width } = this.getWindowSize(bufferWindowId);
+    return width - this.state.config.rowPaddingLeft - this.state.config.rowPaddingRight;
+  }
+
   getAllDisplayRows (params: {
     bufferWindowId: string;
     bufferId: string;
@@ -407,7 +426,6 @@ export class Service implements types.IService {
     if (!buffer) {
       throw new Error("buffer not found");
     }
-    const wd = this.getWindowSize(params.bufferWindowId);
     const maxDisplayLines = this.getMaxDisplayLines(params.bufferWindowId);
     const lineTexts = this.getLineTextsOfBuffer(params.bufferId);
     let displayLineTexts = lineTexts
@@ -426,8 +444,8 @@ export class Service implements types.IService {
       );
     }
 
-    const cfg = this.state.config;
-    const availableWidth = wd.width - cfg.rowPaddingLeft - cfg.rowPaddingRight;
+    const availableWidth = this.getRowAvailableWidth(params.bufferWindowId);
+    console.log(availableWidth);
     const bufferRows = displayLineTexts.reduce((accum, cur, idx) => {
       const texts = this.splitTextWithLimit(cur.text, availableWidth);
       for (let i = 0; i < texts.length; i++) {
@@ -489,8 +507,7 @@ export class Service implements types.IService {
       return mc.text.splitByNewLine(buffer.content);
     }
     else if (dmn.utils.isFiler(buffer)) {
-      // FIXME: make it compatible with recursive calculation for opened directories
-      return this.getFilerRows(buffer.id).map((r) => r.node.name);
+      return this.getFilerRows(buffer.id).map((r) => r.text);
     }
     else {
       throw new Error("unknown buffer type");
@@ -534,12 +551,67 @@ export class Service implements types.IService {
     }
   }
 
+  getTextMetrics (text: string): TextMetrics {
+    return this._textMeasurer.measure(text);
+  }
+
   updateBuffer (buffer: types.IBufferKind, opt?: types.SetStateOption): void {
     this.setState({
       buffers: this.state.buffers.find((b) => b.id === buffer.id)
         ? this.state.buffers.map((b) => b.id === buffer.id ? buffer.serialize() : b)
         : this.state.buffers.concat(buffer.serialize())
     }, opt);
+  }
+
+  getCursorInfo (params: {
+    bufferWindowId: string;
+    bufferId: string;
+  }): types.CursorInfo {
+    const buffer = this.findBuffer(params.bufferId);
+    if (!buffer) {
+      throw new Error("buffer window or buffer not found");
+    }
+
+    const lines = this.getLineTextsOfBuffer(params.bufferId);
+    const line = lines[buffer.cursorLine];
+    const availableWidth = this.getRowAvailableWidth(params.bufferWindowId);
+    const splitLines = this.splitTextWithLimit(line, availableWidth);
+
+    let lineIdx = 0;
+    let columnIdx = 0;
+    let charCount = 0;
+    let prevCharCount = 0;
+    let offsetLeft = this.state.config.rowPaddingLeft;
+    for (let i = 0; i < splitLines.length; i++) {
+      const sl = splitLines[i];
+      prevCharCount = charCount;
+      charCount += sl.length;
+
+      if (buffer.cursorColumn > charCount - 1) {
+        if (i === splitLines.length - 1) {
+          columnIdx = buffer.cursorColumn - prevCharCount;
+          break;
+        }
+        lineIdx += 1;
+        continue;
+      }
+
+      columnIdx = buffer.cursorColumn - prevCharCount;
+      break;
+    }
+
+    const leftText = line.slice(prevCharCount, columnIdx);
+    offsetLeft += this._textMeasurer.measure(leftText).width;
+    const char = line[buffer.cursorColumn] || " ";
+    const charWidth = this._textMeasurer.measure(char).width;
+
+    return {
+      line: lineIdx,
+      column: columnIdx,
+      charWidth: charWidth,
+      offsetLeft: offsetLeft,
+      char: char,
+    };
   }
 
   updateWindow (bufferWindow: types.IBufferWindow): void {
