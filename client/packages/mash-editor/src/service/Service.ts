@@ -5,8 +5,10 @@ import * as E from "fp-ts/es6/Either";
 
 import * as types from "../types";
 import * as dmn from "../domain";
+import * as asts from "../assets";
 import { InputHandler } from "./InputHandler";
 import { TextMeasurer } from "./TextMeasurerer";
+import { CommandExecutor } from "./CommandExecutor";
 import { defaultConfig } from "./config";
 
 export class Service implements types.IService {
@@ -16,6 +18,7 @@ export class Service implements types.IService {
   private _emitter: EventEmitter;
   private _inputHandler: types.IInputHandler;
   private _textMeasurer: types.ITextMeasurer;
+  private _commandExecutor: types.ICommandExecutor;
 
   constructor (params: {
     filesystem: mfs.IFileSystem,
@@ -27,6 +30,9 @@ export class Service implements types.IService {
       service: this,
     });
     this._textMeasurer = new TextMeasurer();
+    this._commandExecutor = new CommandExecutor({
+      service: this,
+    });
 
     this.state = this.buildInitialState();
     this._textMeasurer.configure(this.state.config);
@@ -43,9 +49,12 @@ export class Service implements types.IService {
   buildInitialState (): types.AS {
     const filer = new dmn.Filer({ nodeId: this._filesystem.currentDirectory.id });
     const buffer = new dmn.Buffer({ nodeId: "" });
+    const commandLineBuffer = new dmn.Buffer({ nodeId: "" });
     const buffers = [
       filer.serialize(),
       buffer.serialize(),
+      asts.prebfs.help.serialize(),
+      commandLineBuffer.serialize(),
     ] as types.SBufferKind[];
 
     const windows = [
@@ -65,6 +74,9 @@ export class Service implements types.IService {
       windows,
       buffers,
       currentWindowId: windows[1].id,
+      filerWindowId: windows[0].id,
+      commandLineBufferId: commandLineBuffer.id,
+      focusTarget: "windows",
     };
   }
 
@@ -87,22 +99,12 @@ export class Service implements types.IService {
     }
   }
 
-  openBuffer (nodeId: string): void {
-    const r1 = this._filesystem.getNode(nodeId);
-    if (E.isLeft(r1)) {
-      throw r1.left;
-    }
-    const node = r1.right;
-
+  openBuffer (bufferId: string): void {
     const bufferWindow = this.getModifiableBufferWindow();
-
-    const buffer = (
-      this.findBufferByNodeId({
-        bufferWindowId: bufferWindow.id,
-        nodeId: nodeId,
-      })
-      || this.createBufferWithNode({ node: node })
-    );
+    const buffer = this.findBuffer(bufferId);
+    if (!buffer) {
+      throw this.errorBufferNotFound(bufferId);
+    }
 
     bufferWindow.openBuffer(buffer.id);
 
@@ -113,12 +115,89 @@ export class Service implements types.IService {
     this.updateWindow(bufferWindow);
   }
 
+  openBufferByNodeId (nodeId: string): void {
+    const r1 = this._filesystem.getNode(nodeId);
+    if (E.isLeft(r1)) {
+      throw this.error(r1.left);
+    }
+    const node = r1.right;
+
+    const bufferWindow = this.getModifiableBufferWindow();
+
+    let buffer = this.findBufferByNodeId({
+      bufferWindowId: bufferWindow.id,
+      nodeId: nodeId,
+    });
+    if (!buffer) {
+      buffer = this.createBufferWithNode({ node });
+      this.updateBuffer(buffer, { update: false });
+    }
+
+    this.openBuffer(buffer.id);
+  }
+
+  executeExCommand (cmd: string): void {
+    this._commandExecutor.execute(cmd);
+  }
+
+  setCommandLineContent (content: string): void {
+    const buffer = this.getCommandLineBuffer();
+    buffer.content = content;
+    this.updateBuffer(buffer);
+  }
+
+  toggleFiler (): void {
+    const bufferWindow = this.findBufferWindow(this.state.filerWindowId);
+    if (!bufferWindow) {
+      throw this.errorBufferWindowNotFound(this.state.filerWindowId);
+    }
+    bufferWindow.hide = !bufferWindow.hide;
+    this.updateWindow(bufferWindow);
+  }
+
+  error (err: string | Error): Error {
+    const error = err instanceof Error
+      ? err
+      : new Error(err);
+    this.setCommandLineContent(error.message);
+    return error;
+  }
+  errorNotFiler (filerId: string): Error {
+    return this.error(`could not find filer with id: ${filerId}`);
+  }
+  errorNotDirectory (nodeId: string): Error {
+    const path = this._filesystem.getNode(nodeId);
+    return this.error(`not directory: ${path}`);
+  }
+  errorBufferWindowNotFound (bufferWindowId: string): Error {
+    return this.error(`could not find buffer window with id: ${bufferWindowId}`);
+  }
+  errorBufferNotFound (bufferId: string): Error {
+    return this.error(`could not find buffer with id: ${bufferId}`);
+  }
+  errorModifiableWindowNotFound (): Error {
+    return this.error("could not find any buffer window which is modifiable");
+  }
+  errorUnknownFileSystemNode (nodeId: string): Error {
+    return this.error(`unknown filesystem node type with id: ${nodeId}`);
+  }
+
   handleKeyDown (event: KeyboardEvent): void {
     return this._inputHandler.handleKeyDown(event);
   }
 
   handleKeyPress (event: KeyboardEvent): void {
     return this._inputHandler.handleKeyPress(event);
+  }
+
+  handleTextareaChange (event: Event): void {
+    event;
+    if (this.state.focusTarget === "commandLine") {
+      const buffer = this.getCommandLineBuffer();
+      buffer.content = this.handlerTextarea.value;
+      buffer.cursorColumn = this.handlerTextarea.selectionStart;
+      this.updateBuffer(buffer);
+    }
   }
 
   requestAction (action: types.RequestAction.Kind): void {
@@ -160,7 +239,7 @@ export class Service implements types.IService {
   }): types. BufferRow[] {
     const buffer = this.findBuffer(params.bufferId);
     if (!buffer) {
-      throw new Error("buffer not found");
+      throw this.error("buffer not found");
     }
 
     const maxDisplayLines = this.getMaxDisplayLines(params.bufferWindowId);
@@ -204,17 +283,17 @@ export class Service implements types.IService {
   getChildNodes (nodeId: string): mfs.IFileSystemNode[] {
     const r1 = this._filesystem.getNode(nodeId);
     if (E.isLeft(r1)) {
-      throw r1.left;
+      throw this.error(r1.left);
     }
     const node = r1.right;
 
     if (!mfs.utils.isDirectory(node)) {
-      throw new Error("not a directory");
+      throw this.errorNotDirectory(node.id);
     }
 
     const r2 = this._filesystem.getNodes(node.children);
     if (E.isLeft(r2)) {
-      throw r2.left;
+      throw this.error(r2.left);
     }
     const nodes = r2.right;
 
@@ -224,7 +303,7 @@ export class Service implements types.IService {
   getFilerRows (filerId: string): types.FilerRow[] {
     const filer = this.findBuffer(filerId);
     if (!filer || !dmn.utils.isFiler(filer)) {
-      throw new Error("not a filer");
+      throw this.errorNotFiler(filerId);
     }
 
     const recur = (nodeId: string, nest: number): types.FilerRow[] =>  {
@@ -272,7 +351,7 @@ export class Service implements types.IService {
   private getCurrentBufferWindow (): types.IBufferWindow {
     const bufferWindow = this.state.windows.find((w) => w.id === this.state.currentWindowId);
     if (!bufferWindow) {
-      throw new Error("current buffer window not found");
+      throw this.errorBufferWindowNotFound(this.state.currentWindowId);
     }
     return new dmn.BufferWindow(bufferWindow);
   }
@@ -280,7 +359,7 @@ export class Service implements types.IService {
   private getModifiableBufferWindow (): types.IBufferWindow {
     const bufferWindow = this.state.windows.find((w) => w.modifiable);
     if (!bufferWindow) {
-      throw new Error("no modifiable window found");
+      throw this.errorModifiableWindowNotFound();
     }
     return new dmn.BufferWindow(bufferWindow);
   }
@@ -328,11 +407,8 @@ export class Service implements types.IService {
     if (buffer.type === "Buffer") {
       return new dmn.Buffer(buffer);
     }
-    else if (buffer.type === "Filer") {
-      return new dmn.Filer(buffer);
-    }
     else {
-      throw new Error("unknown buffer");
+      return new dmn.Filer(buffer);
     }
   }
 
@@ -351,7 +427,7 @@ export class Service implements types.IService {
       });
     }
     else {
-      throw new Error("not a proper filesystemnode: " + params.node.id);
+      throw this.errorUnknownFileSystemNode(params.node.id);
     }
   }
 
@@ -360,9 +436,12 @@ export class Service implements types.IService {
     bufferId: string;
   }): types.BufferWindowStats {
     const bufferWindow = this.findBufferWindow(params.bufferWindowId);
+    if (!bufferWindow) {
+      throw this.errorBufferWindowNotFound(params.bufferWindowId);
+    }
     const buffer = this.findBuffer(params.bufferId);
-    if (!bufferWindow || !buffer) {
-      throw new Error("bufferWindow or buffer not found");
+    if (!buffer) {
+      throw this.errorBufferNotFound(params.bufferId);
     }
 
     const wd = this.getWindowSize(params.bufferWindowId);
@@ -391,7 +470,7 @@ export class Service implements types.IService {
   getWindowSize (bufferWindowId: string): types.WindowDimension {
     const bufferWindow = this.findBufferWindow(bufferWindowId);
     if (!bufferWindow) {
-      throw new Error("buffer window not found");
+      throw this.errorBufferWindowNotFound(bufferWindowId);
     }
     const dom = document.querySelector<HTMLElement>(`[data-buffer-window-id="${bufferWindow.id}"] [data-component-name="BufferWindow__content"]`);
     if (!dom) {
@@ -424,7 +503,7 @@ export class Service implements types.IService {
   }): types.BufferRow[] {
     const buffer = this.findBuffer(params.bufferId);
     if (!buffer) {
-      throw new Error("buffer not found");
+      throw this.errorBufferNotFound("buffer not found");
     }
     const maxDisplayLines = this.getMaxDisplayLines(params.bufferWindowId);
     const lineTexts = this.getLineTextsOfBuffer(params.bufferId);
@@ -445,7 +524,6 @@ export class Service implements types.IService {
     }
 
     const availableWidth = this.getRowAvailableWidth(params.bufferWindowId);
-    console.log(availableWidth);
     const bufferRows = displayLineTexts.reduce((accum, cur, idx) => {
       const texts = this.splitTextWithLimit(cur.text, availableWidth);
       for (let i = 0; i < texts.length; i++) {
@@ -500,17 +578,14 @@ export class Service implements types.IService {
   getLineTextsOfBuffer (bufferId: string): string[] {
     const buffer = this.findBuffer(bufferId);
     if (!buffer) {
-      throw new Error("buffer not found");
+      throw this.errorBufferNotFound("buffer not found");
     }
 
     if (dmn.utils.isBuffer(buffer)) {
       return mc.text.splitByNewLine(buffer.content);
     }
-    else if (dmn.utils.isFiler(buffer)) {
+    else  {
       return this.getFilerRows(buffer.id).map((r) => r.text);
-    }
-    else {
-      throw new Error("unknown buffer type");
     }
   }
 
@@ -527,7 +602,10 @@ export class Service implements types.IService {
 
     const r1 = this._filesystem.getNode(buffer.nodeId);
     if (E.isLeft(r1)) {
-      return defaultInfo;
+      return {
+        ...defaultInfo,
+        name: buffer.name ?? defaultInfo.name,
+      };
     }
     const node = r1.right;
 
@@ -555,21 +633,13 @@ export class Service implements types.IService {
     return this._textMeasurer.measure(text);
   }
 
-  updateBuffer (buffer: types.IBufferKind, opt?: types.SetStateOption): void {
-    this.setState({
-      buffers: this.state.buffers.find((b) => b.id === buffer.id)
-        ? this.state.buffers.map((b) => b.id === buffer.id ? buffer.serialize() : b)
-        : this.state.buffers.concat(buffer.serialize())
-    }, opt);
-  }
-
   getCursorInfo (params: {
     bufferWindowId: string;
     bufferId: string;
   }): types.CursorInfo {
     const buffer = this.findBuffer(params.bufferId);
     if (!buffer) {
-      throw new Error("buffer window or buffer not found");
+      throw this.errorBufferNotFound(params.bufferId);
     }
 
     const lines = this.getLineTextsOfBuffer(params.bufferId);
@@ -614,11 +684,42 @@ export class Service implements types.IService {
     };
   }
 
+  getCommandLineBuffer (): types.IBuffer {
+    const buffer = this.findBuffer(this.state.commandLineBufferId);
+    if (!buffer || !dmn.utils.isBuffer(buffer)) {
+      throw this.error("command line buffer not found");
+    }
+    return buffer;
+  }
+
+  getNodeByPath (path: string): mfs.IFileSystemNode {
+    const r1 = this._filesystem.resolveNodeFromPath(path);
+    if (E.isLeft(r1)) {
+      throw this.error(r1.left);
+    }
+    return r1.right;
+  }
+
+  updateBuffer (buffer: types.IBufferKind, opt?: types.SetStateOption): void {
+    this.setState({
+      buffers: this.state.buffers.find((b) => b.id === buffer.id)
+        ? this.state.buffers.map((b) => b.id === buffer.id ? buffer.serialize() : b)
+        : this.state.buffers.concat(buffer.serialize())
+    }, opt);
+  }
+
   updateWindow (bufferWindow: types.IBufferWindow): void {
     this.setState({
       windows: this.state.windows.find((w) => w.id === bufferWindow.id)
         ? this.state.windows.map((w) => w.id === bufferWindow.id ? bufferWindow.serialize() : w)
         : this.state.windows.concat(bufferWindow.serialize())
     });
+  }
+
+  updateTextarea (params: {
+    value: string;
+  }): void {
+    this.handlerTextarea.value = params.value;
+    this.handlerTextarea.dispatchEvent(new Event("change"));
   }
 }

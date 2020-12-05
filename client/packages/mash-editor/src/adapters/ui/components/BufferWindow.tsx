@@ -24,13 +24,6 @@ export const BufferWindow: React.FC<IProps> = ({
   const { config, service } = hooks.useAppContext();
 
 
-  const containerClassName = cx(
-    Styles.container({
-      vertColumn: config.color.VertSplit,
-    }),
-    Styles.width(bufferWindow.width),
-  );
-
   const rowHeight = service.getRowHeight();
   const cursorInfo = service.getCursorInfo({
     bufferWindowId: bufferWindow.id,
@@ -105,6 +98,16 @@ export const BufferWindow: React.FC<IProps> = ({
     buffer.type === "Filer" ? renderFiler(buffer) :
     { content: null, ruler: null, cursor: null };
 
+  const showCursor = focused && service.state.focusTarget === "windows";
+
+  const containerClassName = cx(
+    Styles.container({
+      vertColumn: config.color.VertSplit,
+    }),
+    Styles.width(bufferWindow.width),
+    bufferWindow.hide && Styles.hide,
+  );
+
   return (
     <div className={containerClassName}
       data-buffer-window-id={bufferWindow.id}
@@ -117,7 +120,7 @@ export const BufferWindow: React.FC<IProps> = ({
           </div>
         )}
         <div className={Styles.content} data-component-name="BufferWindow__content">
-          { focused && cursor }
+          { showCursor && cursor }
           { content }
         </div>
       </div>
@@ -142,6 +145,9 @@ const Styles = {
     &:not(:first-of-type) {
       border-left: 8px solid ${params.vertColumn};
     }
+  `,
+  hide: css`
+    display: none;
   `,
   contentArea: css`
     flex: 1;

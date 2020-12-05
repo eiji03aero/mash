@@ -164,7 +164,6 @@ export class BufferScroller implements types.IBufferScroller {
       && !this.isSepratorChar(this.getCursorPreviousChar())
     ) {
       this.slideCursor(-1);
-      console.log(this.getCursorChar());
     }
   }
 

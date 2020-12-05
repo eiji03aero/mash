@@ -63,6 +63,15 @@ export const Editor: React.FC<IProps> = ({
 
   const onKeyPress = (e: KeyboardEvent) => {
     engine.service.handleKeyPress(e);
+    engine.service.handleTextareaChange(e);
+  };
+
+  const onKeyUp = (e: KeyboardEvent) => {
+    engine.service.handleTextareaChange(e);
+  };
+
+  const onChange = (e: Event) => {
+    engine.service.handleTextareaChange(e);
   };
 
   const onResize = () => {
@@ -78,6 +87,8 @@ export const Editor: React.FC<IProps> = ({
     window.document.addEventListener("click", onClickDocument);
     refs.handlerTextarea.current?.addEventListener("keydown", onKeyDown);
     refs.handlerTextarea.current?.addEventListener("keypress", onKeyPress);
+    refs.handlerTextarea.current?.addEventListener("keyup", onKeyUp);
+    refs.handlerTextarea.current?.addEventListener("change", onChange);
 
     return () => {
       engine.service.offRequestAction(onRequestAction);
@@ -85,6 +96,8 @@ export const Editor: React.FC<IProps> = ({
       window.removeEventListener("resize", resizeHandler);
       refs.handlerTextarea.current?.removeEventListener("keydown", onKeyDown);
       refs.handlerTextarea.current?.removeEventListener("keypress", onKeyPress);
+      refs.handlerTextarea.current?.removeEventListener("keyup", onKeyUp);
+      refs.handlerTextarea.current?.removeEventListener("change", onChange);
     };
   }, [state, setState]);
 
@@ -105,16 +118,17 @@ export const Editor: React.FC<IProps> = ({
 
   return (
     <div className={containerClassName} ref={refs.container}>
-      <div className={Styles.content}>
-        <EditorContent
-          currentWindowId={state.currentWindowId}
-          windows={state.windows}
-          buffers={state.buffers}
-        />
-      </div>
+      <EditorContent
+        currentWindowId={state.currentWindowId}
+        windows={state.windows}
+        buffers={state.buffers}
+      />
 
       <div className={Styles.hidden}>
-        <textarea className={Styles.hidden} ref={refs.handlerTextarea} />
+        <textarea
+          ref={refs.handlerTextarea}
+          className={Styles.hidden}
+        />
       </div>
     </div>
   );
@@ -124,26 +138,22 @@ const Styles = {
   container: (params: {
     font: string;
   }) => css`
-    display: flex;
-    flex-direction: column;
+    position: relative;
     width: 100%;
     height: 100%;
+    z-index: 0;
 
     * {
       font-family: ${params.font};
       box-sizing: border-box;
     }
   `,
-  content: css`
-    display: flex;
-    width: 100%;
-    max-height: 100%;
-    flex: 1;
-  `,
   hidden: css`
+    position: absolute;
+    top: -10px;
+    left: -10px;
     width: 0;
     height: 0;
-    position: absolute;
     pointer-events: none;
     z-index: -1;
   `,

@@ -29,6 +29,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   window.setTimeout(() => {
-    engine.openBuffer(r1.right.id);
+    engine.openBufferByNodeId(r1.right.id);
   }, 500);
+
+  engine.onRequestAction((action) => {
+    if (action.type === "quit") {
+      alert("ja, boku mou yamemasunde, yoroshiku~");
+    }
+  });
 });

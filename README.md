@@ -33,7 +33,7 @@
 
 ```
 # milestone for deployment
-- implement massh-editor
+- implement mash-editor
 - implement fsservice
 - look at monitoring service
   - prometheus
@@ -42,10 +42,6 @@
 
 # issues
 - client
-  - implement mash-editor
-    - work on phase 1
-      - should start from domain models
-      - should have test
   - upgrade packages
     - mash-editor should be refered about which version to upgrade
 

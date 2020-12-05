@@ -5,6 +5,7 @@ import * as types from "../types";
 export type BaseBufferCtorParams = {
   id?: string;
   nodeId: string;
+  name?: string;
   scrollLine?: number;
   bottomScrollLine?: number;
   cursorLine?: number;
@@ -16,6 +17,7 @@ export type BaseBufferCtorParams = {
 export class BaseBuffer implements types.IBaseBuffer {
   id: string;
   nodeId: string;
+  name?: string;
   scrollLine: number;
   bottomScrollLine: number;
   cursorLine: number;
@@ -26,6 +28,7 @@ export class BaseBuffer implements types.IBaseBuffer {
   constructor (params: BaseBufferCtorParams) {
     this.id = params.id ?? mc.cid.generate();
     this.nodeId = params.nodeId;
+    this.name = params.name;
     this.scrollLine = params.scrollLine ?? 0;
     this.bottomScrollLine = params.bottomScrollLine ?? 0;
     this.cursorLine = params.cursorLine ?? 0;
@@ -39,6 +42,7 @@ export class BaseBuffer implements types.IBaseBuffer {
       type: "",
       id: this.id,
       nodeId: this.nodeId,
+      name: this.name,
       scrollLine: this.scrollLine,
       bottomScrollLine: this.bottomScrollLine,
       cursorLine: this.cursorLine,

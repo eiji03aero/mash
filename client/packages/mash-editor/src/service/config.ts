@@ -9,6 +9,7 @@ export const defaultConfig: types.Config = {
   rowPaddingRight: 4,
   cursorBlinkInitialPause: 1000,
   cursorBlinkDuration: 500,
+  commandLineRows: 2,
   color: {
     ColorColumn: "#808080",
     VertSplit: "#121212",

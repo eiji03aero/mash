@@ -9,7 +9,10 @@ export type ApplicationState = {
   config: Config;
   windows: dmn.SBufferWindow[];
   buffers: dmn.SBufferKind[];
+  commandLineBufferId: string;
   currentWindowId: string;
+  filerWindowId: string;
+  focusTarget: "windows" | "commandLine";
 };
 
 export type AS = ApplicationState;
@@ -23,6 +26,7 @@ export type Config = {
   rowPaddingRight: number;
   cursorBlinkInitialPause: number;
   cursorBlinkDuration: number;
+  commandLineRows: number;
   color: {
     ColorColumn: string;
     VertSplit: string;
@@ -54,8 +58,13 @@ export namespace RequestAction {
     state: AS;
   };
 
+  export type Quit = Base & {
+    type: "quit";
+  };
+
   export type Kind =
-    | SetState;
+    | SetState
+    | Quit;
 }
 
 export type RequestActionHandler = (action: RequestAction.Kind) => void;
@@ -111,6 +120,10 @@ export interface IBufferScroller {
   slideCursorToPreviousWordBegin(): void;
 }
 
+export interface ICommandExecutor {
+  execute(cmd: string): void;
+}
+
 export type SetStateOption = {
   update?: boolean;
 };
@@ -122,9 +135,17 @@ export interface IService {
   blur(): void;
   buildInitialState(): AS;
   setState(s: Partial<AS>, opt?: SetStateOption): void;
-  openBuffer(nodeId: string): void;
+  openBuffer(bufferId: string): void;
+  openBufferByNodeId(nodeId: string): void;
+  executeExCommand(cmd: string): void;
+  setCommandLineContent(content: string): void;
+  toggleFiler(): void;
+  // error
+  error(err: string | Error): Error;
+  // handler
   handleKeyDown(event: KeyboardEvent): void;
   handleKeyPress(event: KeyboardEvent): void;
+  handleTextareaChange(event: Event): void;
   // emitter related
   requestAction(action: RequestAction.Kind): void;
   onRequestAction(cb: RequestActionHandler): void;
@@ -169,6 +190,8 @@ export interface IService {
     bufferWindowId: string;
     bufferId: string;
   }): CursorInfo;
+  getCommandLineBuffer(): dmn.IBuffer;
+  getNodeByPath(path: string): mfs.IFileSystemNode;
   // query methods
   findBuffer(id: string): dmn.IBufferKind | undefined;
   findBufferWindow(id: string): dmn.IBufferWindow | undefined;
@@ -179,10 +202,15 @@ export interface IService {
   // update methods
   updateBuffer(b: dmn.IBufferKind, opt?: SetStateOption): void;
   updateWindow(w: dmn.IBufferWindow): void;
+  updateTextarea (params: {
+    value: string;
+  }): void;
 }
 
 export interface IEditorEngine {
   service: IService;
-  openBuffer(nodeId: string): void;
+  openBufferByNodeId(nodeId: string): void;
   requestAction(action: RequestAction.Kind): void;
+  onRequestAction(handler: RequestActionHandler): void;
+  offRequestAction(handler: RequestActionHandler): void;
 }

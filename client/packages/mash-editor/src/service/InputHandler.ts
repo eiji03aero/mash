@@ -6,6 +6,7 @@ import { BufferScroller } from "./BufferScroller";
 
 const combo = {
   ctrlw: "Ctrl w",
+  ctrln: "Ctrl n",
 };
 
 type TimerIds = {
@@ -55,9 +56,36 @@ export class InputHandler implements types.IInputHandler {
     })) {
       return;
     }
+
+    if (event.ctrlKey && event.key === "n") {
+      this.startCombination(combo.ctrln);
+      return;
+    }
+
+    if (this.isCancel(event)) {
+      this.service.setState({
+        focusTarget: "windows",
+      });
+      setTimeout(() => {
+        this.service.focus();
+      }, 50);
+    }
   }
 
   handleKeyPress (event: KeyboardEvent): void {
+    if (this.service.state.focusTarget === "commandLine") {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        const buffer = this.service.getCommandLineBuffer();
+        this.service.executeExCommand(buffer.content);
+        this.service.setState({
+          focusTarget: "windows",
+        });
+      }
+
+      return;
+    }
+
     const { bufferWindow, buffer } = this.service.getCurrentBufferWindowSet();
     const stats = this.service.getWindowStats({
       bufferWindowId: bufferWindow.id,
@@ -68,6 +96,25 @@ export class InputHandler implements types.IInputHandler {
       bufferWindow,
       buffer,
     });
+
+    if (event.key === ":") {
+      event.preventDefault();
+      this.service.setState({
+        focusTarget: "commandLine",
+      });
+      this.service.updateTextarea({
+        value: ":",
+      });
+      return;
+    }
+
+    if (this.combination === combo.ctrln) {
+      if (event.key === "t") {
+        this.service.toggleFiler();
+        this.cancelCombination();
+        return;
+      }
+    }
 
     if (this.handleWindowOperation({
       event,
@@ -111,7 +158,7 @@ export class InputHandler implements types.IInputHandler {
 
     if (event.ctrlKey && event.key === "w") {
       this.combination = combo.ctrlw;
-      this.startCombination();
+      this.startCombination(combo.ctrlw);
       return true;
     }
 
@@ -216,7 +263,7 @@ export class InputHandler implements types.IInputHandler {
       }
       else {
         this.combination = "g";
-        this.startCombination();
+        this.startCombination("g");
         updated = true;
       }
     }
@@ -265,7 +312,7 @@ export class InputHandler implements types.IInputHandler {
 
     if (event.key === "Enter" || event.key === "o") {
       if (mfs.utils.isFile(node)) {
-        this.service.openBuffer(node.id);
+        this.service.openBufferByNodeId(node.id);
       }
       else if (mfs.utils.isDirectory(node)) {
         filer.toggleOpenedNode(node.id);
@@ -279,7 +326,8 @@ export class InputHandler implements types.IInputHandler {
     this.service.updateBuffer(filer);
   }
 
-  private startCombination () {
+  private startCombination (combi: string) {
+    this.combination = combi;
     window.clearTimeout(this.timerIds.combination);
     this.timerIds.combination = window.setTimeout(() => {
       this.combination = null;
@@ -289,5 +337,12 @@ export class InputHandler implements types.IInputHandler {
   private cancelCombination () {
     window.clearTimeout(this.timerIds.combination);
     this.combination = null;
+  }
+
+  private isCancel (event: KeyboardEvent) {
+    return (
+      (event.ctrlKey && event.key === "c")
+      || (event.key === "Escape")
+    );
   }
 }

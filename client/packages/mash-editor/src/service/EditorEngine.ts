@@ -13,11 +13,19 @@ export class EditorEngine implements types.IEditorEngine {
     });
   }
 
-  openBuffer (nodeId: string): void {
-    this.service.openBuffer(nodeId);
+  openBufferByNodeId (nodeId: string): void {
+    this.service.openBufferByNodeId(nodeId);
   }
 
   requestAction (action: types.RequestAction.Kind): void {
     this.service.requestAction(action);
+  }
+
+  onRequestAction (handler: types.RequestActionHandler): void {
+    this.service.onRequestAction(handler);
+  }
+
+  offRequestAction (handler: types.RequestActionHandler): void {
+    this.service.offRequestAction(handler);
   }
 }

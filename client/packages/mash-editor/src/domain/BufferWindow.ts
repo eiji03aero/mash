@@ -10,6 +10,7 @@ export class BufferWindow implements types.IBufferWindow {
   width?: number;
   modifiable: boolean;
   ruler: boolean;
+  hide: boolean;
 
   constructor (params: {
     id?: string;
@@ -19,6 +20,7 @@ export class BufferWindow implements types.IBufferWindow {
     width?: number;
     modifiable?: boolean;
     ruler?: boolean;
+    hide?: boolean;
   }) {
     this.id = params.id || cid.generate();
     this.sourceIds = params.sourceIds || [params.currentSourceId];
@@ -27,6 +29,7 @@ export class BufferWindow implements types.IBufferWindow {
     this.width = params.width;
     this.modifiable = params.modifiable ?? true;
     this.ruler = params.ruler ?? false;
+    this.hide = params.hide ?? false;
   }
 
   serialize (): types.SBufferWindow {
@@ -38,6 +41,7 @@ export class BufferWindow implements types.IBufferWindow {
       width: this.width,
       modifiable: this.modifiable,
       ruler: this.ruler,
+      hide: this.hide,
     };
   }
 

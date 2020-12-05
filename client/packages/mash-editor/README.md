@@ -43,8 +43,8 @@
   - fix buffer row thing
     - move the adding caret and indent logic inside service#getFilerRows so that cursor
       calculation can be done properly
-- [ ] implement commandline
-- [ ] implement buffer list line
+- [x] implement commandline
+  - make it usable as error notifier
 - BufferWindow
   - [x] display file content
   - [x] Ctrl-W hjkl to move focus
@@ -60,11 +60,11 @@
   - implement commands
 
 ### phase 2
-- save current buffer
-- insertmode
-- edit file content
-- create file on filer
-- create file/directory on filer
+- [ ] create file/directory on filer
+- [ ] insertmode
+- [ ] edit file content
+- [ ] save current buffer
+  - probably need to update filesystem api
 
 ### misc
 - [ ] optimize render
@@ -85,14 +85,20 @@
     - x
 
 ### Ex commands
-- q ... quit vim
-- h ... show help
-- FilerToggle ... toggle visibility of filer
+- q
+  - quit vim
+  - client code should listen for corresponding requestaction and do the actual closing
+- h
+  - show help
+- e [path]
+  - open buffer with path
+- FilerToggle
+  - toggle visibility of filer
 
 ## Models
 
 ### EditorEngine
-- wrapps everything required.
+- wraps everything required.
 - exposes the available operation.
 - supposed to be initialized and passed by client code
 

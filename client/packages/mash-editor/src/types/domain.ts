@@ -8,6 +8,7 @@ export interface SBaseBuffer {
   type: string;
   id: string;
   nodeId: string;
+  name?: string;
   // ui
   scrollLine: number;
   bottomScrollLine: number;
@@ -20,6 +21,7 @@ export interface SBaseBuffer {
 export interface IBaseBuffer {
   id: string;
   nodeId: string;
+  name?: string;
   scrollLine: number;
   bottomScrollLine: number;
   cursorLine: number;
@@ -68,6 +70,7 @@ export interface SBufferWindow {
   width?: number;
   modifiable: boolean;
   ruler: boolean;
+  hide: boolean;
 }
 
 export interface IBufferWindow
@@ -75,6 +78,7 @@ extends IBaseEntity<SBufferWindow>, SBufferWindow {
   openBuffer(sourceId: string): void;
   hasSourceId(sourceId: string): boolean;
   ruler: boolean;
+  hide: boolean;
 }
 
 export type BufferWindowStats = {
