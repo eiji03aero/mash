@@ -33,13 +33,13 @@ export default async ({
       return;
     }
 
-    const r = filesystem.deleteDirectory(node.id);
+    const r = await filesystem.deleteDirectory({id: node.id});
     if (E.isLeft(r)) {
       environment.error(1, r.left.message);
       return
     }
   } else if (futils.isFile(node)) {
-    const r = filesystem.deleteFile(node.id);
+    const r = await filesystem.deleteFile({id: node.id});
     if (E.isLeft(r)) {
       environment.error(1, r.left.message);
       return

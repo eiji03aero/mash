@@ -25,7 +25,7 @@ export default async ({
   }
   const parentNode = r.right;
 
-  const r2 = filesystem.createFile({
+  const r2 = await filesystem.createFile({
     parentNodeId: parentNode.id,
     params: {
       name: basename,

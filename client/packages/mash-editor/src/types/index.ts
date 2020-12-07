@@ -13,6 +13,7 @@ export type ApplicationState = {
   currentWindowId: string;
   filerWindowId: string;
   focusTarget: "windows" | "commandLine";
+  infoText: string;
 };
 
 export type AS = ApplicationState;
@@ -131,6 +132,7 @@ export type SetStateOption = {
 export interface IService {
   state: AS;
   handlerTextarea: HTMLTextAreaElement;
+  filesystem: mfs.IFileSystem;
   focus(): void;
   blur(): void;
   buildInitialState(): AS;
@@ -138,7 +140,8 @@ export interface IService {
   openBuffer(bufferId: string): void;
   openBufferByNodeId(nodeId: string): void;
   executeExCommand(cmd: string): void;
-  setCommandLineContent(content: string): void;
+  setInfoText(text: string): void;
+  setCommandLineContent(text: string): void;
   toggleFiler(): void;
   // error
   error(err: string | Error): Error;
@@ -191,7 +194,9 @@ export interface IService {
     bufferId: string;
   }): CursorInfo;
   getCommandLineBuffer(): dmn.IBuffer;
+  getNode(nodeId: string): mfs.IFileSystemNode;
   getNodeByPath(path: string): mfs.IFileSystemNode;
+  getAbsolutePath(nodeId: string): string;
   // query methods
   findBuffer(id: string): dmn.IBufferKind | undefined;
   findBufferWindow(id: string): dmn.IBufferWindow | undefined;
@@ -202,6 +207,7 @@ export interface IService {
   // update methods
   updateBuffer(b: dmn.IBufferKind, opt?: SetStateOption): void;
   updateWindow(w: dmn.IBufferWindow): void;
+  ensureBufferCursorLine(b: dmn.IBufferKind, offset: number): void;
   updateTextarea (params: {
     value: string;
   }): void;

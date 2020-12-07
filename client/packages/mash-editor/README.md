@@ -60,11 +60,22 @@
   - implement commands
 
 ### phase 2
-- [ ] create file/directory on filer
-- [ ] insertmode
+- [x] update filesystem first
+  - crud operation should have pre hook so that client code can insert request logic to do backend
+    work before proceed
+- [x] create file/directory on filer
+  - service needs to have infoLines field
+    - to show temporary texts
+    - should be cleared when key up
 - [ ] edit file content
+  - show insertmode
+  - show dirty state
+    - turn it on when write on insert mode
+    - turn it off after save
+  - update content of file
+  - not to update the file if not modifiable
 - [ ] save current buffer
-  - probably need to update filesystem api
+  - run filesystem#updatefile
 
 ### misc
 - [ ] optimize render

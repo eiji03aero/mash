@@ -1,4 +1,5 @@
 import * as mfs from "mash-filesystem";
+import * as mc from "mash-common";
 
 import * as types from "../types";
 import * as dmn from "../domain";
@@ -18,6 +19,7 @@ export class InputHandler implements types.IInputHandler {
 
   combination: string | null;
   timerIds: TimerIds;
+  filerOperation: "menu" | "create" | "move" | "delete" | null;
 
   constructor (params: {
     service: types.IService,
@@ -27,6 +29,7 @@ export class InputHandler implements types.IInputHandler {
     this.timerIds = {
       combination: 0,
     };
+    this.filerOperation = null;
   }
 
   handleKeyDown (event: KeyboardEvent): void {
@@ -65,6 +68,10 @@ export class InputHandler implements types.IInputHandler {
     if (this.isCancel(event)) {
       this.service.setState({
         focusTarget: "windows",
+        infoText: "",
+      });
+      this.service.updateTextarea({
+        value: "",
       });
       setTimeout(() => {
         this.service.focus();
@@ -73,7 +80,18 @@ export class InputHandler implements types.IInputHandler {
   }
 
   handleKeyPress (event: KeyboardEvent): void {
-    if (this.service.state.focusTarget === "commandLine") {
+    const { bufferWindow, buffer } = this.service.getCurrentBufferWindowSet();
+    const stats = this.service.getWindowStats({
+      bufferWindowId: bufferWindow.id,
+      bufferId: buffer.id,
+    });
+    const scroller = new BufferScroller({
+      service: this.service,
+      bufferWindow,
+      buffer,
+    });
+
+    if (this.service.state.focusTarget === "commandLine" && this.filerOperation === null) {
       if (event.key === "Enter") {
         event.preventDefault();
         const buffer = this.service.getCommandLineBuffer();
@@ -85,17 +103,6 @@ export class InputHandler implements types.IInputHandler {
 
       return;
     }
-
-    const { bufferWindow, buffer } = this.service.getCurrentBufferWindowSet();
-    const stats = this.service.getWindowStats({
-      bufferWindowId: bufferWindow.id,
-      bufferId: buffer.id,
-    });
-    const scroller = new BufferScroller({
-      service: this.service,
-      bufferWindow,
-      buffer,
-    });
 
     if (event.key === ":") {
       event.preventDefault();
@@ -125,7 +132,7 @@ export class InputHandler implements types.IInputHandler {
       return;
     }
 
-    if (this.handleCursorCommand({
+    if (this.filerOperation === null && this.handleCursorCommand({
       event,
       buffer,
       scroller,
@@ -310,6 +317,18 @@ export class InputHandler implements types.IInputHandler {
     const idx = filer.scrollLine + filer.cursorLine;
     const node = rows[idx].node;
 
+    if (this.handleFilerOperation({
+      event,
+      filer,
+      rows,
+    })) {
+      return;
+    }
+
+    if (this.filerOperation !== null) {
+      return;
+    }
+
     if (event.key === "Enter" || event.key === "o") {
       if (mfs.utils.isFile(node)) {
         this.service.openBufferByNodeId(node.id);
@@ -324,6 +343,126 @@ export class InputHandler implements types.IInputHandler {
     }
 
     this.service.updateBuffer(filer);
+  }
+
+  private handleFilerOperation (params: {
+    event: KeyboardEvent;
+    filer: types.IFiler;
+    rows: types.FilerRow[];
+  }): boolean {
+    const { filer, event, rows } = params;
+    const cursorNodeId = rows[filer.cursorLine]?.node?.id || filer.nodeId;
+    const cursorNode = this.service.getNode(cursorNodeId);
+    let updated = false;
+
+    const cleanup = () => {
+      this.filerOperation = null;
+      this.service.setState({
+        focusTarget: "windows",
+        infoText: "",
+      });
+    };
+
+    if (this.filerOperation === null && event.key === "m") {
+      this.service.setInfoText([
+        "Filer operation:",
+        "a) Create file/directory",
+        "d) Delete file/directory",
+        "m) Move file/directory",
+      ].join("\n"));
+      this.filerOperation = "menu";
+      updated = true;
+    }
+    else if (this.filerOperation === "menu") {
+      const path = this.service.getAbsolutePath(cursorNodeId);
+      const inspected = mc.paths.inspect(path);
+      if (event.key === "a") {
+        event.preventDefault();
+        this.filerOperation = "create";
+        this.service.setInfoText([
+          "Create node:",
+          "Press enter to complete creation."
+        ].join("\n"));
+        const value = mfs.utils.isFile(cursorNode)
+          ? `${inspected.dirname}${inspected.dirname.length === 1 ? "" : "/"}`
+          : path
+        this.service.updateTextarea({
+          value: value
+        });
+        this.service.setState({ focusTarget: "commandLine" });
+        updated = true;
+      }
+      else if (event.key === "m") {
+        event.preventDefault();
+        this.filerOperation = "move";
+        this.service.setInfoText([
+          "Move node:",
+          "Press enter to complete move."
+        ].join("\n"));
+        this.service.updateTextarea({
+          value: path,
+        });
+        this.service.setState({ focusTarget: "commandLine" });
+        updated = true;
+      }
+      else if (event.key === "d") {
+        event.preventDefault();
+        this.filerOperation = "delete";
+        this.service.setInfoText([
+          "Delete node:",
+          "Press y if you are sure to delete this node:",
+          path,
+        ].join("\n"));
+        this.service.updateTextarea({
+          value: "",
+        });
+        this.service.setState({ focusTarget: "commandLine" });
+        updated = true;
+      }
+      else {
+        this.filerOperation = null;
+        this.service.setState({ infoText: "" });
+      }
+      updated = true;
+    }
+    else if (event.key === "Enter") {
+      event.preventDefault();
+      const path = this.service.handlerTextarea.value;
+      if (this.filerOperation === "create") {
+        this.service.filesystem.createNodeByPath(path)
+          .catch(this.service.error)
+          .then(cleanup);
+        updated = true;
+      }
+      else if (this.filerOperation === "move") {
+        console.log(path, cursorNodeId);
+        this.service.filesystem.moveNodeByPath({
+          nodeId: cursorNodeId,
+          path: path,
+        })
+          .catch(this.service.error)
+          .then(cleanup);
+        updated = true;
+      }
+      this.filerOperation = null;
+    }
+    else if (this.filerOperation === "delete") {
+      if (event.key === "y") {
+        event.preventDefault();
+        const path = this.service.getAbsolutePath(cursorNodeId);
+        this.service.ensureBufferCursorLine(filer, -1);
+        this.service.updateBuffer(filer);
+        this.service.filesystem.deleteNodeByPath(path)
+          .catch(this.service.error)
+          .then(cleanup);
+        updated = true;
+      } else {
+        cleanup();
+        updated = true;
+      }
+    }
+
+    return updated;
   }
 
   private startCombination (combi: string) {

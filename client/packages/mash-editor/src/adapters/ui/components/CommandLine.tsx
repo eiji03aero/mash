@@ -19,14 +19,15 @@ export const CommandLine: React.FC<IProps> = ({
 
 
   const rowHeight = service.getRowHeight();
-  const lines = mc.text.splitByNewLine(buffer.content);
+  const infoLines = mc.text.splitByNewLine(service.state.infoText);
+  const bufferLines = mc.text.splitByNewLine(buffer.content);
 
   const containerClassName = Styles.container({
     minHeight: config.commandLineRows * rowHeight,
   });
 
   const renderCursor = () => {
-    const cursorLine = lines[buffer.cursorLine];
+    const cursorLine = bufferLines[buffer.cursorLine];
     const leftText = cursorLine.slice(0, buffer.cursorColumn);
     const cursorChar = cursorLine[buffer.cursorColumn] || " ";
     return (
@@ -39,20 +40,34 @@ export const CommandLine: React.FC<IProps> = ({
     );
   };
 
+
   return (
     <div className={containerClassName}>
-      {lines.map((l, i) => {
-        return (
-          <Row
-            key={i}
-            text={l}
-          />
-        );
-      })}
+      <div className={Styles.info}>
+        {service.state.infoText.length > 0 && infoLines.map((l, i) => {
+          return (
+            <Row
+              key={i + l}
+              text={l}
+            />
+          );
+        })}
+      </div>
 
-      {service.state.focusTarget === "commandLine" && (
-        renderCursor()
-      )}
+      <div className={Styles.commandLine}>
+        {bufferLines.map((l, i) => {
+          return (
+            <Row
+              key={i + l}
+              text={l}
+            />
+          );
+        })}
+
+        {service.state.focusTarget === "commandLine" && (
+          renderCursor()
+        )}
+      </div>
     </div>
   );
 };
@@ -64,5 +79,11 @@ const Styles = {
     position: relative;
     width: 100%;
     min-height: ${params.minHeight}px;
+  `,
+  info: css`
+    position: relative;
+  `,
+  commandLine: css`
+    position: relative;
   `,
 };

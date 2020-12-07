@@ -1,5 +1,10 @@
 # Mash-Filesystem
 
+## Todo
+- [x] update to let client code register hook methods
+  - register/unregister hook function via filesystem#on/off
+  - on (event: "name union", callback: corresponding function type): PromisedEither;
+
 ## models
 
 - FileSystem

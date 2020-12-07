@@ -14,7 +14,7 @@ import { defaultConfig } from "./config";
 export class Service implements types.IService {
   state: types.AS;
   handlerTextarea: HTMLTextAreaElement;
-  private _filesystem: mfs.IFileSystem;
+  filesystem: mfs.IFileSystem;
   private _emitter: EventEmitter;
   private _inputHandler: types.IInputHandler;
   private _textMeasurer: types.ITextMeasurer;
@@ -24,7 +24,7 @@ export class Service implements types.IService {
     filesystem: mfs.IFileSystem,
   }) {
     this.handlerTextarea = document.createElement("textarea");
-    this._filesystem = params.filesystem;
+    this.filesystem = params.filesystem;
     this._emitter = new EventEmitter();
     this._inputHandler = new InputHandler({
       service: this,
@@ -47,7 +47,7 @@ export class Service implements types.IService {
   }
 
   buildInitialState (): types.AS {
-    const filer = new dmn.Filer({ nodeId: this._filesystem.currentDirectory.id });
+    const filer = new dmn.Filer({ nodeId: this.filesystem.currentDirectory.id });
     const buffer = new dmn.Buffer({ nodeId: "" });
     const commandLineBuffer = new dmn.Buffer({ nodeId: "" });
     const buffers = [
@@ -77,6 +77,7 @@ export class Service implements types.IService {
       filerWindowId: windows[0].id,
       commandLineBufferId: commandLineBuffer.id,
       focusTarget: "windows",
+      infoText: "",
     };
   }
 
@@ -116,7 +117,7 @@ export class Service implements types.IService {
   }
 
   openBufferByNodeId (nodeId: string): void {
-    const r1 = this._filesystem.getNode(nodeId);
+    const r1 = this.filesystem.getNode(nodeId);
     if (E.isLeft(r1)) {
       throw this.error(r1.left);
     }
@@ -140,9 +141,13 @@ export class Service implements types.IService {
     this._commandExecutor.execute(cmd);
   }
 
-  setCommandLineContent (content: string): void {
+  setInfoText (text: string): void {
+    this.setState({ infoText: text });
+  }
+
+  setCommandLineContent (text: string): void {
     const buffer = this.getCommandLineBuffer();
-    buffer.content = content;
+    buffer.content = text;
     this.updateBuffer(buffer);
   }
 
@@ -159,14 +164,14 @@ export class Service implements types.IService {
     const error = err instanceof Error
       ? err
       : new Error(err);
-    this.setCommandLineContent(error.message);
+    this.setInfoText(error.message);
     return error;
   }
   errorNotFiler (filerId: string): Error {
     return this.error(`could not find filer with id: ${filerId}`);
   }
   errorNotDirectory (nodeId: string): Error {
-    const path = this._filesystem.getNode(nodeId);
+    const path = this.filesystem.getNode(nodeId);
     return this.error(`not directory: ${path}`);
   }
   errorBufferWindowNotFound (bufferWindowId: string): Error {
@@ -281,7 +286,7 @@ export class Service implements types.IService {
   }
 
   getChildNodes (nodeId: string): mfs.IFileSystemNode[] {
-    const r1 = this._filesystem.getNode(nodeId);
+    const r1 = this.filesystem.getNode(nodeId);
     if (E.isLeft(r1)) {
       throw this.error(r1.left);
     }
@@ -291,7 +296,7 @@ export class Service implements types.IService {
       throw this.errorNotDirectory(node.id);
     }
 
-    const r2 = this._filesystem.getNodes(node.children);
+    const r2 = this.filesystem.getNodes(node.children);
     if (E.isLeft(r2)) {
       throw this.error(r2.left);
     }
@@ -316,7 +321,7 @@ export class Service implements types.IService {
         let name = cur.name;
         let indent = mc.text.repeat("  ", nest);
         if (mfs.utils.isFile(cur)) {
-          indent = mc.text.repeat(" ", Math.max(nest * 2 - 1, 2));
+          indent = mc.text.repeat(" ", Math.max(nest * 2 + 1, 2));
         }
         else if (mfs.utils.isDirectory(cur)) {
           const caret = filer.isNodeOpened(cur.id) ? "▾" : "▸";
@@ -600,7 +605,7 @@ export class Service implements types.IService {
       return defaultInfo;
     }
 
-    const r1 = this._filesystem.getNode(buffer.nodeId);
+    const r1 = this.filesystem.getNode(buffer.nodeId);
     if (E.isLeft(r1)) {
       return {
         ...defaultInfo,
@@ -609,7 +614,7 @@ export class Service implements types.IService {
     }
     const node = r1.right;
 
-    const r2 = this._filesystem.resolveAbsolutePath(buffer.nodeId);
+    const r2 = this.filesystem.resolveAbsolutePath(buffer.nodeId);
     if (E.isLeft(r2)) {
       return defaultInfo;
     }
@@ -692,8 +697,24 @@ export class Service implements types.IService {
     return buffer;
   }
 
+  getNode (nodeId: string): mfs.IFileSystemNode {
+    const r1 = this.filesystem.getNode(nodeId);
+    if (E.isLeft(r1)) {
+      throw this.error(r1.left);
+    }
+    return r1.right;
+  }
+
   getNodeByPath (path: string): mfs.IFileSystemNode {
-    const r1 = this._filesystem.resolveNodeFromPath(path);
+    const r1 = this.filesystem.resolveNodeFromPath(path);
+    if (E.isLeft(r1)) {
+      throw this.error(r1.left);
+    }
+    return r1.right;
+  }
+
+  getAbsolutePath (nodeId: string): string {
+    const r1 = this.filesystem.resolveAbsolutePath(nodeId);
     if (E.isLeft(r1)) {
       throw this.error(r1.left);
     }
@@ -714,6 +735,17 @@ export class Service implements types.IService {
         ? this.state.windows.map((w) => w.id === bufferWindow.id ? bufferWindow.serialize() : w)
         : this.state.windows.concat(bufferWindow.serialize())
     });
+  }
+
+  ensureBufferCursorLine (buffer: types.IBufferKind, ofs?: number): void {
+    const offset = ofs ?? 0;
+    const lines = this.getLineTextsOfBuffer(buffer.id);
+    if (buffer.cursorLine < 0) {
+      buffer.cursorLine = 0;
+    }
+    else if (buffer.cursorLine >= (lines.length - 1 + offset)) {
+      buffer.cursorLine = lines.length - 1 + offset;
+    }
   }
 
   updateTextarea (params: {

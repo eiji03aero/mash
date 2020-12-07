@@ -11,4 +11,9 @@ export class File extends FileSystemNode implements IFile {
     super(params);
     this.content = params.content || "";
   }
+
+  update (params: Partial<IFileBasis>) {
+    if (params.name) this.name = params.name;
+    if (params.content) this.content = params.content;
+  }
 }

@@ -1,5 +1,7 @@
 import * as E from "fp-ts/lib/Either";
 
+export type PromisedEither<T> = Promise<E.Either<Error, T>>;
+
 export interface IFileSystemNodeBasis {
   id?: string;
   name: string;
@@ -19,11 +21,12 @@ export interface IFileSystemNode {
 export type Nodes = IFileSystemNode[];
 
 export interface IDirectoryBasis extends IFileSystemNodeBasis {
-  _?: any;
+  children?: string[];
 }
 
 export interface IDirectory extends IFileSystemNode {
   children: string[];
+  update(p: Partial<IDirectoryBasis>): void;
   addChild(id: string): void;
   removeChild(id: string): void;
 }
@@ -34,6 +37,7 @@ export interface IFileBasis extends IFileSystemNodeBasis {
 
 export interface IFile extends IFileSystemNode {
   content: string;
+  update(p: Partial<IFileBasis>): void;
 }
 
 export type NodeMap = Map<string, IFileSystemNode>;
@@ -55,26 +59,95 @@ export interface INodeStore {
   }): E.Either<Error, IFileSystemNode>;
 }
 
+export namespace Operation {
+  export type CreateFileParams = {
+    parentNodeId: string;
+    params: IFileBasis;
+  };
+  export type CreateFileMiddlewareFunc = (p: CreateFileParams) => PromisedEither<null>;
+
+  export type UpdateFileParams = {
+    id: string;
+    params: Partial<IFileBasis>;
+  };
+  export type UpdateFileMiddlewareFunc = (p: UpdateFileParams) => PromisedEither<null>;
+
+  export type DeleteFileParams = {
+    id: string;
+  };
+  export type DeleteFileMiddlewareFunc = (p: DeleteFileParams) => PromisedEither<null>;
+
+  export type CreateDirectoryParams = {
+    parentNodeId: string;
+    params: IDirectoryBasis;
+  };
+  export type CreateDirectoryMiddlewareFunc = (p: CreateDirectoryParams) => PromisedEither<null>;
+
+  export type UpdateDirectoryParams = {
+    id: string;
+    params: Partial<IDirectoryBasis>;
+  };
+  export type UpdateDirectoryMiddlewareFunc = (p: UpdateDirectoryParams) => PromisedEither<null>;
+
+  export type DeleteDirectoryParams = {
+    id: string;
+  };
+  export type DeleteDirectoryMiddlewareFunc = (p: DeleteDirectoryParams) => PromisedEither<null>;
+
+  export type Middlewares = {
+    "file:beforeCreate": Array<CreateFileMiddlewareFunc>;
+    "file:beforeUpdate": Array<UpdateFileMiddlewareFunc>;
+    "file:beforeDelete": Array<DeleteFileMiddlewareFunc>;
+    "directory:beforeCreate": Array<CreateDirectoryMiddlewareFunc>;
+    "directory:beforeUpdate": Array<UpdateDirectoryMiddlewareFunc>;
+    "directory:beforeDelete": Array<DeleteDirectoryMiddlewareFunc>;
+  };
+
+  export type Names = keyof Middlewares;
+  export type RegisterMiddlewareyPayload<T, C> = {
+    type: T;
+    callback: C;
+  };
+  export type RegisterMiddlewareyPayloadKind =
+    | RegisterMiddlewareyPayload<"file:beforeCreate", CreateFileMiddlewareFunc>
+    | RegisterMiddlewareyPayload<"file:beforeUpdate", UpdateFileMiddlewareFunc>
+    | RegisterMiddlewareyPayload<"file:beforeDelete", DeleteFileMiddlewareFunc>
+    | RegisterMiddlewareyPayload<"directory:beforeCreate", CreateDirectoryMiddlewareFunc>
+    | RegisterMiddlewareyPayload<"directory:beforeUpdate", UpdateDirectoryMiddlewareFunc>
+    | RegisterMiddlewareyPayload<"directory:beforeDelete", DeleteDirectoryMiddlewareFunc>;
+
+  export type MiddlewareFuncs =
+    | CreateFileMiddlewareFunc
+    | UpdateFileMiddlewareFunc
+    | DeleteFileMiddlewareFunc
+    | CreateDirectoryMiddlewareFunc
+    | UpdateDirectoryMiddlewareFunc
+    | DeleteDirectoryMiddlewareFunc;
+}
+
 export interface IFileSystem {
   currentDirectory: IDirectory;
   rootDirectory: IDirectory;
   size: number;
   changeCurrentDirectory(id: string): E.Either<Error, null>;
-  createFile(params: {
-    parentNodeId: string;
-    params: IFileBasis;
-  }): E.Either<Error, IFile>;
-  deleteFile(id: string): E.Either<Error, null>;
-  createDirectory(params: {
-    parentNodeId: string;
-    params: IDirectoryBasis;
-  }): E.Either<Error, IDirectory>;
-  deleteDirectory(id: string): E.Either<Error, null>;
+  createFile: (p: Operation.CreateFileParams) => PromisedEither<IFile>;
+  updateFile: (p: Operation.UpdateFileParams) => PromisedEither<IFile>;
+  deleteFile(p: Operation.DeleteFileParams): PromisedEither<null>;
+  createDirectory(p: Operation.CreateDirectoryParams): PromisedEither<IDirectory>;
+  updateDirectory(p: Operation.UpdateDirectoryParams): PromisedEither<IDirectory>;
+  deleteDirectory(p: Operation.DeleteDirectoryParams): PromisedEither<null>;
+  createNodeByPath(path: string): PromisedEither<IFileSystemNode>;
+  moveNodeByPath(p: {
+    nodeId: string;
+    path: string;
+  }): PromisedEither<IFileSystemNode>;
+  deleteNodeByPath(path: string): PromisedEither<null>;
   resolveNodeFromPath(path: string): E.Either<Error, IFileSystemNode>;
   resolveAbsolutePath(id: string): E.Either<Error, string>;
   getNode(id: string): E.Either<Error, IFileSystemNode>;
   getNodes(ids: string[]): E.Either<Error, Nodes>;
   installNodes(parentDirectoryId: string, nodes: any[]): void;
+  addMiddleware(params: Operation.RegisterMiddlewareyPayloadKind): void;
 }
 
 export interface ITargetNodePathStat {

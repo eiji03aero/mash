@@ -9,7 +9,8 @@ export class Directory extends FileSystemNode implements IDirectory {
 
   constructor (params: IDirectoryBasis) {
     super(params);
-    this._children = new Set<string>();
+    const children = params.children ?? [] as string[];
+    this._children = new Set<string>(children);
   }
 
   get children (): string[] {
@@ -22,5 +23,10 @@ export class Directory extends FileSystemNode implements IDirectory {
 
   removeChild (id: string): void {
     this._children.delete(id);
+  }
+
+  update (params: Partial<IDirectoryBasis>): void {
+    if (params.name) this.name = params.name;
+    if (params.children) this._children = new Set<string>(params.children);
   }
 }
