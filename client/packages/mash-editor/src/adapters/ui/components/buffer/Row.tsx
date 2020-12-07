@@ -33,7 +33,7 @@ export const Row: React.FC<IProps> = ({
   );
 
   return (
-    <div className={containerClassName} style={style} data-component="Row">
+    <div className={containerClassName} style={style} data-component-name="Row">
       {mc.text.parseColorString(text).map((v: mc.ITextObject, idx: number) => {
         return (
           <span

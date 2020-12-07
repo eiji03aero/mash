@@ -9,6 +9,7 @@ import * as asts from "../assets";
 import { InputHandler } from "./InputHandler";
 import { TextMeasurer } from "./TextMeasurerer";
 import { CommandExecutor } from "./CommandExecutor";
+import { BufferScroller } from "./BufferScroller";
 import { defaultConfig } from "./config";
 
 export class Service implements types.IService {
@@ -44,6 +45,10 @@ export class Service implements types.IService {
 
   blur (): void {
     this.handlerTextarea.blur();
+  }
+
+  isFocused (): boolean {
+    return window.document.activeElement === this.handlerTextarea;
   }
 
   buildInitialState (): types.AS {
@@ -83,7 +88,7 @@ export class Service implements types.IService {
 
   setState (s: Partial<types.AS>, opt?: types.SetStateOption): void {
     const option: types.SetStateOption = {
-      update: true,
+      dispatch: true,
       ...opt,
     };
 
@@ -92,7 +97,7 @@ export class Service implements types.IService {
       ...s,
     };
 
-    if (option.update) {
+    if (option.dispatch) {
       this.requestAction({
         type: "setState",
         state: this.state,
@@ -131,7 +136,7 @@ export class Service implements types.IService {
     });
     if (!buffer) {
       buffer = this.createBufferWithNode({ node });
-      this.updateBuffer(buffer, { update: false });
+      this.updateBuffer(buffer, { dispatch: false });
     }
 
     this.openBuffer(buffer.id);
@@ -160,6 +165,38 @@ export class Service implements types.IService {
     this.updateWindow(bufferWindow);
   }
 
+  startInsertMode (params: {
+    bufferId: string;
+    bufferWindowId: string;
+  }): void {
+    const buffer = this.findBuffer(params.bufferId);
+    if (!buffer) {
+      throw this.errorBufferNotFound(params.bufferId);
+    }
+    if (!dmn.utils.isBuffer(buffer)) {
+      throw this.errorNotBuffer(buffer.id);
+    }
+    const bufferWindow = this.findBufferWindow(params.bufferWindowId);
+    if (!bufferWindow) {
+      throw this.errorBufferWindowNotFound(params.bufferWindowId);
+    }
+
+    const lines = this.getLineTextsOfBuffer(params.bufferId);
+    let position = 0;
+    for (let i = 0; i < buffer.cursorLine; i++) {
+      position += lines[i].length + 1;
+    }
+    position += buffer.cursorColumn;
+
+    this.updateTextarea({
+      value: buffer.content,
+      position: position,
+    });
+
+    bufferWindow.mode = "insert";
+    this.updateWindow(bufferWindow);
+  }
+
   error (err: string | Error): Error {
     const error = err instanceof Error
       ? err
@@ -169,6 +206,9 @@ export class Service implements types.IService {
   }
   errorNotFiler (filerId: string): Error {
     return this.error(`could not find filer with id: ${filerId}`);
+  }
+  errorNotBuffer (bufferId: string): Error {
+    return this.error(`not a filer with id: ${bufferId}`);
   }
   errorNotDirectory (nodeId: string): Error {
     const path = this.filesystem.getNode(nodeId);
@@ -197,11 +237,55 @@ export class Service implements types.IService {
 
   handleTextareaChange (event: Event): void {
     event;
+
     if (this.state.focusTarget === "commandLine") {
       const buffer = this.getCommandLineBuffer();
       buffer.content = this.handlerTextarea.value;
       buffer.cursorColumn = this.handlerTextarea.selectionStart;
       this.updateBuffer(buffer);
+    }
+    else {
+      const { buffer, bufferWindow } = this.getCurrentBufferWindowSet();
+      if (bufferWindow.mode === "insert") {
+        if (!dmn.utils.isBuffer(buffer)) {
+          throw this.errorNotBuffer(buffer.id);
+        }
+
+        const textareaPosition = this.handlerTextarea.selectionStart;
+        const content = this.handlerTextarea.value;
+        const lines = mc.text.splitByNewLine(content);
+        let cursorLine = 0;
+        let cursorColumn = 0;
+        let position = 0;
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          const prevPosition = position;
+          position += line.length;
+          const linePosition = position;
+          position += content.slice(position, position + 2) === "\r\n"
+            ? 2
+            : 1;
+          if (textareaPosition <= linePosition) {
+            cursorLine = i;
+            cursorColumn = textareaPosition - prevPosition;
+            break;
+          }
+        }
+
+        buffer.content = content;
+        this.updateBuffer(buffer, {dispatch: false});
+
+        const scroller = new BufferScroller({
+          service: this,
+          buffer,
+          bufferWindow,
+        });
+
+        scroller.scrollTo(cursorLine);
+        buffer.cursorColumn = cursorColumn;
+
+        this.updateBuffer(buffer);
+      }
     }
   }
 
@@ -729,12 +813,12 @@ export class Service implements types.IService {
     }, opt);
   }
 
-  updateWindow (bufferWindow: types.IBufferWindow): void {
+  updateWindow (bufferWindow: types.IBufferWindow, opt?: types.SetStateOption): void {
     this.setState({
       windows: this.state.windows.find((w) => w.id === bufferWindow.id)
         ? this.state.windows.map((w) => w.id === bufferWindow.id ? bufferWindow.serialize() : w)
         : this.state.windows.concat(bufferWindow.serialize())
-    });
+    }, opt);
   }
 
   ensureBufferCursorLine (buffer: types.IBufferKind, ofs?: number): void {
@@ -749,9 +833,14 @@ export class Service implements types.IService {
   }
 
   updateTextarea (params: {
-    value: string;
+    value?: string;
+    position: number;
   }): void {
-    this.handlerTextarea.value = params.value;
+    if (typeof params.value === "string") this.handlerTextarea.value = params.value;
+    if (typeof params.position === "number") {
+      this.handlerTextarea.selectionStart = params.position;
+      this.handlerTextarea.selectionEnd = params.position;
+    }
     this.handlerTextarea.dispatchEvent(new Event("change"));
   }
 }

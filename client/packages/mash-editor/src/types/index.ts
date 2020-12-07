@@ -39,8 +39,11 @@ export type Config = {
     StatusLineSubBg: string;
     StatusLineModeNormalFg: string;
     StatusLineModeNormalBg: string;
+    StatusLineModeInsertFg: string;
+    StatusLineModeInsertBg: string;
     StatusLineNodeNameFg: string;
     StatusLineDirectoryPathFg: string;
+    StatusLineDirtySignFg: string;
   },
 };
 
@@ -112,10 +115,18 @@ export type CursorInfo = {
   char: string;
 };
 
+export type BufferScrollerScrollToOption = {
+  inWindowMove?: boolean;
+};
+
+export type BufferScrollerSlideCursorOption = {
+  allowEndOfLine?: boolean
+};
+
 export interface IBufferScroller {
   scroll(delta: number): void;
-  scrollTo(line: number): void;
-  slideCursor(delta: number): void;
+  scrollTo(line: number, opts?: BufferScrollerScrollToOption): void;
+  slideCursor(delta: number, opts?: BufferScrollerSlideCursorOption): void;
   slideCursorToNextWordBegin(): void;
   slideCursorToNextWordEnd(): void;
   slideCursorToPreviousWordBegin(): void;
@@ -126,7 +137,7 @@ export interface ICommandExecutor {
 }
 
 export type SetStateOption = {
-  update?: boolean;
+  dispatch?: boolean;
 };
 
 export interface IService {
@@ -135,6 +146,7 @@ export interface IService {
   filesystem: mfs.IFileSystem;
   focus(): void;
   blur(): void;
+  isFocused(): boolean;
   buildInitialState(): AS;
   setState(s: Partial<AS>, opt?: SetStateOption): void;
   openBuffer(bufferId: string): void;
@@ -143,6 +155,10 @@ export interface IService {
   setInfoText(text: string): void;
   setCommandLineContent(text: string): void;
   toggleFiler(): void;
+  startInsertMode(params: {
+    bufferId: string;
+    bufferWindowId: string;
+  }): void;
   // error
   error(err: string | Error): Error;
   // handler
@@ -206,10 +222,11 @@ export interface IService {
   }): dmn.IBufferKind | undefined;
   // update methods
   updateBuffer(b: dmn.IBufferKind, opt?: SetStateOption): void;
-  updateWindow(w: dmn.IBufferWindow): void;
+  updateWindow(w: dmn.IBufferWindow, opt?: SetStateOption): void;
   ensureBufferCursorLine(b: dmn.IBufferKind, offset: number): void;
   updateTextarea (params: {
-    value: string;
+    value?: string;
+    position?: number;
   }): void;
 }
 

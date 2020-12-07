@@ -98,7 +98,7 @@ export const BufferWindow: React.FC<IProps> = ({
     buffer.type === "Filer" ? renderFiler(buffer) :
     { content: null, ruler: null, cursor: null };
 
-  const showCursor = focused && service.state.focusTarget === "windows";
+  const showCursor = focused && service.isFocused() && service.state.focusTarget === "windows";
 
   const containerClassName = cx(
     Styles.container({

@@ -70,7 +70,7 @@ export const parseColorString = (str: string): Row => {
 
 export const NewLineRegexp = /\r?\n/;
 
-export const splitByNewLine = (text: string) => {
+export const splitByNewLine = (text: string): string[] => {
   return text.split(NewLineRegexp);
 };
 
@@ -79,7 +79,7 @@ export const compareMagnitude = (a: string, b: string): number =>
   a > b ? 1 :
   0;
 
-export const repeat = (text: string, times: number) => {
+export const repeat = (text: string, times: number): string => {
   let buf = "";
   for (let i = 0; i < times; i++) {
     buf += text;

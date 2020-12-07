@@ -66,6 +66,13 @@ export class InputHandler implements types.IInputHandler {
     }
 
     if (this.isCancel(event)) {
+      event.preventDefault();
+      const lines = this.service.getLineTextsOfBuffer(buffer.id);
+      const line = lines[buffer.cursorLine];
+      buffer.cursorColumn = mc.math.ensureInRange(buffer.cursorColumn, 0, line.length - 1);
+      this.service.updateBuffer(buffer, {dispatch: false});
+      bufferWindow.mode = "normal";
+      this.service.updateWindow(bufferWindow, {dispatch: false});
       this.service.setState({
         focusTarget: "windows",
         infoText: "",
@@ -73,9 +80,6 @@ export class InputHandler implements types.IInputHandler {
       this.service.updateTextarea({
         value: "",
       });
-      setTimeout(() => {
-        this.service.focus();
-      }, 50);
     }
   }
 
@@ -90,6 +94,14 @@ export class InputHandler implements types.IInputHandler {
       bufferWindow,
       buffer,
     });
+
+    if (bufferWindow.mode === "insert") {
+      if (!buffer.dirty) {
+        buffer.dirty = true;
+        this.service.updateBuffer(buffer);
+      }
+      return;
+    }
 
     if (this.service.state.focusTarget === "commandLine" && this.filerOperation === null) {
       if (event.key === "Enter") {
@@ -144,6 +156,7 @@ export class InputHandler implements types.IInputHandler {
       this.handleBuffer({
         event,
         buffer,
+        bufferWindow,
         scroller,
         stats,
       });
@@ -289,10 +302,11 @@ export class InputHandler implements types.IInputHandler {
   private handleBuffer (params: {
     event: KeyboardEvent;
     buffer: types.IBuffer;
+    bufferWindow: types.IBufferWindow;
     scroller: types.IBufferScroller;
     stats: types.BufferWindowStats;
   }): void {
-    const { event, buffer, scroller } = params;
+    const { event, buffer, bufferWindow, scroller } = params;
 
     if (event.key === "Enter") {
       scroller.scroll(1);
@@ -301,7 +315,26 @@ export class InputHandler implements types.IInputHandler {
       // TBD
       return;
     }
+    else if (event.key === "i") {
+      event.preventDefault();
+      this.service.startInsertMode({
+        bufferId: buffer.id,
+        bufferWindowId: bufferWindow.id,
+      });
+      return;
+    }
+    else if (event.key === "a") {
+      event.preventDefault();
+      scroller.slideCursor(1, {allowEndOfLine: true});
+      this.service.updateBuffer(buffer, {dispatch: false});
+      this.service.startInsertMode({
+        bufferId: buffer.id,
+        bufferWindowId: bufferWindow.id,
+      });
+      return;
+    }
 
+    this.service.updateWindow(bufferWindow);
     this.service.updateBuffer(buffer);
   }
 
@@ -326,6 +359,11 @@ export class InputHandler implements types.IInputHandler {
     }
 
     if (this.filerOperation !== null) {
+      return;
+    }
+
+    if (event.key === "i" || event.key === "a") {
+      this.service.error("filer cannot be modified");
       return;
     }
 
@@ -435,7 +473,6 @@ export class InputHandler implements types.IInputHandler {
         updated = true;
       }
       else if (this.filerOperation === "move") {
-        console.log(path, cursorNodeId);
         this.service.filesystem.moveNodeByPath({
           nodeId: cursorNodeId,
           path: path,

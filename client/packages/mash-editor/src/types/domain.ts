@@ -9,6 +9,7 @@ export interface SBaseBuffer {
   id: string;
   nodeId: string;
   name?: string;
+  dirty: boolean;
   // ui
   scrollLine: number;
   bottomScrollLine: number;
@@ -22,6 +23,7 @@ export interface IBaseBuffer {
   id: string;
   nodeId: string;
   name?: string;
+  dirty: boolean;
   scrollLine: number;
   bottomScrollLine: number;
   cursorLine: number;
@@ -60,7 +62,8 @@ export type IBufferKind =
 
 // -------------------- BufferWindow --------------------
 export type BufferWindowMode =
-  | "normal";
+  | "normal"
+  | "insert";
 
 export interface SBufferWindow {
   id: string;

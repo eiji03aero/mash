@@ -36,9 +36,15 @@ export const StatusLine: React.FC<IProps> = ({
   const modeConfig = mode === "normal" ? ({
     modeText: "NORMAL",
     primaryBackground: config.color.StatusLineModeNormalBg,
+    primaryFontColor: config.color.StatusLineModeNormalFg,
+  }) : mode === "insert" ? ({
+    modeText: "INSERT",
+    primaryBackground: config.color.StatusLineModeInsertBg,
+    primaryFontColor: config.color.StatusLineModeInsertFg,
   }) : ({
     modeText: "",
-    primaryBacgkround: "",
+    primaryBackground: "",
+    primaryFontColor: "",
   });
 
   const containerClassName = Styles.container({
@@ -48,7 +54,7 @@ export const StatusLine: React.FC<IProps> = ({
 
   const modeClassName = Styles.cell({
     background: modeConfig.primaryBackground,
-    color: config.color.StatusLineModeNormalFg,
+    color: modeConfig.primaryFontColor,
   });
 
   const nodeNameClassName = Styles.cell({
@@ -57,6 +63,13 @@ export const StatusLine: React.FC<IProps> = ({
 
   const directoryPathClassName = Styles.cell({
     color: config.color.StatusLineDirectoryPathFg,
+  });
+
+  const dirtyClassName = Styles.cell({
+    color: config.color.StatusLineDirtySignFg,
+  });
+
+  const padClassName = Styles.cell({
     flexGrow: 1,
   });
 
@@ -64,15 +77,15 @@ export const StatusLine: React.FC<IProps> = ({
     background: focused
       ? config.color.StatusLineSubBg
       : "transparent",
-    color: config.color.StatusLineNodeNameFg,
-  })
+    color: config.color.StatusLineSubFg,
+  });
 
   const lineInfoClassName = Styles.cell({
     background: focused
       ? modeConfig.primaryBackground
       : config.color.StatusLineSubBg,
     color: focused
-      ? config.color.StatusLineModeNormalFg
+      ? modeConfig.primaryFontColor
       : config.color.StatusLineSubFg,
   });
 
@@ -89,6 +102,12 @@ export const StatusLine: React.FC<IProps> = ({
       <div className={directoryPathClassName}>
         { nodeInfo.directoryPath }
       </div>
+      {buffer.dirty && (
+        <div className={dirtyClassName}>
+          +
+        </div>
+      )}
+      <div className={padClassName}></div>
       <div className={linePercentClassName}>
         { linePercentText }
       </div>
@@ -111,12 +130,12 @@ const Styles = {
   `,
   cell: (params: {
     background?: string;
-    color: string;
+    color?: string;
     flexGrow?: number;
   }) => css`
     padding: 2px 8px;
     background: ${params.background ?? "transparent"};
-    color: ${params.color};
+    color: ${params.color ?? "auto"};
     flex-grow: ${params.flexGrow ?? 0};
     flex-shrink: 0;
     white-space: pre;

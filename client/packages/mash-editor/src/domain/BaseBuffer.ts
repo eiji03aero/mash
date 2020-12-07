@@ -6,6 +6,7 @@ export type BaseBufferCtorParams = {
   id?: string;
   nodeId: string;
   name?: string;
+  dirty?: boolean;
   scrollLine?: number;
   bottomScrollLine?: number;
   cursorLine?: number;
@@ -18,6 +19,7 @@ export class BaseBuffer implements types.IBaseBuffer {
   id: string;
   nodeId: string;
   name?: string;
+  dirty: boolean;
   scrollLine: number;
   bottomScrollLine: number;
   cursorLine: number;
@@ -29,6 +31,7 @@ export class BaseBuffer implements types.IBaseBuffer {
     this.id = params.id ?? mc.cid.generate();
     this.nodeId = params.nodeId;
     this.name = params.name;
+    this.dirty = params.dirty ?? false;
     this.scrollLine = params.scrollLine ?? 0;
     this.bottomScrollLine = params.bottomScrollLine ?? 0;
     this.cursorLine = params.cursorLine ?? 0;
@@ -43,6 +46,7 @@ export class BaseBuffer implements types.IBaseBuffer {
       id: this.id,
       nodeId: this.nodeId,
       name: this.name,
+      dirty: this.dirty,
       scrollLine: this.scrollLine,
       bottomScrollLine: this.bottomScrollLine,
       cursorLine: this.cursorLine,

@@ -41,7 +41,7 @@ export class BufferScroller implements types.IBufferScroller {
     else if (nextCursorLine >= this.buffer.scrollLine + this.stats.displayLines - 1) {
       this.buffer.rowEdge = "bottom";
       this.buffer.bottomScrollLine = this.buffer.cursorLine;
-      this.service.updateBuffer(this.buffer, {update: false});
+      this.service.updateBuffer(this.buffer, {dispatch: false});
 
       const rows = this.service.getAllDisplayRows({
         bufferWindowId: this.bufferWindow.id,
@@ -60,19 +60,25 @@ export class BufferScroller implements types.IBufferScroller {
     }
   }
 
-  scrollTo (line: number): void {
+  scrollTo (line: number, opts?: types.BufferScrollerScrollToOption): void {
+    const inWindowMove = opts?.inWindowMove ?? true;
+
     if (line < this.buffer.scrollLine) {
       this.scroll(line - this.buffer.scrollLine);
     }
     else if (line > (this.buffer.scrollLine + this.stats.displayLines)) {
-      this.scroll(line - this.buffer.scrollLine + this.stats.displayLines);
+      this.scroll(line - this.buffer.scrollLine - this.stats.displayLines);
     }
     else {
-      this.scroll(line - this.buffer.cursorLine);
+      if (inWindowMove) {
+        this.scroll(line - this.buffer.cursorLine);
+      }
     }
   }
 
-  slideCursor (delta: number): void {
+  slideCursor (delta: number, opts?: types.BufferScrollerSlideCursorOption): void {
+    const allowEndOfLine = opts?.allowEndOfLine ?? false;
+
     const line = this.lines[this.buffer.cursorLine];
     const nextColumn = this.buffer.cursorColumn + delta;
 
@@ -85,6 +91,10 @@ export class BufferScroller implements types.IBufferScroller {
       this.buffer.cursorColumn = Math.max(line.length - 1, 0);
     }
     else if (nextColumn >= line.length) {
+      if (allowEndOfLine) {
+        this.buffer.cursorColumn = line.length;
+        return;
+      }
       if (this.buffer.cursorLine === this.lines.length - 1) {
         return;
       }

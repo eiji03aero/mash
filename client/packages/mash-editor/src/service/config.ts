@@ -21,7 +21,10 @@ export const defaultConfig: types.Config = {
     StatusLineSubBg: "#303030",
     StatusLineModeNormalFg: "#121212",
     StatusLineModeNormalBg: "#0087ff",
+    StatusLineModeInsertFg: "#121212",
+    StatusLineModeInsertBg: "#87d787",
     StatusLineNodeNameFg: "#fff",
     StatusLineDirectoryPathFg: "#808080",
+    StatusLineDirtySignFg: "#ff5f87",
   },
 };
