@@ -11,6 +11,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const filesystem = FileSystem.bootstrap();
   filesystem.installNodes(filesystem.rootDirectory.id, fixtureNodes);
+  // filesystem.addMiddleware({
+  //   type: "file:beforeUpdate",
+  //   callback: async () => {
+  //     console.log("beforeupdate");
+  //     return E.left(new Error("shippai"))
+  //   },
+  // });
 
   const engine = new EditorEngine({
     filesystem,

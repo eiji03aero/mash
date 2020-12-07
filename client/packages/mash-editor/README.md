@@ -74,7 +74,7 @@
     - turn it off after save
   - update content of file
   - not to update the file if not modifiable
-- [ ] save current buffer
+- [x] save current buffer
   - run filesystem#updatefile
 
 ### misc

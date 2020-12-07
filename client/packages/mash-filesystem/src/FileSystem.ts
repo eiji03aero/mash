@@ -327,10 +327,16 @@ export class FileSystem implements types.IFileSystem {
       case "file:beforeCreate":
         this._middlewares[params.type].push(params.callback);
         break;
+      case "file:beforeUpdate":
+        this._middlewares[params.type].push(params.callback);
+        break;
       case "file:beforeDelete":
         this._middlewares[params.type].push(params.callback);
         break;
       case "directory:beforeCreate":
+        this._middlewares[params.type].push(params.callback);
+        break;
+      case "directory:beforeUpdate":
         this._middlewares[params.type].push(params.callback);
         break;
       case "directory:beforeDelete":

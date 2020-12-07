@@ -37,6 +37,8 @@ export class Service implements types.IService {
 
     this.state = this.buildInitialState();
     this._textMeasurer.configure(this.state.config);
+
+    this.error = this.error.bind(this);
   }
 
   focus (): void {

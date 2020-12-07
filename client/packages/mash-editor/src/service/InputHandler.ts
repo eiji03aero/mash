@@ -468,8 +468,8 @@ export class InputHandler implements types.IInputHandler {
       const path = this.service.handlerTextarea.value;
       if (this.filerOperation === "create") {
         this.service.filesystem.createNodeByPath(path)
-          .catch(this.service.error)
-          .then(cleanup);
+          .then(cleanup)
+          .catch(this.service.error);
         updated = true;
       }
       else if (this.filerOperation === "move") {
@@ -477,8 +477,8 @@ export class InputHandler implements types.IInputHandler {
           nodeId: cursorNodeId,
           path: path,
         })
-          .catch(this.service.error)
-          .then(cleanup);
+          .then(cleanup)
+          .catch(this.service.error);
         updated = true;
       }
       this.filerOperation = null;
@@ -490,8 +490,8 @@ export class InputHandler implements types.IInputHandler {
         this.service.ensureBufferCursorLine(filer, -1);
         this.service.updateBuffer(filer);
         this.service.filesystem.deleteNodeByPath(path)
-          .catch(this.service.error)
-          .then(cleanup);
+          .then(cleanup)
+          .catch(this.service.error);
         updated = true;
       } else {
         cleanup();
