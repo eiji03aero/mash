@@ -1,15 +1,19 @@
 import React from "react";
 import { css } from "emotion";
 
-import { AppContext } from "./context";
+import * as hooks from "./hooks";
+import { colors } from "../../utils";
+import { gen } from "../../graphql";
 
 import {
   Booting,
   Term,
+  Editor,
 } from "./routes";
 
 export const App: React.FC = () => {
-  const ctx = React.useContext(AppContext);
+  const ctx = hooks.useAppContext();
+  const { data: localStateResult } = hooks.useLocalState();
 
   React.useEffect(() => {
     const terminalContainer = document.getElementById("terminal-container");
@@ -25,7 +29,16 @@ export const App: React.FC = () => {
 
   return (
     <div className={Styles.container}>
-      <Term />
+      <div className={Styles.content}>
+        <Term />
+      </div>
+
+      {localStateResult?.localState.editorState === gen.EditorState.Running && (
+        <div className={Styles.modal}>
+          <Editor />
+        </div>
+      )}
+
       <Booting />
     </div>
   );
@@ -33,14 +46,23 @@ export const App: React.FC = () => {
 
 const Styles = {
   container: css`
+    position: relative;
     width: 100%;
     height: 100%;
-    & > *:nth-child(1) {
-      position: relative;
-      z-index: 0;
-    }
-    & > *:nth-child(2) {
-      z-index: 1;
-    }
   `,
+  content: css`
+    position: relative;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+  `,
+  modal: css`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background: ${colors.pallete.deepGreen};
+  `
 };

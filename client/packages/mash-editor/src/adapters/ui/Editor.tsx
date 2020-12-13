@@ -90,6 +90,10 @@ export const Editor: React.FC<IProps> = ({
     refs.handlerTextarea.current?.addEventListener("keyup", onKeyUp);
     refs.handlerTextarea.current?.addEventListener("change", onChange);
 
+    engine.requestAction({
+      type: "mounted",
+    });
+
     return () => {
       engine.service.offRequestAction(onRequestAction);
       window.document.removeEventListener("click", onClickDocument);
@@ -109,11 +113,13 @@ export const Editor: React.FC<IProps> = ({
 
     engine.service.handlerTextarea = hta;
     engine.service.focus();
+    engine.service.setState(engine.service.state);
   }, []);
 
 
   const containerClassName = Styles.container({
     font: state.config.font,
+    background: state.config.background,
   });
 
   return (
@@ -137,10 +143,12 @@ export const Editor: React.FC<IProps> = ({
 const Styles = {
   container: (params: {
     font: string;
+    background: string;
   }) => css`
     position: relative;
     width: 100%;
     height: 100%;
+    background: ${params.background};
     z-index: 0;
 
     * {

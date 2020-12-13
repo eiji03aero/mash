@@ -1,7 +1,7 @@
 import * as E from "fp-ts/es6/Either";
 import { MashClient, Environment, IMashClient, IEnvironment } from "mash";
 import { Terminal, ITerminal } from "mash-term";
-import { FileSystem, IFileSystem } from "mash-filesystem";
+import { IFileSystem } from "mash-filesystem";
 import { text } from "mash-common";
 
 import { IMash, IService, ILocalStateRepository } from "../../types";
@@ -21,9 +21,10 @@ export class Mash implements IMash {
   constructor (params: {
     terminalContainer: HTMLElement;
     service: IService;
+    filesystem: IFileSystem;
     localStateRepository: ILocalStateRepository;
   }) {
-    const filesystem = FileSystem.bootstrap();
+    const filesystem = params.filesystem;
     const terminal = new Terminal(params.terminalContainer, {
       cursorInitialPauseMs: 1000,
       cursorIntervalMs: 500,
@@ -33,11 +34,11 @@ export class Mash implements IMash {
       textBlue: colors.pallete.blue,
       textYellow: colors.pallete.yellow,
       fontFamily: "Menlo",
-      fontSize: 16,
-      rowTopMargin: 4,
-      rowBottomMargin: 4,
-      rowLeftMargin: 8,
-      rowRightMargin: 8,
+      fontSize: 14,
+      rowTopMargin: 2,
+      rowBottomMargin: 2,
+      rowLeftMargin: 4,
+      rowRightMargin: 4,
     });
 
     const environment = new Environment({
@@ -82,7 +83,7 @@ export class Mash implements IMash {
       "We will be building this app together",
       "ganbarimasyou"
     ];
-    const msgInterval = 200;
+    const msgInterval = 500;
 
     for (let i = 0; i < msgs.length; i++) {
       const msg = msgs[i];
@@ -96,6 +97,14 @@ export class Mash implements IMash {
     }, msgs.length * msgInterval);
 
     this._attachKeyboardHandlers();
+  }
+
+  focusTerminal (): void {
+    this._terminal.focus();
+  }
+
+  blurTerminal (): void {
+    this._terminal.blur();
   }
 
   async read (promptString: string): Promise<string> {

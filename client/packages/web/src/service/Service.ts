@@ -1,4 +1,6 @@
 import * as E from "fp-ts/lib/Either";
+import * as me from "mash-editor";
+import * as mfs from "mash-filesystem";
 
 import * as types from "../types";
 import { Mash } from "../domain/mash";
@@ -6,6 +8,7 @@ import { gen } from "../graphql";
 import * as utils from "../utils";
 
 export class Service implements types.IService {
+  editorEngine: me.EditorEngine;
   private _mash: types.IMash;
   private _authRepository: types.IAuthRepository;
   private _localStateRepository: types.ILocalStateRepository;
@@ -16,6 +19,7 @@ export class Service implements types.IService {
     authRepository: types.IAuthRepository;
     localStateRepository: types.ILocalStateRepository;
   }) {
+    this.editorEngine = null as any;
     this._localStore = params.localStore;
     this._localStateRepository = params.localStateRepository;
     this._authRepository = params.authRepository;
@@ -35,12 +39,19 @@ export class Service implements types.IService {
     });
     await utils.sleep(500);
 
+    const filesystem = mfs.FileSystem.bootstrap();
+
     this._mash = new Mash({
       terminalContainer: params.terminalContainer,
       service: this,
+      filesystem,
       localStateRepository: this._localStateRepository,
     });
     this._mash.initialize();
+
+    this.editorEngine = new me.EditorEngine({
+      filesystem,
+    });
   }
 
   // -------------------- auth --------------------
@@ -83,5 +94,29 @@ export class Service implements types.IService {
       username: "guest",
     });
     return r1;
+  }
+
+  // -------------------- mash --------------------
+  focusTerminal (): void {
+    this._mash.focusTerminal();
+  }
+
+  blurTerminal (): void {
+    this._mash.blurTerminal();
+  }
+
+  // -------------------- editor --------------------
+  async openEditor (): types.PromisedEither<null> {
+    await this._localStateRepository.update({
+      editorState: gen.EditorState.Running,
+    });
+    return E.right(null);
+  }
+
+  async closeEditor (): types.PromisedEither<null> {
+    await this._localStateRepository.update({
+      editorState: gen.EditorState.Stopped,
+    });
+    return E.right(null);
   }
 }

@@ -28,4 +28,8 @@ export class EditorEngine implements types.IEditorEngine {
   offRequestAction (handler: types.RequestActionHandler): void {
     this.service.offRequestAction(handler);
   }
+
+  error (err: string | Error): Error {
+    return this.service.error(err);
+  }
 }

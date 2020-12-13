@@ -35,7 +35,13 @@ export class Terminal implements ITerminal {
 
     this.container = container;
     this.textarea = document.createElement("textarea");
-    this.textarea.setAttribute("style", "width: 0; height: 0; position: absolute;");
+    this.textarea.setAttribute("style", `
+      width: 0;
+      height: 0;
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    `);
     this.container.appendChild(this.textarea);
 
     this.config = getConfig(config);

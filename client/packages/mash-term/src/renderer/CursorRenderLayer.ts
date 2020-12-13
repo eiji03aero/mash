@@ -100,14 +100,28 @@ export class CursorRenderLayer extends BaseRenderLayer {
   }
 
   private get _cursorX () {
-    const promptStr = text.stripHideCharacters(this.terminal.config.prompt);
-    const promptWidth = this.ctx.measureText(promptStr).width;
-
+    let inputWidth = 0;
     const inputValue = this.terminal.textarea.value;
-    const inputLength = inputValue === ""
-      ? 0
-      : this.ctx.measureText(inputValue.slice(0, this.terminal.textarea.selectionStart)).width;
-    return this.terminal.config.rowLeftMargin + promptWidth + inputLength;
+    const rows = this.terminal.rows;
+    const lastRow = rows[rows.length - 1];
+
+    if (lastRow) {
+      const t = lastRow.row[lastRow.row.length - 1];
+      const promptStr = text.stripHideCharacters(this.terminal.config.prompt);
+      const rowText = lastRow.row.reduce((accum, cur) => {
+        return accum + cur.text;
+      }, "");
+      if (rowText !== (promptStr + inputValue)) {
+        inputWidth = this.ctx.measureText(t.text).width;
+      }
+      else {
+        const promptWidth = this.ctx.measureText(promptStr).width;
+
+        inputWidth = promptWidth
+        inputWidth += this.ctx.measureText(inputValue.slice(0, this.terminal.textarea.selectionStart)).width;
+      }
+    }
+    return this.terminal.config.rowLeftMargin + inputWidth;
   }
 
   private get _cursorY () {

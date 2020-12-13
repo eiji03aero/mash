@@ -8,7 +8,8 @@ export const initialState: InitialState = {
   localState: {
     __typename: "LocalState",
     username: "guest",
-    applicationState: gen.ApplicationState.Stopped
+    applicationState: gen.ApplicationState.Stopped,
+    editorState: gen.EditorState.Stopped,
   }
 };
 

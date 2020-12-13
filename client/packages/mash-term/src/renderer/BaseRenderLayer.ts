@@ -50,7 +50,11 @@ export class BaseRenderLayer {
   }
 
   private resizeCanvas = (): void => {
-    this.canvas.width = this.terminal.container.offsetWidth;
-    this.canvas.height = this.terminal.container.offsetHeight;
+    const width = this.terminal.container.offsetWidth;
+    const height = this.terminal.container.offsetHeight;
+    this.canvas.width = width;
+    this.canvas.height = height;
+    this.canvas.style.width = width + "px";
+    this.canvas.style.height = height + "px";
   }
 }

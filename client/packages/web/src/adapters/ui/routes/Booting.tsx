@@ -1,9 +1,8 @@
 import React from "react";
 import { css, cx } from "emotion";
-import { useQuery } from "@apollo/client";
 
 import { HorizontalLoadingIndicator } from "../components";
-import { useCompositeState } from "../hooks";
+import * as hooks from "../hooks";
 import { gen } from "../../../graphql";
 import { colors } from "../../../utils";
 
@@ -13,13 +12,11 @@ interface IState {
 }
 
 export const Booting: React.FC = () => {
-  const [state, setState] = useCompositeState<IState>({
+  const [state, setState] = hooks.useCompositeState<IState>({
     show: false,
     removed: false,
   });
-  const { data: localStateResult } = useQuery<
-    { localState: gen.LocalState }
-  >(gen.GetLocalStateDocument);
+  const { data: localStateResult } = hooks.useLocalState();
 
   const handleShow = React.useCallback(() => {
     setState({ removed: false });

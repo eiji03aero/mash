@@ -3,6 +3,7 @@ import * as types from "../types";
 export const defaultConfig: types.Config = {
   font: "Menlo",
   fontSize: 13,
+  background: "transparent",
   rowPaddingTop: 1,
   rowPaddingBottom: 1,
   rowPaddingLeft: 4,

@@ -13,6 +13,7 @@ import pwd from "./pwd";
 import rm from "./rm";
 import signup from "./signup";
 import touch from "./touch";
+import vim from "./vim";
 
 export const builtins: CommandMap = {
   basename,
@@ -28,4 +29,6 @@ export const builtins: CommandMap = {
   rm,
   signup,
   touch,
+  vim,
+  vi: vim,
 };

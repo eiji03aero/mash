@@ -33,11 +33,11 @@
 
 ```
 # milestone for deployment
-- implement mash-editor
-- implement fsservice
-- look at monitoring service
+- [x] implement mash-editor
+- [ ] implement fsservice
+- [ ] look at monitoring service
   - prometheus
-- kubernetes
+- [ ] kubernetes
   - gcp
 
 # issues

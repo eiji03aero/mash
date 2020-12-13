@@ -12,6 +12,13 @@ export type Scalars = {
   Float: number;
 };
 
+export type User = {
+  __typename?: 'User';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  token: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createTodo: Todo;
@@ -35,30 +42,13 @@ export type MutationLoginArgs = {
   input: ILogin;
 };
 
-export type ISignup = {
-  name: Scalars['String'];
-  password: Scalars['String'];
+export type INewTodo = {
+  text: Scalars['String'];
+  userId: Scalars['String'];
 };
 
 export type INone = {
   none?: Maybe<Scalars['Boolean']>;
-};
-
-export type RNone = {
-  __typename?: 'RNone';
-  none?: Maybe<Scalars['Boolean']>;
-};
-
-export type User = {
-  __typename?: 'User';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  token: Scalars['String'];
-};
-
-export type INewTodo = {
-  text: Scalars['String'];
-  userId: Scalars['String'];
 };
 
 export type RLogin = {
@@ -74,10 +64,9 @@ export type Todo = {
   user: User;
 };
 
-export type Query = {
-  __typename?: 'Query';
-  localState: LocalState;
-  users: Array<User>;
+export type ISignup = {
+  name: Scalars['String'];
+  password: Scalars['String'];
 };
 
 export type RSignup = {
@@ -85,9 +74,15 @@ export type RSignup = {
   user: User;
 };
 
-export type ILogin = {
-  name: Scalars['String'];
-  password: Scalars['String'];
+export type RNone = {
+  __typename?: 'RNone';
+  none?: Maybe<Scalars['Boolean']>;
+};
+
+export type Query = {
+  __typename?: 'Query';
+  localState: LocalState;
+  users: Array<User>;
 };
 
 export type Subscription = {
@@ -100,15 +95,26 @@ export type SubscriptionTodoAddedArgs = {
   userId: Scalars['String'];
 };
 
+export type ILogin = {
+  name: Scalars['String'];
+  password: Scalars['String'];
+};
+
 export type LocalState = {
   __typename?: 'LocalState';
   username: Scalars['String'];
   applicationState: ApplicationState;
+  editorState: EditorState;
 };
 
 export enum ApplicationState {
   Stopped = 'Stopped',
   Booting = 'Booting',
+  Running = 'Running'
+}
+
+export enum EditorState {
+  Stopped = 'Stopped',
   Running = 'Running'
 }
 
@@ -185,7 +191,7 @@ export type GetLocalStateQuery = (
   { __typename?: 'Query' }
   & { localState: (
     { __typename?: 'LocalState' }
-    & Pick<LocalState, 'username' | 'applicationState'>
+    & Pick<LocalState, 'username' | 'applicationState' | 'editorState'>
   ) }
 );
 
@@ -356,6 +362,7 @@ export const GetLocalStateDocument = gql`
   localState @client {
     username
     applicationState
+    editorState
   }
 }
     `;

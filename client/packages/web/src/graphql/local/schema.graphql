@@ -5,10 +5,16 @@ type Query {
 type LocalState {
   username: String!
   applicationState: ApplicationState!
+  editorState: EditorState!
 }
 
 enum ApplicationState {
   Stopped
   Booting
+  Running
+}
+
+enum EditorState {
+  Stopped
   Running
 }

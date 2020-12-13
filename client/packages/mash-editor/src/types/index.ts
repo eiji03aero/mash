@@ -21,6 +21,7 @@ export type AS = ApplicationState;
 export type Config = {
   font: string;
   fontSize: number;
+  background: string;
   rowPaddingTop: number;
   rowPaddingBottom: number;
   rowPaddingLeft: number;
@@ -62,12 +63,17 @@ export namespace RequestAction {
     state: AS;
   };
 
+  export type Mounted = Base & {
+    type: "mounted";
+  };
+
   export type Quit = Base & {
     type: "quit";
   };
 
   export type Kind =
     | SetState
+    | Mounted
     | Quit;
 }
 
@@ -140,6 +146,8 @@ export type SetStateOption = {
   dispatch?: boolean;
 };
 
+export type ErrorHandler = (err: string | Error) => Error;
+
 export interface IService {
   state: AS;
   handlerTextarea: HTMLTextAreaElement;
@@ -160,7 +168,7 @@ export interface IService {
     bufferWindowId: string;
   }): void;
   // error
-  error(err: string | Error): Error;
+  error: ErrorHandler;
   // handler
   handleKeyDown(event: KeyboardEvent): void;
   handleKeyPress(event: KeyboardEvent): void;
@@ -236,4 +244,5 @@ export interface IEditorEngine {
   requestAction(action: RequestAction.Kind): void;
   onRequestAction(handler: RequestActionHandler): void;
   offRequestAction(handler: RequestActionHandler): void;
+  error: ErrorHandler;
 }
