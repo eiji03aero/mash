@@ -111,7 +111,7 @@ export class CursorRenderLayer extends BaseRenderLayer {
       const rowText = lastRow.row.reduce((accum, cur) => {
         return accum + cur.text;
       }, "");
-      if (rowText !== (promptStr + inputValue)) {
+      if (t && rowText !== (promptStr + inputValue)) {
         inputWidth = this.ctx.measureText(t.text).width;
       }
       else {

@@ -34,6 +34,10 @@
 ```
 # milestone for deployment
 - [x] implement mash-editor
+- [ ] refactor mash-filesystem
+  - explicitly define serialized data, and utilize it for:
+    - return value of crud apis
+    - constructor params
 - [ ] implement fsservice
 - [ ] look at monitoring service
   - prometheus
