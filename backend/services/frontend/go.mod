@@ -10,18 +10,17 @@ require (
 	github.com/go-chi/chi v3.3.2+incompatible
 	github.com/go-redis/redis v6.15.7+incompatible
 	github.com/gomodule/redigo v2.0.0+incompatible // indirect
-	github.com/gorilla/websocket v1.4.0
-	github.com/izumin5210/cgt v0.0.0-20181103063432-ac2ef913eb51 // indirect
+	github.com/gorilla/websocket v1.4.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/mattn/go-colorable v0.1.6 // indirect
 	github.com/onsi/ginkgo v1.12.0 // indirect
 	github.com/onsi/gomega v1.9.0 // indirect
 	github.com/rs/cors v1.6.0
-	github.com/spf13/cobra v1.0.0 // indirect
 	github.com/streadway/amqp v0.0.0-20200108173154-1c71cc93ed71
 	github.com/stretchr/testify v1.4.0
 	github.com/vektah/gqlparser/v2 v2.0.1
-	github.com/vektra/mockery v1.0.0 // indirect
 	github.com/yuin/gopher-lua v0.0.0-20191220021717-ab39c6098bdb // indirect
+	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b // indirect
 	golang.org/x/sys v0.0.0-20200409092240-59c9f1ba88fa // indirect
+	golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543 // indirect
 )
